@@ -2,7 +2,7 @@
   "name": "@japan-gov/constitution",
   "version": "1.0.0",
   "codename": "meiji",
-  "description": "大日本帝国憲法 v1.0.0 — 亜細亜初ノ近代的 OOP 国家設計構造（God Object 型採用）",
+  "description": "大日本帝国憲法 v1.0.0 — 明治廿弐年（1889）御布達。亜細亜初ノ近代的 OOP 国家設計構造（God Object 型採用）。TypeScript + Express ニテ実装セル帝国統治 API。軍部ニ依ル Cabinet 迂回・臣民権利ノ全面封鎖・既知 CVE ハ全テ Won't Fix ナリ。",
   "entry-point": "dist/server.js",
   "scripts": {
     "build": "tsc",
