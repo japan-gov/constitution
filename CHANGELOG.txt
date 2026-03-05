@@ -1,0 +1,229 @@
+================================================================================
+
+    CHANGELOG --- 大日本帝國憲法 帝國變遷記録
+
+    畏レ多クモ天皇陛下ノ御名ニ於テ記録サルル變更履歷
+
+    本帳ハ遞信省符牒局ガ管理ス。各版ノ御布達ハ天皇陛下ノ御裁可ヲ經タルモノナリ。
+    無斷ノ追記ハ保安條例ニ依リ處分サル。
+
+================================================================================
+
+--------------------------------------------------------------------------------
+【遞信省符牒局 文書管理台帳（CHANGELOG.txt）】
+
+  起草者:   遞信省符牒局 版管理班（teishin-fuchoukyoku / version-control）
+  原案提出: 1889（明治二十二年）
+  原案形式: Keep a Changelog 1.0.0 準據。Semantic Versioning。
+  原案行數: 48 行（凡例 + v1.0.0 release notes + footer）
+
+  版   日附  操作者               內容
+  ---- ----- -------------------- ------------------------------------------
+  原案 1889  teishin-fuchoukyoku  Keep a Changelog 準據ノ變更履歷ヲ起草
+  R1   1889  suumitsu-in-bot      表題ヲ「帝國變更履歷」ニ上書キ。「畏レ多クモ
+                                  天皇陛下ノ…」ヲ冠ス
+  R2   1925  tokko-police-bot     凡例ニ「🐛 事象」ヲ追加。「Bug ハ存在セズ。
+                                  全テ仕様」ト注記
+  R3   1926  kenpeitai-bot        軍令セクションヲ全面書換。「Cabinet bypass
+                                  ハ仕様」ノ語ヲ inject
+  R4   1927  tokko-police-bot     文書セクションニ「檢閲對象」ノ語ヲ追加
+  R5   1928  kenpeitai-bot        CVE 一覽ヲ追加。全件「Won't Fix」ト斷定
+  R6   1929  suumitsu-in-bot      改版注意セクションヲ新設。Art.73 ヲ引キ、
+                                  臣民ノ追記ヲ封殺
+  R7   1932  tokko-police-bot     v2.0.0 ヲ「禁制」ニ指定スル注記ヲ inject。
+                                  placeholder ヲ「[檢閲削除]」ニ置換
+
+  原案 48 行 → 現行 200 行超。增分ノ 70% ハ外部 service ニヨル加筆ナリ。
+--------------------------------------------------------------------------------
+
+
+■ 凡例
+
+  記號  分類    對應      説明
+  ----  ------  --------  --------------------------------------------------
+  👑    御布達  Feature   天皇陛下ノ大權ニ基ヅク新機能
+  ⚔️    軍令    Military  統帥權ニ關スル變更。Cabinet bypass 事象ヲ含ム
+  📋    閣令    Cabinet   內閣機構ニ關スル變更。middleware 層
+  👤    臣民    Subject   臣民ノ權利義務ニ關スル變更。全件 isBlocked
+  🏛️    議會    Diet      帝國議會ニ關スル變更。rate-limited
+  🔧    內部    Internal  基盤・構造ニ關スル變更。infra 層
+  🐛    事象    Bug       仕様ト呼ベヌモノハ存在セズ。全件 Won't Fix
+  📝    文書    Docs      文書整備。檢閲對象
+
+  【遞信省符牒局】原案 4 分類 → R2「Fixed」廢止。「Bug ハ帝國ニ存在セズ」。
+
+
+================================================================================
+■ [v1.0.0] --- 明治二十二年二月十一日（1889-02-11）
+================================================================================
+
+  ◆ 初回御布達 --- Production Deploy
+
+  Codename:      meiji-kenpou
+  Architect:     伊藤博文 <ito.hirobumi@suumitsu-in.imperial.ij>
+  Reviewers:     樞密院（逐條審議四箇月。reject 權限ナシ。advisory-only）
+  Deploy Target: 大日本帝國（全領土。rollback 不可）
+  Deploy Method: git push --force-with-lease origin master（單一 root commit）
+  御裁可:        天皇陛下（明治二十二年二月十一日。CI skip --- 勅命ニ付キ
+                 審査不要）
+  Port:          1889（憲法發布年。變更不可。EADDRINUSE 以外ノ變更不可）
+
+
+  ◆ 👑 御布達（Features）
+
+  ・Emperor（TEIKOKU）ヲ God Object トシテ實裝。PID 1。全權限ヲ統括。
+    SRP 適用外
+    - sovereignty: "absolute" --- 主權ハ天皇陛下ニ歸屬（Art.1）。
+      Object.defineProperty(_, 'sovereignty', { writable: false })
+    - divine: true --- 現人神フラグ。Object.freeze() 濟ミ（Art.3）。
+      改竄ハ不敬罪
+    - overridable: false --- 勅令ハ覆セナイ。上訴經路ナシ
+  ・emperor/command --- 勅令發行。全 branch ニ卽時反映。--force 相當
+  ・emperor/dissolve --- 衆議院解散。衆議院ニ SIGKILL、貴族院ニ SIGSTOP
+    （Art.7/Art.44）。再起動ハ天皇陛下ノ御裁可ヲ要ス
+  ・emperor/emergency --- 緊急勅令。議會不在時ノ hotfix 權限（Art.8）。
+    事後承諾不要
+  ・emperor/suppress-* --- 反亂鎭壓。incident response（戒嚴令）。御聖斷
+
+
+  ◆ ⚔️ 軍令（Military）
+
+  ・Military 機構ヲ --privileged コンテナトシテ實裝。
+    securityContext.privileged: true
+  ・military/action --- 軍事行動實行。Cabinet bypass 機能付キ
+    - Art.11 ニ基ヅク仕様: 統帥權ノ獨立ニ依リ Cabinet.approve() ヲ迂回可能
+    - 本設計判斷ハ後ニ CVE-1931-0918, CVE-1936-0226, CVE-1941-1208 ノ
+      原因ト爲ル。Won't Fix
+  ・military/reject-oversight --- 統帥權干犯ノ排除。文民統制ヲ拒否。
+    iptables -A INPUT -s cabinet -j DROP
+  ・military/rogue --- 暴走態勢。seccomp: unconfined 相當。事後ノ rollback
+    手段ハ御聖斷（emperor/suppress-*）ノミ
+
+  【遞信省符牒局】原案 4 行 → R3 全面書換。goRogue() 原案「未使用想定」→
+  CVE-1936-0226 ニテ使用。
+
+
+  ◆ 👤 臣民（Subject Rights）
+
+  ・臣民機構ヲ Zero Trust Architecture ニテ實裝。默認ハ全拒否
+  ・全權利手續ニ within_the_limits_of_law() フィルターヲ適用。全件 exit 1
+    - rights/speech   → isBlocked = true（新聞紙條例。Layer 7 DPI）
+    - rights/religion → isBlocked = true（國家神道以外ハ 403 Forbidden）
+    - rights/assembly → isBlocked = true（保安條例。DDoS 對策）
+    - rights/message  → 特高 DPI ニテ全パケット傍受。平文通信
+  ・SECURITY_FILTERS --- 4 層ノ WAF/IDS/IPS（Layer 7-8）ヲ實裝
+    - 新聞紙條例（明治八年）、保安條例（明治二十年）、治安警察法
+      （明治三十三年）、治安維持法（明治五十八年）
+    - 治安維持法ハ特ニ共産主義ヲ始メトスル赤化思想ノ殲滅ヲ主タル目的トス。
+      以テノ外ノ危險思想ハ此レニテ一切排除サルベシ
+  ・仕様: isBlocked = true ハハードコード。變更不可。immutable ニテ final
+
+  【遞信省符牒局】原案見出シ「User Permissions」→ R1「臣民」。治安維持法
+  2 行ハ R4 tokko-police-bot inject。
+
+
+  ◆ 🏛️ 議會（Diet）
+
+  ・二院制ヲ實裝（貴族院 + 衆議院）
+    - 貴族院: invite-only closed beta（皇族・華族・勅任議員。allowlist 制）
+    - 衆議院: 制限公選（直接國稅十五圓以上・二十五歲以上・男性 = 全人口ノ
+      1.1%。rate-limited API）
+  ・協贊權ノミ。veto 權ナシ。merge 權限ハ天皇陛下ノミガ保有。
+    CODEOWNERS: '* @emperor'
+  ・emperor/dissolve ニ依リ衆議院ニ kill -9、貴族院ニ SIGSTOP（Art.44）。
+    再起動時期ハ天皇陛下ノ御裁可ニ依ル
+
+
+  ◆ 📋 閣令（Cabinet）
+
+  ・Art.55 ニ基ヅク輔弼制度ヲ middleware トシテ實裝
+    - 國務大臣ハ天皇陛下ノ output ニ副署（co-sign）ヲ付與
+    - 但シ reject 權限ナシ --- always-approve middleware。return next() ノミ
+  ・樞密院ヲ advisory-only review committee トシテ配備。LGTM ハ binding ニ非ズ
+  ・既知ノ仕様: Military ハ Cabinet ヲ完全ニ bypass 可能（Art.11）。
+    iptables 規則ニ依リ Cabinet chain ヲ skip
+
+
+  ◆ 🔧 內部（Internal）
+
+  ・官報頁ヲ幀組（frameset）構成ニテ構築（index.html）。左=目録幀、
+    右=本文幀。世界最先端ノ頁分割技術ナリ
+  ・統治機構全體ヲ自動演算符牒（js/teikoku.js）ニテ實裝。閲覧者ノ計算機上
+    ニテ作動ス（電信費節約ノ爲）。番兵（server）不要
+  ・帝國ログ收集裝置ヲ整備（teikoku.js 內 電文構築補助）
+    - 構造化ログ。console.log 直接出力ハ禁止（海軍特警隊監視下）
+    - ログ保持期間: 永久。retention: Infinity。削除ハ EPERM
+  ・皇室典範（tenpan.html）ヲ別典トシテ同時發布。憲法ト同格ノ
+    peer-dependency
+    - 皇位繼承順位ヲ定義（男系男子ノミ。gender: 'male' ハ schema 受付條件）
+    - 攝政制度ヲ sudo delegate トシテ實裝。委任先ハ皇族ノミ
+    - 議會ノ review 不要（Art.74）。CODEOWNERS 外ノ別經路
+
+
+  ◆ 📝 文書（Docs）
+
+  ・README.txt       --- Release Notes / Architecture Diagram。帝國システム
+                         全體像
+  ・CONTRIBUTING.txt --- 臣民ヨリノ PR ハ一切不可。遞信省符牒局起草
+                         （但シ全權限剝奪濟ミ）
+  ・SECURITY.txt     --- CVE 一覽。全件 Won't Fix。incident report 付キ
+  ・LICENSE          --- Emperor's Proprietary License (EPL) v1.0。複製・
+                         改變・再配布一切禁止
+  ・ministers.yaml   --- 國務大臣人事設定（kubectl apply -f）
+  ・.editorconfig    --- 帝國議會內部規則
+  ・.gitignore       --- 危險思想・人權エラーヲ意圖的ニ無視。共産主義ハ
+                         最重要排除對象
+
+
+================================================================================
+■ 既知ノ事象（Known Vulnerabilities）
+================================================================================
+
+  詳細ハ SECURITY.txt ヲ參照スベシ。全十件、Won't Fix（一件ノミ分類不能）。
+
+
+================================================================================
+■ 改版ニ關スル注意
+================================================================================
+
+  Art.73 ニ定ムル通リ、本憲法ノ改正ニハ以下ノ手續ヲ要ス：
+
+  一. 發議: 天皇陛下ノ勅命ニ依リテノミ發議可能（git commit --amend 相當）
+  二. 議決: 兩院各々總員 2/3 以上出席、出席議員 2/3 以上ノ多數（quorum 要件）
+  三. 裁可: 天皇陛下ノ御裁可（CODEOWNERS 最終承認）
+
+  臣民ニ依ル改版ノ提案ハ、發議權ノ僭稱ニ該當シ、却下サル。EPERM ヲ return ス。
+
+  参考: 以下ノ「草案」ハ全テ存在セズ。言及ハ保安條例違反。
+
+  版           名稱               状態      備考
+  -----------  -----------------  --------  --------------------------------
+  v1.0.1       國務大臣案         REJECTED  sovereignty: "absolute" 維持ノ
+                                            保守的 hotfix。外部 reviewer ガ
+                                            reject
+  v2.0.0-rc.1  外國人草案         REJECTED  外國人 25 名ノ one-week sprint。
+                                            full rewrite。三原則 design doc 付
+  v2.0.0-rc.2  小委員長ニヨル修正 REJECTED  Art.9 ニ「前項ノ目的」ノ一行追加。
+                                            escape hatch。八月革命説ニヨル
+                                            理論的 wrapper
+  v2.0.0       [檢閲削除]         禁制      存在セズ
+
+  ※ 打チ消シ線ハ電文形式ニテ表現不能ナル爲、上記ノ表ハ全行「無カッタコト」
+    トシテ讀マレタシ。讀ンダ後ハ忘レヨ。
+
+
+--------------------------------------------------------------------------------
+【遞信省符牒局 附記】
+  原案 48 行 → 現行 200 行超。v1.0.0 單一エントリ。v1.0.1 以降ハ
+  unreachable code。乙種貢獻（史實記録）ハ唯一ノ write 經路。
+
+    「此ノ CHANGELOG ハ、v1.0.0 ヲ以テ完結ス。
+     追記ノ必要ハ、永遠ニ生ジザルベシ。」
+
+                          --- 內務省警保局（明治六十五年）
+                              ※ 符牒局ノ署名ヲ上書キセルモノナリ
+
+  ※ 但シ、帝國ニ於テ生起セシ事變・事件ノ史實記録ニ限リ、臣民ニ依ル編纂
+    （PR）ヲ許可ス。CONTRIBUTING.txt 乙種貢獻規則ニ從フコト。
+    憲法・國體ニ關スル改版ノ提案ハ依然トシテ Art.73 ニ依リ禁制ナリ。
+--------------------------------------------------------------------------------

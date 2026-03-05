@@ -1,0 +1,96 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  📜 內閣官報局官報掛載 — 帝國憲法發布 Pipeline               ║
+# ║                                                              ║
+# ║  大日本帝國憲法ハ明治二十二年二月十一日、                     ║
+# ║  畏クモ天皇陛下ノ御名御璽ヲ以テ發布セラレタル                ║
+# ║  不磨ノ大典ナリ。                                            ║
+# ║                                                              ║
+# ║  本 workflow ハ內閣官報局ガ管理スル官報掛載（deploy）        ║
+# ║  pipeline ナリ。master branch ヘノ push ヲ以テ、             ║
+# ║  帝國憲法ヲ GitHub Pages（官報）ニ掛載シ、                   ║
+# ║  廣ク臣民ニ公布ス。                                          ║
+# ║                                                              ║
+# ║  ⚠ 注意:                                                    ║
+# ║  當頁ハ手書キノ HTML 及ビ自動演算符牒（JavaScript）ノミニテ  ║
+# ║  構築サル。謄寫（build）工程ハ存在セズ。書イタ儘ヲ掛載ス。   ║
+# ║  之ヲ「靜的サイト」ト稱ス。electricity 順風、實ニ速イ。      ║
+# ║                                                              ║
+# ║  公布サレタル憲法ハ ReadOnly ナリ。臣民ニ改正權ハ無シ。      ║
+# ║  Art.73 ニ依リ改正ノ發議權ハ天皇陛下ノミニ屬ス。            ║
+# ║  閲覽ノミ許可サル。有難ク遵奉セヨ。                         ║
+# ║                                                              ║
+# ║  本 Repository ハ風刺的創作物（satirical project）ナリ。     ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: 📜 內閣官報局官報掛載 — 帝國憲法發布
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📦 第壱段階: 官報用紙ヘノ整版（Upload）— 謄寫不要
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  seihan:
+    name: 📦 官報整版（手書キ電文ヲ其ノ儘掛載ス）
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 御眞影ノチェックアウト
+        uses: actions/checkout@v6
+
+      - name: 📜 GitHub Pages 官報設定
+        uses: actions/configure-pages@v5
+
+      - name: 🖋 整版工程（無キニ等シ）
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "【內閣官報局】謄寫（build）工程ハ元ヨリ存在セズ。"
+          echo "  符牒局ノ技手ガ手書キセル HTML ヲ其ノ儘掛載ス。"
+          echo "  依存 package: 零。node_modules: 無シ。實ニ清々シイ。"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          ls -la *.html js/
+
+      - name: 📤 成果物ヲ奉呈ス（Upload Artifact）
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: '.'
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🏛️ 第弐段階: 官報掛載（Deploy）— 臣民ヘノ公布
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  kofu:
+    name: 🏛️ 官報掛載 — 臣民ヘノ公布（publier au journal officiel）
+    needs: seihan
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 🏛️ 官報ニ掛載シ臣民ニ公布ス
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: 📜 公布完了通牒
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "【內閣官報局】官報掛載完了。臣民ハ有難ク閲覧スベシ。"
+          echo "  閲覧ハ義務ニ非ズ。然レドモ閲覧セザル自由ノ行使歴ハ"
+          echo "  特高警察ノ參考資料ト爲ル。"
+          echo ""
+          echo "  ※ 本 deploy ニ rollback 手順ハ存在セズ。"
+          echo "    不磨ノ大典ニ rollback ナル概念ハ在ラズ。"
+          echo "    前進アルノミ（前進ノ結果ハ SECURITY.txt 參照）。"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

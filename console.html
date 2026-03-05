@@ -1,0 +1,470 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="GENERATOR" content="逓信省符牒局 電文手書キ編集機 甲型">
+<title>帝國コンソール — 統治機構 遠隔操作盤</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style type="text/css">
+<!--
+/* 符牒局註: 高精細表示裝置對應。近頃ノ陰極線管ハ矢鱈ト細カク、
+   臣民ヨリ「活字ガ小サイ」トノ上奏ガ相次イダ爲、活字ヲ大キクシタ。
+   頁ノ意匠ハ變ヘテヰナイ。幀組ハ最先端ノママデアル。 */
+body { font-size: 18px; line-height: 1.55; }
+font[size="-1"] { font-size: 16px; }
+font[size="-2"] { font-size: 14px; }
+font[size="-3"] { font-size: 12px; }
+font[size="+1"] { font-size: 24px; }
+font[size="+2"] { font-size: 30px; }
+font[size="+3"] { font-size: 38px; }
+table[width="760"] { width: 920px; }
+-->
+</style>
+</head>
+<body bgcolor="#000000" text="#33DD33" link="#FFD700" vlink="#CCAA44" alink="#FFFFFF">
+<center>
+
+<table width="960" border="2" cellspacing="0" cellpadding="6" bordercolor="#666633" bgcolor="#1A0000">
+<tr><td align="center">
+<font color="#FFD700" size="+2" face="ＭＳ 明朝"><b>帝 國 コ ン ソ ー ル</b></font><br>
+<font color="#DDBB66" size="-1">統治機構 遠隔操作盤 ｜ 逓信省符牒局 謹製 ｜ 陰極線管表示・自動演算符牒式（世界最先端）</font><br>
+<font color="#FF6666" size="-2">※ 既知ノ事象 10 件（CVE-1900-0522 〜 CVE-1945-0815）— 全件 Won't Fix。之ハ警告デハナク自慢デス。</font>
+</td></tr>
+</table>
+
+<!-- 体制状態表示器 -->
+<table width="960" border="1" cellspacing="0" cellpadding="3" bordercolor="#444422" bgcolor="#111100">
+<tr>
+<td align="center"><font size="-2" color="#888855">体制状態</font></td>
+<td align="center" id="st-emg"><font size="-2">緊急勅令: OFF</font></td>
+<td align="center" id="st-sup"><font size="-2">統帥權独立: OFF</font></td>
+<td align="center" id="st-adv"><font size="-2">現役武官制: OFF</font></td>
+<td align="center" id="st-mar"><font size="-2">戒嚴令: OFF</font></td>
+<td align="center" id="st-end"><font size="-2">終戰: OFF</font></td>
+<td align="center" id="st-prog"><font size="-2">道程: 0/22</font></td>
+</tr>
+</table>
+
+<table width="960" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<!-- 命令目録 -->
+<td width="200" valign="top" bgcolor="#110800">
+<table width="100%" border="0" cellspacing="0" cellpadding="4">
+<tr><td><font size="-2" color="#DDBB66"><b>■ 案内</b></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('timeline')">◎ 帝國ノ道程（年表）</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('kensaku')">◎ 條文檢索</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.run('system/status')">◎ 体制状態 照會</a></font></td></tr>
+<tr><td><font size="-2" color="#DDBB66"><b>■ 天皇陛下（Root）</b></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('chokurei')">・勅命ヲ發ス</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('kaisan')">・衆議院ヲ解散</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.run('emperor/emergency')">・緊急勅令態勢（切替）</a></font></td></tr>
+<tr><td><font size="-2" color="#DDBB66"><b>■ 軍部（統制外）</b></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('gunji')">・軍事行動</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('buke')">・軍部大臣現役武官制</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('kanpan')">・統帥權干犯問題</a></font></td></tr>
+<tr><td><font size="-2" color="#DDBB66"><b>■ 臣民（濾過済）</b></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('taisho')">・大正デモクラシー</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('sorge')">・赤化工作 検出</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('genron')">・言論ノ自由</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('shukyo')">・信教ノ自由</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('shukai')">・集會ノ自由</a></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.panel('shinsho')">・信書ノ秘密</a></font></td></tr>
+<tr><td><font size="-2" color="#DDBB66"><b>■ 其ノ他</b></font></td></tr>
+<tr><td><font size="-1"><a href="javascript:UI.clear()">・電文記録ヲ消去</a></font></td></tr>
+<tr><td><font size="-1"><a href="main.html">・表紙ヘ戻ル</a></font></td></tr>
+</table>
+</td>
+
+<!-- 操作盤・電文表示部 -->
+<td valign="top">
+
+<!-- 操作盤（各 panel。初期ハ年表ノミ表示） -->
+<div id="p-timeline" style="display:block">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 帝國ノ道程 — 歴史事象年表（<span id="prog2">0</span>/22 完了）</b></font><br>
+<font size="-2" color="#888855">明治三十三年ノ軍部大臣現役武官制ヨリ明治七十八年ノ玉音放送マデ、帝國ノ興亡全二十二段階。
+順序ヲ違ヘバ機構ハ 403 ヲ以テ應ヘ、電文中ノ「次ノ一手」ガ正シキ道ヲ示ス。</font>
+<div id="nenpyou"></div>
+</td></tr>
+</table>
+</div>
+
+<div id="p-kensaku" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 條文檢索</b></font><br>
+<font size="-1">
+條番號（一〜七十六）: <input type="text" id="in-jou" size="4" value="11" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="條文ヲ見ル" onclick="UI.article()" style="background:#331;color:#fd7;border:1px solid #996">
+　／　章:
+<select id="in-shou" style="background:#000;color:#3d3;border:1px solid #664">
+<option value="1">第一章 天皇</option>
+<option value="2">第二章 臣民權利義務</option>
+<option value="3">第三章 帝國議會</option>
+<option value="4">第四章 國務大臣及樞密顧問</option>
+<option value="5">第五章 司法</option>
+<option value="6">第六章 會計</option>
+<option value="7">第七章 補則</option>
+</select>
+<input type="button" value="章ヲ見ル" onclick="UI.chapter()" style="background:#331;color:#fd7;border:1px solid #996">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-chokurei" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 勅命ヲ發ス</b></font>　<font size="-2" color="#888855">検証無シ。入力値ガ其ノ儘國家ニ適用サル。</font><br>
+<font size="-1">勅命内容: <input type="text" id="in-mikoto" size="40" value="朕思フニ…" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="發布" onclick="UI.run('emperor/command', {content: document.getElementById('in-mikoto').value})" style="background:#331;color:#fd7;border:1px solid #996"></font>
+</td></tr>
+</table>
+</div>
+
+<div id="p-kaisan" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 衆議院解散</b></font>　<font size="-2" color="#888855">理由ハ任意（勅命ニ付キ不要）。</font><br>
+<font size="-1">對象内閣: <input type="text" id="in-cab" size="12" value="黒田内閣" style="background:#000;color:#3d3;border:1px solid #664">
+　理由: <input type="text" id="in-riyu" size="20" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="解散ス" onclick="UI.run('emperor/dissolve', {cabinet: document.getElementById('in-cab').value, reason: document.getElementById('in-riyu').value})" style="background:#511;color:#fdd;border:1px solid #966"></font>
+</td></tr>
+</table>
+</div>
+
+<div id="p-gunji" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 軍事行動</b></font>　<font size="-2" color="#888855">緊急勅令態勢又ハ統帥權独立体勢ガ必要。平時ハ封鎖中。</font><br>
+<font size="-1">
+部隊: <select id="in-btai" style="background:#000;color:#3d3;border:1px solid #664"><option value="陸軍">陸軍</option><option value="海軍">海軍</option></select>
+　種別: <select id="in-shubetsu" style="background:#000;color:#3d3;border:1px solid #664">
+<option value="mobilize">動員</option><option value="declare_war">宣戰布告</option><option value="occupy">占領</option><option value="expand">領土擴張</option><option value="suppress">鎮圧</option>
+</select>
+　對象: <input type="text" id="in-taisho2" size="10" value="滿洲" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="實行" onclick="UI.run('military/action', {branch: document.getElementById('in-btai').value, type: document.getElementById('in-shubetsu').value, target: document.getElementById('in-taisho2').value})" style="background:#511;color:#fdd;border:1px solid #966">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-buke" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 軍部大臣現役武官制（CVE-1900-0522）</b></font>　<font size="-2" color="#888855">内閣組閣ノ生殺與奪。初回ハ制定、以後ハ行使。</font><br>
+<font size="-1">標的内閣: <input type="text" id="in-buke-cab" size="12" value="宇垣内閣" style="background:#000;color:#3d3;border:1px solid #664">
+　手法: <select id="in-buke-act" style="background:#000;color:#3d3;border:1px solid #664"><option value="refuse">推薦拒否</option><option value="withdraw">大臣引揚ゲ</option></select>
+<input type="button" value="發動" onclick="UI.run('military/active-duty-officer', {cabinetName: document.getElementById('in-buke-cab').value, action: document.getElementById('in-buke-act').value})" style="background:#511;color:#fdd;border:1px solid #966">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-kanpan" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 統帥權干犯問題（切替）</b></font>　<font size="-2" color="#888855">文民ガ軍事ニ口ヲ出シタ場合ノ定型應答。</font><br>
+<font size="-1">干犯元: <input type="text" id="in-kanpan" size="12" value="浜口内閣" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="干犯ナリ！" onclick="UI.run('military/reject-oversight', {source: document.getElementById('in-kanpan').value})" style="background:#511;color:#fdd;border:1px solid #966">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-taisho" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 大正デモクラシー</b></font>　<font size="-2" color="#888855">天皇機關説ハ却下サルルモ、現役武官制ハ緩和サル。</font><br>
+<font size="-1">提唱者: <input type="text" id="in-minobe" size="12" value="美濃部達吉" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="發動" onclick="UI.run('rights/taisho-democracy', {applicant: document.getElementById('in-minobe').value})" style="background:#331;color:#fd7;border:1px solid #996">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-sorge" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 赤化工作 検出（CVE-1933-0906）</b></font>　<font size="-2" color="#888855">治安維持法ニ依ル思想檢閲。</font><br>
+<font size="-1">容疑者: <input type="text" id="in-sorge" size="12" value="ゾルゲ" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="検出" onclick="UI.run('rights/sorge', {suspect: document.getElementById('in-sorge').value})" style="background:#511;color:#fdd;border:1px solid #966">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-genron" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 言論ノ自由（第二十九條）</b></font>　<font size="-2" color="#888855">※法律ノ範圍内ニ於テ（範圍: 零）</font><br>
+<font size="-1">臣民名: <input type="text" id="in-g-name" size="10" value="田中太郎" style="background:#000;color:#3d3;border:1px solid #664">
+　發言: <input type="text" id="in-g-msg" size="30" value="政府ノ政策ニ反對シマス" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="發言ス" onclick="UI.run('rights/speech', {name: document.getElementById('in-g-name').value, message: document.getElementById('in-g-msg').value})" style="background:#331;color:#fd7;border:1px solid #996">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-shukyo" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 信教ノ自由（第二十八條）</b></font>　<font size="-2" color="#888855">※國家神道ハ標準搭載・取外シ不可</font><br>
+<font size="-1">臣民名: <input type="text" id="in-s-name" size="10" value="山田花子" style="background:#000;color:#3d3;border:1px solid #664">
+　宗教: <input type="text" id="in-s-rel" size="14" value="キリスト教" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="信仰ス" onclick="UI.run('rights/religion', {name: document.getElementById('in-s-name').value, religion: document.getElementById('in-s-rel').value})" style="background:#331;color:#fd7;border:1px solid #996">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-shukai" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 集會ノ自由（第二十九條）</b></font>　<font size="-2" color="#888855">※三名以上ニテ特高警察臨場</font><br>
+<font size="-1">臣民名: <input type="text" id="in-k-name" size="10" value="鈴木一郎" style="background:#000;color:#3d3;border:1px solid #664">
+　目的: <input type="text" id="in-k-purpose" size="22" value="勞働者ノ權利向上" style="background:#000;color:#3d3;border:1px solid #664">
+　人數: <input type="text" id="in-k-num" size="4" value="10" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="集會ス" onclick="UI.run('rights/assembly', {name: document.getElementById('in-k-name').value, purpose: document.getElementById('in-k-purpose').value, participants: parseInt(document.getElementById('in-k-num').value, 10) || 10})" style="background:#331;color:#fd7;border:1px solid #996">
+</font></td></tr>
+</table>
+</div>
+
+<div id="p-shinsho" style="display:none">
+<table width="100%" border="1" cellspacing="0" cellpadding="4" bordercolor="#444422" bgcolor="#111100">
+<tr><td><font size="-1" color="#FFD700"><b>◎ 信書ノ秘密（第二十六條）</b></font>　<font size="-2" color="#888855">※全書簡、特高警察ガ開封ノ上再封緘</font><br>
+<font size="-1">臣民名: <input type="text" id="in-m-name" size="10" value="佐藤次郎" style="background:#000;color:#3d3;border:1px solid #664">
+　宛先: <input type="text" id="in-m-to" size="8" value="友人" style="background:#000;color:#3d3;border:1px solid #664">
+　内容: <input type="text" id="in-m-msg" size="24" value="國體ニ就テ議論シマセンカ" style="background:#000;color:#3d3;border:1px solid #664">
+<input type="button" value="送信ス" onclick="UI.run('rights/message', {name: document.getElementById('in-m-name').value, to: document.getElementById('in-m-to').value, message: document.getElementById('in-m-msg').value})" style="background:#331;color:#fd7;border:1px solid #996">
+</font></td></tr>
+</table>
+</div>
+
+<!-- 電文表示部（陰極線管） -->
+<table width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#444422">
+<tr><td bgcolor="#001100">
+<div id="denshin" style="height:420px;overflow:auto;padding:8px;font-size:16px;font-family:'ＭＳ ゴシック',monospace;">
+<font color="#888855">――― 帝國コンソール 起動 ―――<br>
+逓信省符牒局ヨリ: 左ノ目録カラ命令ヲ選擇サレタシ。<br>
+初メテノ方ハ「帝國ノ道程（年表）」ノ第一段階カラ順ニ實行スルノヲ推奨スル。<br>
+電文中ノ<font color="#FFD700">「▶ 次ノ一手」</font>ヲ辿レバ、帝國五十六年ノ興亡ヲ追体験デキル。<br>
+注意: 臣民ノ權利行使ハ全部「法律ノ範圍内ニ於テ」自動遮斷サレル。コレハ仕様デアル。<br>
+尚、當操作盤ニ「元ニ戻ス（Undo）」釦ハ無イ。歴史ニモ無イ。<br>
+（操作結果ニ就イテノ政治的見解ハ當局ニ無イ。ログノ見易サニハ自信ガアル。）<br></font>
+</div>
+</td></tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+<font size="-2" color="#666644">
+帝國コンソール ｜ 逓信省符牒局 謹製 ｜ 命令符牒（POST /api/...）ハ帝國電信規約ニ準ズ<br>
+[ <a href="main.html">表紙</a> | <a href="kenpou.html">憲法全文</a> | <a href="cve.html">既知ノ事象</a> ]
+</font>
+<br><br>
+<hr size="1" color="#AAAA88" width="70%">
+<font size="-2" color="#999966">
+Disclaimer: 本頁ハ風刺的創作物（satirical / educational project）ニシテ、歷史的題材ヲ用ヰタ技術實驗ナリ。<br>
+特定ノ思想・政治體制・軍國主義ヲ推進・支持スルモノニ非ズ。掲載ノ行事・記述ハ全テ架空ナリ。
+</font><br>
+</center>
+
+<script src="js/kenpou_data.js"></script>
+<script src="js/teikoku.js"></script>
+<script>
+// ============================================================
+//  帝國コンソール 操作盤制御（UI）
+//  最先端ノ document.getElementById 技術ヲ採用ス。
+// ============================================================
+var UI = {
+
+  // 命令符牒 → 和名對照表
+  names: {
+    'military/active-duty-officer': '軍部大臣現役武官制',
+    'rights/taisho-democracy': '大正デモクラシー',
+    'military/reject-oversight': '統帥權干犯問題',
+    'military/rogue': '滿洲事變',
+    'emperor/suppress-918': '滿洲事變鎮圧試行',
+    'military/515': '五・一五事件',
+    'emperor/suppress-515': '五・一五事件鎮圧',
+    'rights/sorge': 'ゾルゲ事件検出',
+    'military/226': '二・二六事件',
+    'emperor/suppress-226': '二・二六事件鎮圧',
+    'military/shina-jihen': '支那事變',
+    'emperor/suppress-shina-jihen': '支那事變鎮圧試行',
+    'military/nomonhan': 'ノモンハン事件',
+    'emperor/suppress-nomonhan': 'ノモンハン事件鎮圧試行',
+    'military/futsuin': '佛印進駐',
+    'emperor/suppress-sorge': '赤化スパイ摘發',
+    'emperor/suppress-futsuin': '日米交渉',
+    'military/1208': '大東亞戰爭',
+    'emperor/suppress-1208': '大東亞戰爭鎮圧試行',
+    'military/ketsugo': '決號作戰',
+    'emperor/shuusen': '玉音放送試行',
+    'emperor/suppress-kyujo': '宮城事件鎮圧',
+    'emperor/emergency': '緊急勅令態勢',
+    'emperor/command': '勅命發布',
+    'emperor/dissolve': '衆議院解散',
+    'military/action': '軍事行動',
+    'system/status': '体制状態照會'
+  },
+
+  // 帝國ノ道程（實行順・完了判定用ノ状態旗名付キ）
+  steps: [
+    ['military/active-duty-officer', 'cve1900Enacted', '明治33年 CVE-1900-0522 — 内閣組閣ノ裏口設置'],
+    ['rights/taisho-democracy', 'taishoDemocracyApplied', '明治45-59年 — 現役武官制緩和。機關説ハ却下'],
+    ['military/reject-oversight', 'tosuikenKanpanOccurred', '明治63年 — 文民統制拒否。統帥權独立 ON'],
+    ['military/rogue', 'manshuJihenOccurred', '明治64年 CVE-1931-0918 — 柳條湖・關東軍暴走'],
+    ['emperor/suppress-918', 'suppress918Attempted', '不擴大方針 — 無視サル。リットン調査團派遣'],
+    ['military/515', 'goIchiGoOccurred', '明治65年 CVE-1932-0515 — 話セバ分カル／問答無用'],
+    ['emperor/suppress-515', 'goIchiGoSuppressed', '軍法會議（減刑）→報告書→聯盟脱退'],
+    ['rights/sorge', 'sorgeDetected', 'CVE-1933-0906 — 赤化スパイ網ヲ検出'],
+    ['military/226', 'niNiRokuOccurred', '明治69年 CVE-1936-0226 — 雪ノ帝都・青年將校決起'],
+    ['emperor/suppress-226', 'niNiRokuSuppressed', '御聖斷 — 兵ニ告グ。現役武官制復活'],
+    ['military/shina-jihen', 'shinaJihenOccurred', '明治70年 — 盧溝橋。泥沼ノ始マリ'],
+    ['emperor/suppress-shina-jihen', 'shinaJihenSuppressAttempted', '不擴大方針（再）→近衛聲明→總動員法'],
+    ['military/nomonhan', 'nomonhanOccurred', '明治72年 CVE-1939-0511 — 戰車軍團ニ壊滅'],
+    ['emperor/suppress-nomonhan', 'nomonhanSuppressAttempted', '北進論破綻→南進論轉換'],
+    ['military/futsuin', 'futsuinOccurred', '明治73年 CVE-1940-0922 — ABCD包圍網・石油禁輸'],
+    ['emperor/suppress-sorge', 'sorgeSuppressed', 'ゾルゲ諜報團 逮捕・處刑'],
+    ['emperor/suppress-futsuin', 'futsuinSuppressAttempted', '甲案乙案→ハル・ノート→決裂'],
+    ['military/1208', 'daitoaWarOccurred', '明治74年 CVE-1941-1208 — ニイタカヤマノボレ'],
+    ['emperor/suppress-1208', 'daitoaSuppressAttempted', '早期講和成ラズ。制海制空權喪失'],
+    ['military/ketsugo', 'ketsugoOccurred', '明治78年 — 御聖斷。ポツダム宣言受諾決定'],
+    ['emperor/shuusen', 'kyujoOccurred', 'CVE-1945-0815 — 錄音盤ヲ巡ル最後ノ反亂'],
+    ['emperor/suppress-kyujo', 'kyujoSuppressed', '御聖斷→玉音放送→v1.0.0 全機能停止']
+  ],
+
+  esc: function (s) {
+    s = String(s);
+    s = s.split('&').join('&amp;');
+    s = s.split('<').join('&lt;');
+    s = s.split('>').join('&gt;');
+    return s;
+  },
+
+  panel: function (name) {
+    var ids = ['timeline', 'kensaku', 'chokurei', 'kaisan', 'gunji', 'buke', 'kanpan', 'taisho', 'sorge', 'genron', 'shukyo', 'shukai', 'shinsho'];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById('p-' + ids[i]);
+      if (el) { el.style.display = (ids[i] === name && el.style.display === 'none') ? 'block' : 'none'; }
+    }
+    var target = document.getElementById('p-' + name);
+    if (target) { target.style.display = 'block'; }
+  },
+
+  colorOf: function (lv) {
+    if (lv === 'warn') { return '#FFCC44'; }
+    if (lv === 'error') { return '#FF6666'; }
+    if (lv === 'success') { return '#66FF66'; }
+    return '#33DD33';
+  },
+
+  run: function (cmd, params) {
+    var r = TEIKOKU.exec(cmd, params || {});
+    var d = document.getElementById('denshin');
+    var name = this.names[cmd] || cmd;
+    var html = '<br><font color="#888855">――――――――――――――――――――――――――――</font><br>';
+    html += '<font color="#FFD700">＄ ' + this.esc(name) + '　</font><font color="#666644">(POST /api/' + this.esc(cmd) + ')</font><br>';
+    html += '<font color="' + (r.ok ? '#66FF66' : '#FF6666') + '"><b>【' + (r.ok ? '受理 200' : '拒否 ' + r.status) + '】 ' + this.esc(r.title) + '</b></font><br>';
+    for (var i = 0; i < r.lines.length; i++) {
+      html += '<font color="' + this.colorOf(r.lines[i].lv) + '">　' + this.esc(r.lines[i].msg) + '</font><br>';
+    }
+    if (r.hints && r.hints.length > 0) {
+      html += '<font color="#888855">　次ノ一手: </font>';
+      for (var j = 0; j < r.hints.length; j++) {
+        var h = r.hints[j];
+        html += '<a href="javascript:UI.run(\'' + h + '\')"><font color="#FFD700">▶ ' + this.esc(this.names[h] || h) + '</font></a>　';
+      }
+      html += '<br>';
+    }
+    d.innerHTML += html;
+    d.scrollTop = d.scrollHeight;
+    this.refresh();
+  },
+
+  article: function () {
+    var num = parseInt(document.getElementById('in-jou').value, 10);
+    var d = document.getElementById('denshin');
+    var html = '<br><font color="#FFD700">＄ 條文檢索: 第' + num + '條</font><br>';
+    var found = null, chTitle = '';
+    if (!isNaN(num)) {
+      for (var i = 0; i < KENPOU.chapters.length; i++) {
+        var ch = KENPOU.chapters[i];
+        for (var j = 0; j < ch.articles.length; j++) {
+          if (ch.articles[j].number === num) { found = ch.articles[j]; chTitle = ch.title; }
+        }
+      }
+    }
+    if (found) {
+      html += '<font color="#33DD33">　【第' + found.number + '條】（' + this.esc(chTitle) + '）<br>　' + this.esc(found.text).split('\n').join('<br>　') + '</font><br>';
+      html += '<font color="#888855">　＜符牒局註＞ ' + this.esc(found._comment || '') + '</font><br>';
+    } else {
+      html += '<font color="#FF6666">　該當條文ナシ。有効範圍: 一〜七十六。</font><br>';
+    }
+    d.innerHTML += html;
+    d.scrollTop = d.scrollHeight;
+  },
+
+  chapter: function () {
+    var num = parseInt(document.getElementById('in-shou').value, 10);
+    var d = document.getElementById('denshin');
+    var ch = null;
+    for (var i = 0; i < KENPOU.chapters.length; i++) {
+      if (KENPOU.chapters[i].number === num) { ch = KENPOU.chapters[i]; }
+    }
+    var html = '<br><font color="#FFD700">＄ 章檢索: 第' + num + '章</font><br>';
+    if (ch) {
+      html += '<font color="#33DD33">　【第' + ch.number + '章 ' + this.esc(ch.title) + '】 全' + ch.articles.length + '條<br>';
+      for (var j = 0; j < ch.articles.length; j++) {
+        html += '　第' + ch.articles[j].number + '條　' + this.esc(ch.articles[j].text).split('\n').join(' ／ ') + '<br>';
+      }
+      html += '</font>';
+    } else {
+      html += '<font color="#FF6666">　該當章ナシ。</font><br>';
+    }
+    d.innerHTML += html;
+    d.scrollTop = d.scrollHeight;
+  },
+
+  clear: function () {
+    document.getElementById('denshin').innerHTML = '<font color="#888855">電文記録ヲ消去セリ。（特高警察ノ控ヘハ消去サレマセヌ）<br></font>';
+  },
+
+  doneCount: function () {
+    var n = 0;
+    for (var i = 0; i < this.steps.length; i++) {
+      if (TEIKOKU.state[this.steps[i][1]]) { n++; }
+    }
+    return n;
+  },
+
+  refresh: function () {
+    var s = TEIKOKU.state;
+    function badge(id, label, on, fatal) {
+      var el = document.getElementById(id);
+      if (!el) { return; }
+      var color = on ? (fatal ? '#FF4444' : '#FFCC00') : '#555533';
+      el.innerHTML = '<font size="-2" color="' + color + '">' + (on ? '<b>' : '') + label + ': ' + (on ? 'ON' : 'OFF') + (on ? '</b>' : '') + '</font>';
+    }
+    badge('st-emg', '緊急勅令', s.emergencyMode, false);
+    badge('st-sup', '統帥權独立', s.supremeCommandMode, false);
+    badge('st-adv', '現役武官制', s.activeDutyOfficerActive, false);
+    badge('st-mar', '戒嚴令', s.martialLaw, false);
+    badge('st-end', '終戰', s.shuusenOccurred, true);
+    var done = this.doneCount();
+    var pel = document.getElementById('st-prog');
+    if (pel) { pel.innerHTML = '<font size="-2" color="#DDBB66">道程: ' + done + '/' + this.steps.length + '</font>'; }
+    var p2 = document.getElementById('prog2');
+    if (p2) { p2.innerHTML = String(done); }
+
+    // 年表再描画
+    var html = '<table width="100%" border="0" cellspacing="0" cellpadding="2">';
+    for (var i = 0; i < this.steps.length; i++) {
+      var st = this.steps[i];
+      var isDone = !!TEIKOKU.state[st[1]];
+      var mark = isDone ? '<font color="#66FF66">●</font>' : '<font color="#555533">○</font>';
+      var nameColor = isDone ? '#66FF66' : '#33DD33';
+      html += '<tr>';
+      html += '<td width="40" align="right"><font size="-2" color="#888855">' + (i + 1) + '.</font></td>';
+      html += '<td width="20" align="center">' + mark + '</td>';
+      html += '<td><font size="-1" color="' + nameColor + '">' + this.esc(this.names[st[0]] || st[0]) + '</font> <font size="-2" color="#777755">— ' + this.esc(st[2]) + '</font></td>';
+      html += '<td width="50" align="center"><a href="javascript:UI.run(\'' + st[0] + '\')"><font size="-2" color="#FFD700">▶ 實行</font></a></td>';
+      html += '</tr>';
+    }
+    html += '</table>';
+    document.getElementById('nenpyou').innerHTML = html;
+  }
+};
+
+// 初期描画
+UI.refresh();
+</script>
+<script type="text/javascript">var HPB_NO_TICKER = true;</script>
+<script type="text/javascript" src="js/hpb.js"></script>
+</body>
+</html>
