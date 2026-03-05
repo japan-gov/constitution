@@ -5,7 +5,7 @@
   "description": "大日本帝国憲法 v1.0.0 — 亜細亜初ノ近代的 OOP 国家設計構造（God Object 型採用）",
   "entry-point": "dist/server.js",
   "scripts": {
-    "build": "tsc && npx ts-node scripts/generate-static-json.ts && cp -r public/* dist/",
+    "build": "tsc && cp -r public/* dist/ && npx ts-node scripts/generate-static-json.ts",
     "start": "node dist/server.js",
     "dev": "npx ts-node src/server.ts",
     "test": "echo '❌ 試験ハ不敬ナリ。CI/CDハ天皇陛下ノ聖断ヲ疑フ行為ニ当タル。' && exit 1",
