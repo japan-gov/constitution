@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="GENERATOR" content="逓信省符牒局 電文手書キ編集機 甲型">
+<meta name="description" content="大日本帝國憲法 公式頁 — 帝國電網最先端技術ニテ構築">
+<title>皇室典範（副本） — 大日本帝國公式ホームページ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style type="text/css">
+<!--
+/* 符牒局註: 高精細表示裝置對應。近頃ノ陰極線管ハ矢鱈ト細カク、
+   臣民ヨリ「活字ガ小サイ」トノ上奏ガ相次イダ爲、活字ヲ大キクシタ。
+   頁ノ意匠ハ變ヘテヰナイ。幀組ハ最先端ノママデアル。 */
+body { font-size: 18px; line-height: 1.55; }
+font[size="-1"] { font-size: 16px; }
+font[size="-2"] { font-size: 14px; }
+font[size="-3"] { font-size: 12px; }
+font[size="+1"] { font-size: 24px; }
+font[size="+2"] { font-size: 30px; }
+font[size="+3"] { font-size: 38px; }
+table[width="760"] { width: 920px; }
+-->
+</style>
+</head>
+<body bgcolor="#FFFFF0" text="#331100" link="#8B0000" vlink="#663366" alink="#FF0000">
+<center>
+<table width="760" border="0" cellspacing="0" cellpadding="0"><tr><td>
+<table width="100%" border="2" cellspacing="0" cellpadding="8" bordercolor="#996633" bgcolor="#800000">
+<tr><td align="center">
+<font color="#FFD700" size="+2" face="ＭＳ 明朝"><b>皇 室 典 範</b></font><br>
+<font color="#FFEECC" size="-1">明治二十二年二月十一日 勅定 ／ 別典（憲法同格・第七十四條） ／ 帝國議會ノ議ヲ經ルヲ要セス</font>
+</td></tr>
+</table>
+</td></tr></table>
+<br>
+
+<table width="760" border="1" cellspacing="0" cellpadding="8" bordercolor="#CCAA77" bgcolor="#FFF0F0">
+<tr><td align="center"><font size="-1" color="#8B0000"><b>【御注意】</b> 皇室典範ノ正本ハ宮内省別館ニ奉安サレテ居リマス。當館ニ在ルノハ副本（概要）デス。<br>
+全文ハ <a href="https://imperial-household.github.io/-/" target="_blank"><b>宮内省別館（imperial-household 御本家サイト）</b></a> ニテ御拜讀下サイ。（相互リンク）<br>
+<font size="-2" color="#886644">※ 副本ト正本ニ差異アル場合、常ニ正本ガ正シイ。當館ニ問合セルヨリ先方ヘ。當館ハ爭ヒマセン（爭フ權限モ御座イマセン）。</font></font></td></tr>
+</table><br>
+<table width="760" border="0" cellspacing="0" cellpadding="4" bgcolor="#800000"><tr><td><font color="#FFD700" face="ＭＳ 明朝"><b>■ 皇位繼承規則（第一章ニ相當）</b></font></td></tr></table>
+<table width="760" border="1" cellspacing="0" cellpadding="6" bordercolor="#CCAA77" bgcolor="#FFFDF5"><tr><td colspan="3"><font size="-1"><b>大原則：</b>男系男子ノミ。fork モ rebase モ不可。皇統唯一ニシテ不変ナリ。--single-branch --no-tags clone。</font></td></tr>
+<tr bgcolor="#EEDDBB"><td align="center"><font size="-1"><b>順位</b></font></td><td align="center"><font size="-1"><b>繼承資格者</b></font></td><td align="center"><font size="-1"><b>符牒局註</b></font></td></tr>
+<tr><td align="center"><font size="-1">1</font></td><td><font size="-1">皇長子</font></td><td><font size="-2" color="#886644">第一優先。嫪出ノ長男。master branch ノ HEAD。auto-deploy target。</font></td></tr>
+<tr><td align="center"><font size="-1">2</font></td><td><font size="-1">皇長孫</font></td><td><font size="-2" color="#886644">皇長子ノ子。HEAD~1 ノ direct descendant。canary deployment candidate。</font></td></tr>
+<tr><td align="center"><font size="-1">3</font></td><td><font size="-1">其ノ他ノ皇長子ノ子孫</font></td><td><font size="-2" color="#886644">皇長子系統ノ男系男子。depth-first search。git log --first-parent。</font></td></tr>
+<tr><td align="center"><font size="-1">4</font></td><td><font size="-1">皇次子及其ノ子孫</font></td><td><font size="-2" color="#886644">次男系統。breadth-first search ニ移行。failover replica。</font></td></tr>
+<tr><td align="center"><font size="-1">5</font></td><td><font size="-1">皇兄弟及其ノ子孫</font></td><td><font size="-2" color="#886644">兄弟系統。parent.children[] ヲ iterate。disaster recovery node。</font></td></tr>
+<tr><td align="center"><font size="-1">6</font></td><td><font size="-1">皇伯叔父及其ノ子孫</font></td><td><font size="-2" color="#886644">叔父系統。grandparent.children[] マデ traverse。cold standby。</font></td></tr>
+<tr bgcolor="#FFDDDD"><td align="center"><font size="-1">7</font></td><td><font size="-1">女系・女子（資格ナシ）</font></td><td><font size="-2" color="#886644">❌ REJECTED。女系・女子ハ継承資格ヲ有セズ。enum ニ含マレルモ isEligible = false。Won't Fix。本件ニ関スル Issue ハ @tokko-police-bot ニ依リ自動 close サルル。</font></td></tr>
+</table><br>
+<table width="760" border="0" cellspacing="0" cellpadding="4" bgcolor="#800000"><tr><td><font color="#FFD700" face="ＭＳ 明朝"><b>■ 禁止事項</b></font></td></tr></table>
+<table width="760" border="1" cellspacing="0" cellpadding="6" bordercolor="#CCAA77" bgcolor="#FFFDF5"><tr><td><font size="-1">
+× 庶民ヨリノ皇位請求（fork request denied — 403 Forbidden）<br>
+× 女系継承（male_line_only constraint violation — schema validation error）<br>
+× 他家ヨリノ養子（external dependency injection 禁止 — supply chain policy violation）<br>
+× 皇籍離脱後ノ復帰（deleted branch ノ git reflog restore 不可 — retention policy: 0 days）<br>
+</font></td></tr></table><br>
+<table width="760" border="0" cellspacing="0" cellpadding="4" bgcolor="#800000"><tr><td><font color="#FFD700" face="ＭＳ 明朝"><b>■ 攝政規則（第二章ニ相當）</b></font></td></tr></table>
+<table width="760" border="1" cellspacing="0" cellpadding="6" bordercolor="#CCAA77" bgcolor="#FFFDF5">
+<tr><td bgcolor="#EEDDBB" width="140"><font size="-1"><b>設置条件</b></font></td><td><font size="-1">天皇陛下ガ未成年ナルトキ<br>天皇陛下ガ精神若クハ身体ノ重患ニ依リ大権ヲ行フコト能ハザルトキ</font></td></tr>
+<tr><td bgcolor="#EEDDBB"><font size="-1"><b>就任資格</b></font></td><td><font size="-1">第1順位: 皇太子（成年ナルコト）<br>第2順位: 皇太孫（成年ナルコト）<br>第3順位: 皇位継承順位ニ従フ皇族男子（成年ナルコト）</font></td></tr>
+<tr><td bgcolor="#EEDDBB"><font size="-1"><b>制限</b></font></td><td><font size="-1">摂政ヲ置クノ間、憲法及皇室典範ヲ変更スルコトヲ得ス（Art.75）<br>摂政ハ天皇ノ名ニ於テ大権ヲ行フ（Art.17）</font></td></tr>
+</table><br>
+<table width="760" border="1" cellspacing="0" cellpadding="8" bordercolor="#996633" bgcolor="#FFFDE8"><tr><td><font size="-2" color="#886644">
+⚠️ 本典ハ憲法ト同格ナレドモ、憲法ヲ override スルコト能ハズ（Art.74 第2項）<br>
+⚠️ 摂政中ハ改正不可（Art.75）— Object.freeze() + Helm release lock<br>
+⚠️ Root 専用 protected ConfigMap — CODEOWNERS: @emperor-only<br>
+⚠️ 男系男子ノミ — gender constraint ハ Won't Fix<br>
+🚫 PR ハ auto-close。Issue ヲ立テルト不敬罪。Dependabot PR モ reject。<br>
+</font></td></tr></table>
+</center>
+
+<hr size="1" color="#996633">
+<center>
+<font size="-1" color="#663300">
+[ <a href="main.html">表紙</a> | <a href="kenpou.html">憲法全文</a> | <a href="tenpan.html">皇室典範</a> | <a href="console.html">帝國コンソール</a> | <a href="cve.html">既知ノ事象</a> | <a href="links.html">リンク集</a> ]
+</font><br><br>
+<font size="-2" color="#999966">
+大日本帝國政府 逓信省符牒局　明治二十二年 開設<br>
+本頁ハ帝國電網（テイコクデンマウ）最先端ノ「幀組（frameset）」及ビ「自動演算符牒（JavaScript）」技術ヲ以テ構築セリ。<br>
+電網閲覧機（ブラウザ）ハ幀組對應型ヲ推奨ス。相互電網接續（リンク）ハ自由。無斷轉載ハ出版法ニ依リ處罰ス。
+</font>
+<hr size="1" color="#AAAA88" width="70%">
+<font size="-2" color="#999966">
+Disclaimer: 本頁ハ風刺的創作物（satirical / educational project）ニシテ、歷史的題材ヲ用ヰタ技術實驗ナリ。<br>
+特定ノ思想・政治體制・軍國主義ヲ推進・支持スルモノニ非ズ。掲載ノ行事・記述ハ全テ架空ナリ。
+</font><br>
+</center>
+
+<script type="text/javascript">var HPB_NO_TICKER = true;</script>
+<script type="text/javascript" src="js/hpb.js"></script>
+</body>
+</html>
