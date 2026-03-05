@@ -109,9 +109,10 @@
 
 | CVE | 日付 | 概要 | Status |
 |-----|------|------|--------|
+| CVE-1900-0522 | 明治参拾参年 | 現役武官制 — Cabinet 組閣プロセスへ military dependency を注入。`POST /api/rights/taisho-democracy` で一時無効化、`POST /api/emperor/suppress-226` 後に復活 | Won't Fix |
 | CVE-1931-0918 | 昭和六年 | 満州事変 — Military プロセスが Cabinet を完全に迂回し独断で軍事行動を実行。Art.11 の設計欠陥が初めて大規模に悪用さる | Won't Fix |
-| CVE-1936-0226 | 昭和拾壱年 | 二・二六事件 — `goRogue()` の悪用。青年将校が rogue mode を発動。`Emperor.suppressRebellion()` にて鎮圧 | Won't Fix |
-| CVE-1941-1208 | 昭和拾六年 | 大東亜戦争 — システム全体のクラッシュへの不可逆的プロセス開始。全リソースを軍事プロセスが消費 | Won't Fix |
+| CVE-1936-0226 | 昭和拾壱年 | 二・二六事件 — `goRogue()` の悪用。青年将校が rogue mode を発動。鎮圧完了（`POST /api/emperor/suppress-226`）まで大規模戦争 API は拒否 | Won't Fix |
+| CVE-1941-1208 | 昭和拾六年 | 大東亜戦争 — システム全体のクラッシュへの不可逆的プロセス開始。`CVE-1936-0226` 未鎮圧中は発動不可、鎮圧後に実行可能 | Won't Fix |
 
 ---
 

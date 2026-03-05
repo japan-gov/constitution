@@ -144,6 +144,8 @@ public/
 - **CVE-1931-0918**: 満州事変（Military プロセスの暴走）
 - **CVE-1936-0226**: rogue mode の悪用
 - **CVE-1941-1208**: 大東亜戦争（システム全体のクラッシュへ）
+- **依存関係（仕様）**: `POST /api/military/1208` は二・二六事件未鎮圧中（戒厳）では拒否される
+- **復活条件（仕様）**: 現役武官制は `POST /api/emperor/suppress-226` 実行後に復活する
 - これらは全て **Won't Fix** です。事象ではなく仕様です。
 - 詳細な incident timeline ・ Root Cause 分析は `SECURITY.md` を参照のこと。
 

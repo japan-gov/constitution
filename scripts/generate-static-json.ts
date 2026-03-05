@@ -350,7 +350,7 @@ const STATIC_API_JS = `
       knownVulnerabilities: [
         'CVE-1931-0918: Military.goRogue() — 満州事変',
         'CVE-1936-0226: Military プロセスが Cabinet を物理破壊 — 二・二六事件',
-        'CVE-1941-1208: Military の無制限リソース消費 — 大東亜戦争'
+        'CVE-1941-1208: Military の無制限resource 消費 — 大東亜戦争'
       ],
       logs: [
         L('info', '👑 [SYSTEM] Health check requested. Liveness: OK. Readiness: OK.'),

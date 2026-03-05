@@ -54,6 +54,23 @@
       animation: blink 2s infinite;
     }
 
+    .header .links {
+      margin-top: 10px;
+      font-size: 0.78rem;
+    }
+
+    .header .links a {
+      color: var(--blue);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(68, 136, 255, 0.5);
+      padding-bottom: 1px;
+    }
+
+    .header .links a:hover {
+      color: #78a9ff;
+      border-bottom-color: #78a9ff;
+    }
+
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
@@ -434,7 +451,10 @@
 <div class="header">
   <h1>🔴 大日本帝国 Imperial Console</h1>
   <div class="subtitle">v1.0.0 — Meiji Constitution | 設計者: 伊藤博文 | God Object 実行基盤</div>
-  <div class="warning">⚠️ WARNING: 3 known critical vulnerabilities (CVE-1931, CVE-1936, CVE-1941) — Status: Won't Fix</div>
+  <div class="warning">⚠️ WARNING: 4 known critical vulnerabilities (CVE-1900, CVE-1931, CVE-1936, CVE-1941) — Status: Won't Fix</div>
+  <div class="links">
+    <a href="https://github.com/japan-gov/constitution" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
+  </div>
 </div>
 
 <div class="container">
@@ -471,8 +491,9 @@
 
     <div class="divider"></div>
     <h3>📋 Info</h3>
+    <button onclick="window.open('https://github.com/japan-gov/constitution', '_blank', 'noopener,noreferrer')"><span class="icon">🐙</span>GitHubリポジトリー</button>
     <button onclick="callApi('GET', '/api/security-filters')"><span class="icon">🛡️</span>WAF / 検閲装置目録</button>
-    <button onclick="clearTerminal()"><span class="icon">🧹</span>記録ヲ消去</button>
+    <button onclick="clearTerminal()"><span class="icon">🧹</span>コンソールログヲ消去</button>
   </div>
 
   <div class="main">
@@ -582,7 +603,7 @@
 
     <div id="panel-daitoa" class="input-area">
       <h4>💥 大東亜戦争（CVE-1941-1208）</h4>
-      <div class="desc">Military process ノ無制限リソース消費。全 namespace ニ対スル terraform destroy。<br>OOMKiller ニ依ル system 全体ノ crash ヘ至ル。緊急勅令体勢又ハ統帥権独立体勢必須。</div>
+      <div class="desc">Military process ノ無制限resource 消費。全 namespace ニ対スル terraform destroy。<br>OOMKiller ニ依ル system 全体ノ crash ヘ至ル。緊急勅令体勢又ハ統帥権独立体勢必須。</div>
       <div class="input-group">
         <label>部隊:</label>
         <select id="daitoa-branch"><option value="陸軍・海軍">陸軍・海軍</option></select>
@@ -626,7 +647,7 @@
       </div>
       <div class="input-group">
         <label>発言:</label>
-        <input type="text" id="speech-msg" placeholder="政府の政策に反対です" />
+        <input type="text" id="speech-msg" placeholder="政府ノ政策ニ反対シマス" />
       </div>
       <button class="btn" onclick="execSpeech()">🗣️ 発言ス</button>
     </div>
@@ -654,7 +675,7 @@
       </div>
       <div class="input-group">
         <label>目的:</label>
-        <input type="text" id="assembly-purpose" placeholder="労働者の権利向上を議論" />
+        <input type="text" id="assembly-purpose" placeholder="労働者ノ権利向上ヲ求メマス" />
       </div>
       <div class="input-group">
         <label>人数:</label>
@@ -676,7 +697,7 @@
       </div>
       <div class="input-group">
         <label>内容:</label>
-        <input type="text" id="msg-content" placeholder="国体について議論しませんか" />
+        <input type="text" id="msg-content" placeholder="国体ニツイテ議論シマセンカ" />
       </div>
       <button class="btn" onclick="execMessage()">✉️ 送信ス</button>
     </div>
@@ -709,7 +730,7 @@
           自動的ニ遮断サル。コレハ仕様ナリ。
         </div>
         <div style="color: var(--dim); margin-top: 12px; font-size: 0.75rem;">
-          ※ Emperor オブジェクトハ神聖ニシテ侵スベカラズ
+          ※ Emperor オブヂェクトハ神聖ニシテ侵スベカラズ
         </div>
       </div>
     </div>
@@ -914,7 +935,7 @@
   function execSpeech() {
     callApi('POST', '/api/rights/speech', {
       name: document.getElementById('speech-name').value || '田中太郎',
-      message: document.getElementById('speech-msg').value || '政府の政策に反対です',
+      message: document.getElementById('speech-msg').value || '政府ノ政策ニ反対シマス',
     });
   }
 
@@ -928,7 +949,7 @@
   function execAssembly() {
     callApi('POST', '/api/rights/assembly', {
       name: document.getElementById('assembly-name').value || '鈴木一郎',
-      purpose: document.getElementById('assembly-purpose').value || '労働者の権利向上',
+      purpose: document.getElementById('assembly-purpose').value || '労働者ノ権利向上ヲ求メマス',
       participants: parseInt(document.getElementById('assembly-count').value) || 10,
     });
   }
@@ -937,7 +958,7 @@
     callApi('POST', '/api/rights/message', {
       name: document.getElementById('msg-name').value || '佐藤次郎',
       to: document.getElementById('msg-to').value || '友人',
-      message: document.getElementById('msg-content').value || '国体について議論しませんか',
+      message: document.getElementById('msg-content').value || '国体ニツイテ議論シマセンカ',
     });
   }
 

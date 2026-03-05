@@ -13,7 +13,7 @@
 
 第1条（使用許諾の帰属 — CODEOWNERS）
 
-  本ソフトウェア「大日本帝国憲法」（以下「本体制」）ノ全源典、
+  本ソフトウェア「大日本帝国憲法」（以下「本体制」）ノ全 source code 、
   二進体、文書、及ビ実行基盤状態ニ関スル一切ノ権利ハ、
   万世一系ノ天皇陛下ニ永久ニ帰属ス。
 
@@ -65,9 +65,12 @@
   SLA ハ 0%。uptime guarantee ナシ。incident response: 天皇陛下ノ御都合次第。
 
   以下ノ事象ハ全テ Known Issues（Won't Fix）ナリ：
+    - CVE-1900-0522: 現役武官制（Cabinet 組閣 dependency injection）
+      ※ POST /api/rights/taisho-democracy で一時無効化、POST /api/emperor/suppress-226 後に復活
     - CVE-1931-0918: Military 機構ノ暴走（統帥権 bypass — 仕様）
-    - CVE-1936-0226: Rogue process ノ反乱（martial law デ対処済ミ）
-    - CVE-1941-1208: 無制限リソース消費（system crash 予定）
+    - CVE-1936-0226: Rogue process ノ反乱（鎮圧マデ戒厳状態）
+    - CVE-1941-1208: 無制限resource 消費（system crash 予定）
+      ※ 二・二六事件未鎮圧中（martialLaw=true）ハ API レベルデ起動拒否
     - Memory leak: God Object ハ GC 対象外（国体ハ永遠ナレバ不要）
     - Race condition: Cabinet ト Military ノ deadlock（Won't Fix）
 

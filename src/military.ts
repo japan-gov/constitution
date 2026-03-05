@@ -450,7 +450,7 @@ export class Military {
 
   // ============================================================
   //  CVE-1941-1208 大東亜戦争
-  //  Military process ノ無制限リソース消費。
+  //  Military process ノ無制限resource 消費。
   //  全 namespace に対する terraform destroy 。
   //  OOMKiller による system 全体の crash へ至る。
   // ============================================================
@@ -458,7 +458,7 @@ export class Military {
   /**
    * CVE-1941-1208 大東亜戦争ヲ発動ス。
    *
-   * Military process が全リソースを無制限に消費し、
+   * Military process が全resource を無制限に消費し、
    * system 全体を crash へ導く fatal operation ナリ。
    *
    * 緊急勅令体勢又ハ統帥権独立体勢が有効なる時のみ発動可能。

@@ -10,13 +10,13 @@
 
 ## 📋 Overview（総覧）
 
-本庫ハ、明治廿弐年ニ布達セラレタル国家運用体制 **「大日本帝国」** ノ源典ナリ。
-プロイセン王国ノ既存アーキテクチュアヲ参考ニ fork シ、不肖伊藤博文、畏クモ天皇陛下ノ大命ヲ拝シ主任アーキテクトノ任ヲ奉ジ、約拾年ノヲーターフヲール型開発ヲ経テ謹ミテ御前環境ヘ奉納セシモノナリ。
+本庫ハ、明治廿弐年ニ布達セラレタル国家運用体制 **「大日本帝国」** ノ原典ナリ。
+プロイセン王国ノ既存アーキテクチュアヲ参考ニフオークシ、不肖伊藤博文、畏クモ天皇陛下ノ大命ヲ拝シ主任アーキテクトノ任ヲ奉ジ、約拾年ノヲーターフヲール型開発ヲ経テ謹ミテ御前環境ヘ奉納セシモノナリ。
 
 ### Key Features
 - 🔐 **God Object 型** ニ依ル一元的ナル permission 管理（`Emperor` クラス）
 - 📡 **帝国議会 API**（rate limit付キ・read-onlyニ近シ）
-- ⚔️ **Military 機構** ノ高速ナル特権実行（※認可手順ヲ迂回）
+- ⚔️ **Military 機構** ノ高速ナル Root 実行（※認可手順ヲ迂回）
 - 📜 **臣民ノ権利 Interface** — 充実セル Method 群（※全テニ `within_the_limits_of_law` Firewall 有リ）
 
 ### Architecture Diagram（国体構成図）
@@ -55,12 +55,13 @@
 
 | Severity | Issue | Status |
 |----------|-------|--------|
+| 🔴 Critical | `Military.activeDutyOfficerRequirement()`（CVE-1900-0522）ニ依リ Cabinet 組閣ハ軍部依存ト化ス。 (軍部大臣現役武官制) `POST /api/rights/taisho-democracy` ニテ一時無効化、`POST /api/emperor/suppress-226` 後ニ再汚染 | **Won't Fix** |
 | 🔴 Critical | `Military.executeAction()` ガ `Cabinet.approve()` ヲ迂回シテ直接 `Emperor.command()` ヲ叩ケル（統帥権ノ独立・Art.11） | **Won't Fix** |
-| 🟡 Warning | 臣民ノ全 request ガ `within_the_limits_of_law` middleware ニテ 403 Forbidden ヲ返ス。法律ノ留保（Gesetzesvorbehalt）ニ依ル仕様ナリ | By Design |
-| 🟡 Warning | `Diet` process ニ sudo 無シ。`Emperor.dissolve()` ニテ `kill -9` サル（Art.7）。SIGTERM handler 未実装 | By Design |
-| 🟢 Info | 改憲（hotfix）ハ Root 発議ノミ（Art.73）。臣下ノ PR ハ permission denied。`chmod 400 /etc/constitution` | Won't Fix |
+| 🟡 Warning | 臣民ノ全 request ガ `within_the_limits_of_law` middleware ニテ 403 Forbidden ヲ返ス。法律ノ留保（Gesetzesvorbehalt）ニ依ル仕様ナリ | **By Design** |
+| 🟡 Warning | `Diet` process ニ sudo 無シ。`Emperor.dissolve()` ニテ `kill -9` サル（Art.7）。SIGTERM handler 未実装 | **By Design** |
+| 🟢 Info | 改憲（hotfix）ハ Root 発議ノミ（Art.73）。臣下ノ PR ハ permission denied。`chmod 400 /etc/constitution` | **Won't Fix** |
 
-##  Repository Structure（帝国檔案構成）
+##  Repository Structure（帝国文書構成）
 
 ```
 japan-gov/constitution/

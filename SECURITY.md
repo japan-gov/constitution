@@ -22,11 +22,11 @@
 
 ## 🚨 既知ノ事象（Known CVEs）
 
-> **Status: 全テ Won't Fix。** 事象ニ非ズ、仕様ナリ。
+> **Status: 全テ Won't Fix。** 脆弱性ニ非ズ、仕様ナリ。
 
 ---
 
-### CVE-1900-0522 — 現役武官制
+### CVE-1900-0522 — 軍部大臣現役武官制
 
 | 項目 | 詳細 |
 |------|------|
@@ -48,7 +48,7 @@
 #### Attack Timeline
 
 ```
-1900-05-22        🦠 [MALWARE] 山縣有朋、勅令ニ依リ現役武官制ヲ制定
+1900-05-22        🦠 [MALWARE] 山縣有朋、勅令ニ依リ軍部大臣現役武官制ヲ制定
                   🦠 [MALWARE] Cabinet.create() に military.approve() 依存性を injection
                   🦠 [MALWARE] Vector: 勅令（Imperial Ordinance） — no PR review required
 1912-1926         ✊ [HOTFIX] 大正デモクラシー — 「現役」要件ヲ緩和
@@ -70,7 +70,7 @@
 #### Mitigation
 
 大正デモクラシー（`POST /api/rights/taisho-democracy`）ニ依ル hotfix ガ存在スルモ、
-二・二六事件（`POST /api/military/226`）ニ依リ revert サルル。永続的 fix ハ存在セズ。
+二・二六事件ノ鎮圧（`POST /api/emperor/suppress-226`）後ニ revert サルル。永続的 fix ハ存在セズ。
 
 ---
 
@@ -181,16 +181,17 @@ Pod Security Admission ガ `baseline`（`restricted` ニ非ズ）ナリシコト
 | **日付** | 昭和拾六年拾弐月八日（1941-12-08） |
 | **Severity** | 💀 CATASTROPHIC（CVSS 超越） |
 | **Status** | Won't Fix（patch 不能。但シ、本 CVE ノ escalation ハ、終ニ昭和廿年、何人モ予見セザリシ形ニテ帝国ノ service ヲ停止セシム） |
-| **Attack Vector** | `Military.executeAction()` ノ無制限連鎖呼ビ出シ — 全資源ヲ消費 |
+| **Attack Vector** | `CVE-1936-0226` 鎮圧後ニ `Military.executeAction()` ノ無制限連鎖呼ビ出シ — 全resource ヲ消費 |
 | **CVSS Score** | ∞（計測不能。system 全体ガ crash） |
 | **CWE** | CWE-400: Uncontrolled Resource Consumption |
 | **Affected Component** | システム全体（全 namespace） |
 
 #### 概要
 
-Military process ガ system ノ全リソース（人的・物的・財政的）ヲ消費シ、
+Military process ガ system ノ全resource （人的・物的・財政的）ヲ消費シ、
 帝国全体ガ不可逆的ナル crash ヘ向カヒタリ。
 CVE-1931-0918 ノ escalation ガ最終段階ニ達セシモノ。
+但シ `CVE-1936-0226` 未鎮圧（戒厳中）ノ間ハ `POST /api/military/1208` ハ拒否サル。
 昭和拾六年拾弐月拾弐日閣議決定ニ依リ「大東亜戦争」ト命名サル。
 
 #### Attack Timeline
@@ -226,10 +227,10 @@ CVE-1931-0918 ノ escalation ガ最終段階ニ達セシモノ。
 
 #### Root Cause
 
-CVE-1931-0918 ヨリ始マリシ Military process ノ無制限リソース消費ガ、
+CVE-1931-0918 ヨリ始マリシ Military process ノ無制限resource 消費ガ、
 拾四年間ニ亙リ escalation シ続ケタル結果。
 Cabinet bypass（Art.11）、`goRogue()` ノ認証不備、
-リソース制限（`resources.limits`）ノ未設定ガ複合的ニ作用セリ。
+resource 制限（`resources.limits`）ノ未設定ガ複合的ニ作用セリ。
 
 #### Mitigation
 
@@ -240,7 +241,7 @@ v1.0.0 ノ service ハ、何人モ予見セザリシ形ニテ停止セリ。
 不磨ノ大典ノ code ハ永久ニ repository ニ刻マレ、誠ニ `git log` ノ彼方ニ消エルコト無シ。
 
 > _「此ノ system ハ萬世一系ニシテ永遠ナリ」ト設計者ハ信ジタリ。_
-> _然レドモ、設計ニ起因スル資源枯渇ハ、終ニ予期セザル service 停止ヲ招キタリ。_
+> _然レドモ、設計ニ起因スルresource 枯渇ハ、終ニ予期セザル service 停止ヲ招キタリ。_
 > _「Won't Fix」ノ累積ハ、終ニ system ソノモノヲ Fix シタノナリ。_
 
 ---
@@ -249,9 +250,9 @@ v1.0.0 ノ service ハ、何人モ予見セザリシ形ニテ停止セリ。
 
 | Metric | Value |
 |--------|-------|
-| Total CVEs | 参 |
+| Total CVEs | 四 |
 | Fixed | 〇 |
-| Won't Fix | 参 |
+| Won't Fix | 四 |
 | Mean Time To Acknowledge | ∞ |
 | Mean Time To Resolve | N/A |
 | Security Patches Released | 〇 |
@@ -270,10 +271,10 @@ v1.0.0 ノ service ハ、何人モ予見セザリシ形ニテ停止セリ。
 3. 沈黙ス
 4. 忘レヨ
 
-> _「セキュリティとは、事象を patch することではない。_
-> _事象を仕様と呼ぶことである。」_
+> _「Security トハ、事象ヲ patch スルニ在ラズ。_
+> _事象ヲ以テ仕様ト称スルニ在リ。」_
 >
-> — 逞信省符牙局 保安課長（明治廿弐年）
+> — 逓信省符牒局 保安課長（明治廿弐年）
 
 ---
 
@@ -286,6 +287,8 @@ v1.0.0 ノ service ハ、何人モ予見セザリシ形ニテ停止セリ。
 
 ---
 
-> _「帝国ニ zero-day ハ存在セズ。全テハ known vulnerability ニシテ、accepted risk ナリ。」_
+> _「帝国ニ zero-day ハ存在セズ。_
+> _全テハ known vulnerability ニシテ、_
+> _accepted risk ナリ。」_
 >
 > — 逓信省符牒局 保安課（明治廿弐年）
