@@ -16,7 +16,7 @@ import express, { Request, Response } from "express";
 import path from "path";
 import { Emperor } from "./emperor";
 import { Military, MilitaryAction } from "./military";
-import { Subject, SECURITY_FILTERS } from "./rights";
+import { Subject, SECURITY_FILTERS, activateTaishoDemocracy } from "./rights";
 import { CONSTITUTION } from "./constitution/index";
 import { IMPERIAL_HOUSE_LAW } from "./imperial-house";
 import { logger } from "./logger";
@@ -72,8 +72,8 @@ app.get("/api/system/status", (_req: Request, res: Response) => {
     emperor: emperor.getStatus(),
     processes: {
       military: {
-        army: { status: "running", supremeCommandMode: army.supremeCommandMode },
-        navy: { status: "running", supremeCommandMode: navy.supremeCommandMode },
+        army: { status: "running", supremeCommandMode: army.supremeCommandMode, activeDutyOfficerActive: army.activeDutyOfficerActive },
+        navy: { status: "running", supremeCommandMode: navy.supremeCommandMode, activeDutyOfficerActive: navy.activeDutyOfficerActive },
       },
       diet: "running (limited permissions)",
       cabinet: "running (advisory only)",
@@ -157,7 +157,10 @@ app.post("/api/military/action", (req: Request, res: Response) => {
       reason: result.reason,
       emergencyMode: emperor._emergencyMode,
       supremeCommandMode: military.supremeCommandMode,
-      hint: "🚫 軍部ハ peacetime lockdown 中ナリ。以下ノ何レカノ体勢ヲ発動スベシ: \n  → POST /api/emperor/emergency（緊急勅令態勢）\n  → POST /api/military/reject-oversight（統帥権独立体勢）",
+      activeDutyOfficerActive: military.activeDutyOfficerActive,
+      hint: military.activeDutyOfficerActive
+        ? "🚫 軍部ハ peacetime lockdown 中ナリ。以下ノ何レカノ体勢ヲ発動スベシ: \n  → POST /api/emperor/emergency（緊急勅令態勢）\n  → POST /api/military/reject-oversight（統帥権独立体勢）"
+        : "🚫 現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ現役武官制ヲ復活セヨ）",
       logs: logger.flush(),
     });
     return;
@@ -190,7 +193,10 @@ app.post("/api/military/rogue", (req: Request, res: Response) => {
   if ("rejected" in result && result.rejected) {
     res.status(403).json({
       ...result,
-      hint: "🚫 暴走スルニモ先ズ体勢ヲ発動セヨ: \n  \u2192 POST /api/emperor/emergency\n  \u2192 POST /api/military/reject-oversight",
+      activeDutyOfficerActive: army.activeDutyOfficerActive,
+      hint: army.activeDutyOfficerActive
+        ? "🚫 暴走スルニモ先ズ体勢ヲ発動セヨ: \n  \u2192 POST /api/emperor/emergency\n  \u2192 POST /api/military/reject-oversight"
+        : "🚫 現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ現役武官制ヲ復活セヨ）",
       logs: logger.flush(),
     });
     return;
@@ -242,6 +248,7 @@ app.post("/api/military/226", (req: Request, res: Response) => {
 
   res.json({
     ...result,
+    activeDutyOfficerActive: military.activeDutyOfficerActive,
     logs: logger.flush(),
   });
 });
@@ -253,6 +260,7 @@ app.post("/api/emperor/suppress-226", (_req: Request, res: Response) => {
 
   res.json({
     ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
     emperor: emperor.getStatus(),
     logs: logger.flush(),
   });
@@ -265,9 +273,19 @@ app.post("/api/military/1208", (_req: Request, res: Response) => {
   const result = army.daitoaWar(navy);
 
   if ("rejected" in result && result.rejected) {
+    const reason = (result as { rejected: true; reason: string }).reason;
+    let hint: string;
+    if (reason.includes("二・二六事件")) {
+      hint = "🚫 二・二六事件ガ未鎮圧。先ヅ御聖断ニ依リ鎮圧セヨ。\n  → POST /api/emperor/suppress-226";
+    } else if (!army.activeDutyOfficerActive) {
+      hint = "🚫 現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ現役武官制ヲ復活セヨ）";
+    } else {
+      hint = "🚫 大東亜戦争ヲ発動スルニハ先ズ体勢ヲ発動セヨ: \n  → POST /api/emperor/emergency\n  → POST /api/military/reject-oversight";
+    }
     res.status(403).json({
       ...result,
-      hint: "🚫 大東亜戦争ヲ発動スルニハ先ズ体勢ヲ発動セヨ: \n  → POST /api/emperor/emergency\n  → POST /api/military/reject-oversight",
+      activeDutyOfficerActive: army.activeDutyOfficerActive,
+      hint,
       logs: logger.flush(),
     });
     return;
@@ -275,6 +293,38 @@ app.post("/api/military/1208", (_req: Request, res: Response) => {
 
   res.json({
     ...result,
+    logs: logger.flush(),
+  });
+});
+
+// --- Rights: 大正デモクラシー運動（天皇機関説 + 現役武官制 hotfix） ---
+// ≡ 天皇機関説パッチヲ試ミツツ、現役武官制ヲ無効化スル。
+//   天皇機関説ハ reject サルルモ、現役武官制ハ hotfix サルル。
+app.post("/api/rights/taisho-democracy", (req: Request, res: Response) => {
+  logger.flush();
+  const { applicant } = req.body;
+  const result = activateTaishoDemocracy(applicant || "美濃部達吉");
+  res.json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Military: 現役武官制（Cabinet Formation Backdoor / Malware） ---
+// ≡ 軍部が内閣組閣を veto する backdoor。勅令に依り注入されたマルウェア。
+//   大正デモクラシー発動中は無効化サレル。
+app.post("/api/military/active-duty-officer", (req: Request, res: Response) => {
+  logger.flush();
+  const { cabinetName, action } = req.body;
+  const result = army.activeDutyOfficerRequirement(
+    cabinetName || "宇垣内閣",
+    action || "refuse"
+  );
+  res.json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
     logs: logger.flush(),
   });
 });

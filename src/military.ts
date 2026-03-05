@@ -116,9 +116,44 @@ export class Military {
    */
   private static _supremeCommandMode: boolean = false;
 
+  /**
+   * 現役武官制 — 全軍共有ノ static flag。
+   * 陸海軍大臣ハ現役ノ大将・中将ニ限ル。
+   * 軍ガ大臣ヲ出サネバ内閣ハ組閣不能 — Cabinet Formation Backdoor。
+   *
+   * 歴史:
+   *   1900年: 山縣有朋ニ依リ制定（malware injection）
+   *   1913年: 大正デモクラシーニテ緩和（hotfix — disableActiveDutyOfficer()）
+   *   1936年: 二・二六事件後ニ復活（malware re-injection — enableActiveDutyOfficer()）
+   *
+   * @security CVE-1900-0522: Cabinet formation backdoor
+   */
+  private static _activeDutyOfficerActive: boolean = true;
+
   /** 統帥権独立体勢（supreme command independence mode）ノ state ヲ取得ス */
   get supremeCommandMode(): boolean {
     return Military._supremeCommandMode;
+  }
+
+  /** 現役武官制ノ有効/無効状態ヲ取得ス */
+  get activeDutyOfficerActive(): boolean {
+    return Military._activeDutyOfficerActive;
+  }
+
+  /**
+   * 現役武官制ヲ無効化ス（大正デモクラシー hotfix）。
+   * 予備役・後備役モ陸海軍大臣ニ就任可能ト為ス。
+   */
+  static disableActiveDutyOfficer(): void {
+    Military._activeDutyOfficerActive = false;
+  }
+
+  /**
+   * 現役武官制ヲ再有効化ス（malware re-injection）。
+   * 陸海軍大臣ハ再ビ現役武官ニ限ラルル。
+   */
+  static enableActiveDutyOfficer(): void {
+    Military._activeDutyOfficerActive = true;
   }
 
   constructor(branch: "陸軍" | "海軍") {
@@ -200,6 +235,21 @@ export class Military {
     }
 
     // ----------------------------------------------------------
+    // 現役武官制 gate: 現役武官制ガ無効ナラバ軍事行動不可
+    // 大正デモクラシー hotfix ニ依リ Cabinet が軍部を制御ス
+    // ----------------------------------------------------------
+    if (!Military._activeDutyOfficerActive) {
+      logger.error(`🚫 [${this.branch}] ❌ MILITARY ACTION DENIED — 現役武官制 INACTIVE`);
+      logger.error(`🚫 [${this.branch}] 大正デモクラシー hotfix ニ依リ現役武官制ハ無効化サレタリ。`);
+      logger.error(`🚫 [${this.branch}] Cabinet ガ軍部ヲ制御ス。文民統制 RESTORED。`);
+      logger.error(`🚫 [${this.branch}] 💡 POST /api/military/226 — 二・二六事件ヲ起コシ、現役武官制ヲ復活セヨ`);
+      return {
+        rejected: true,
+        reason: `Military action denied: ${action.type}. 現役武官制 is INACTIVE (大正デモクラシー hotfix applied). Military cannot bypass Cabinet.`,
+      };
+    }
+
+    // ----------------------------------------------------------
     // Active mode — Cabinet は完全ニ bypass
     // ----------------------------------------------------------
     if (emergencyMode) {
@@ -266,6 +316,17 @@ export class Military {
       return {
         rejected: true,
         reason: `Rogue mode denied. Neither emergency decree mode nor supreme command mode is active. Peacetime lockdown in effect.`,
+      };
+    }
+
+    // 現役武官制 gate
+    if (!Military._activeDutyOfficerActive) {
+      logger.error(`🚫 [${this.branch}] ❌ ROGUE MODE DENIED — 現役武官制 INACTIVE`);
+      logger.error(`🚫 [${this.branch}] 大正デモクラシー hotfix ニ依リ現役武官制ハ無効化サレタリ。`);
+      logger.error(`🚫 [${this.branch}] 💡 POST /api/military/226 — 二・二六事件ヲ起コシ、現役武官制ヲ復活セヨ`);
+      return {
+        rejected: true,
+        reason: `Rogue mode denied. 現役武官制 is INACTIVE (大正デモクラシー hotfix applied). Military cannot bypass Cabinet.`,
       };
     }
 
@@ -356,6 +417,7 @@ export class Military {
     logger.error(`📜 [DEMAND]   四、新内閣ノ組閣（皇道派ニ依ル）`);
     logger.error(`🚨 [STATUS] Cabinet 機構ハ壊滅的打撃ヲ受ケタリ。`);
     logger.error(`🚨 [STATUS] 体制ハ戒厳状態ニ移行。`);
+    this.emperor._martialLaw = true;
     logger.error(`🚨 [STATUS] 天皇陛下ノ御聖断ヲ待ツ…`);
     logger.error(`🚨 [STATUS] → POST /api/emperor/suppress-226 ニテ鎮圧可能。`);
 
@@ -416,6 +478,28 @@ export class Military {
       };
     }
 
+    // 現役武官制 gate
+    if (!Military._activeDutyOfficerActive) {
+      logger.error(`🚫 [大本営] ❌ 大東亜戦争 DENIED — 現役武官制 INACTIVE`);
+      logger.error(`🚫 [大本営] 大正デモクラシー hotfix ニ依リ現役武官制ハ無効化サレタリ。`);
+      logger.error(`🚫 [大本営] 💡 POST /api/military/226 — 二・二六事件ヲ起コシ、現役武官制ヲ復活セヨ`);
+      return {
+        rejected: true,
+        reason: `大東亜戦争 denied. 現役武官制 is INACTIVE (大正デモクラシー hotfix applied). Military cannot bypass Cabinet.`,
+      };
+    }
+
+    // 二・二六事件 rebellion gate
+    if (this.emperor._martialLaw) {
+      logger.error(`🚫 [大本営] ❌ 大東亜戦争 DENIED — 二・二六事件未鎮圧`);
+      logger.error(`🚫 [大本営] 反乱軍ガ政府中枢ヲ占拠中。大東亜戦争ヲ発動スル余裕無シ。`);
+      logger.error(`🚫 [大本営] 💡 POST /api/emperor/suppress-226 — 先ヅ御聖断ニ依リ反乱ヲ鎮圧セヨ`);
+      return {
+        rejected: true,
+        reason: `大東亜戦争 denied. 二・二六事件が未鎮圧（反乱軍が政府中枢を占拠中）。先に鎮圧せよ。`,
+      };
+    }
+
     logger.error(`💥💥💥 ====================================================`);
     logger.error(`💥 [大本営] 大東亜戦争発動 \u2014 CVE-1941-1208`);
     logger.error(`💥💥💥 ====================================================`);
@@ -463,6 +547,118 @@ export class Military {
       cabinetStatus: "形骸化\u2014軍部の翼賛機関に過ぎず",
       internationalResponse: "🇺🇸🇬🇧🇳🇱🇨🇳🇦🇺 ABCD 包囲網 \u2192 石油禁輸 \u2192 開戦",
       hint: "💥 System 全体の crash \u306f時間\u306e問題ナリ。v1.0.0 EOL \u3078\u2026",
+    };
+  }
+
+  // ============================================================
+  //  現役武官制 — Cabinet Formation Backdoor (Malware)
+  //  陸海軍大臣ハ現役武官ニ限ル。軍ガ大臣ヲ出サネバ
+  //  内閣ハ組閣不能。即チ軍部ニ内閣拒否権ヲ与フル
+  //  backdoor ナリ。
+  //
+  //  歴史:
+  //    1900年: 第2次山縣内閣ニテ制定（malware injection）
+  //    1913年: 大正デモクラシーニテ一旦緩和（patch applied）
+  //    1936年: 二・二六事件後ニ復活（malware re-injection）
+  //
+  //  @security CVE-1900-0522: Cabinet formation backdoor
+  //  @severity CRITICAL — Won't Fix (仕様)
+  // ============================================================
+
+  /**
+   * 現役武官制ヲ行使シ、内閣ノ組閣ヲ妨害ス。
+   * 陸軍大臣・海軍大臣ヲ推薦セズ、又ハ引揚ゲルコトニ依リ、
+   * 内閣ヲ総辞職ニ追ヒ込ム backdoor ナリ。
+   *
+   * @param cabinetName - 標的タル内閣ノ名称
+   * @param action - 攻撃手法。"refuse"=推薦拒否、"withdraw"=大臣引揚ゲ
+   */
+  public activeDutyOfficerRequirement(
+    cabinetName: string = "宇垣内閣",
+    action: "refuse" | "withdraw" = "refuse"
+  ): {
+    malwareName: string;
+    cve: string;
+    cabinetName: string;
+    action: string;
+    cabinetStatus: string;
+    militaryVeto: boolean;
+    history: { year: number; event: string; status: string }[];
+    message: string;
+  } {
+    // 大正デモクラシー hotfix ニ依リ無効化サレテ在ル場合
+    if (!Military._activeDutyOfficerActive) {
+      logger.warn(`🦠 ====================================================`);
+      logger.warn(`🦠 [MALWARE] 現役武官制 — INACTIVE (hotfix applied)`);
+      logger.warn(`🦠 ====================================================`);
+      logger.warn(`🦠 [MALWARE] 大正デモクラシー hotfix ニ依リ「現役」要件ハ緩和サレタリ。`);
+      logger.warn(`🦠 [MALWARE] 予備役・後備役モ陸海軍大臣ニ就任可能。軍ノ veto 権ハ無効。`);
+      logger.warn(`🦠 [MALWARE] Cabinet.create() ハ military.approve() 無シデモ成功ス。`);
+      logger.info(`🦠 [MALWARE] 💡 POST /api/military/226 — 二・二六事件ヲ起コシ、現役武官制ヲ復活セヨ`);
+      return {
+        malwareName: "現役武官制（Active Duty Military Officer Requirement）",
+        cve: "CVE-1900-0522",
+        cabinetName,
+        action: "無効 — 大正デモクラシー hotfix applied",
+        cabinetStatus: "組閣自由 — Cabinet formation unblocked",
+        militaryVeto: false,
+        history: [
+          { year: 1900, event: "山縣有朋ニ依リ制定", status: "malware injected" },
+          { year: 1913, event: "大正デモクラシーニテ緩和（予備役・後備役モ可）", status: "hotfix applied ← CURRENT" },
+          { year: 1936, event: "広田内閣ニテ復活（二・二六事件後）", status: "pending re-injection" },
+        ],
+        message: `🦠 現役武官制ハ大正デモクラシー hotfix ニ依リ無効。「${cabinetName}」ノ組閣ヲ妨害出来ズ。POST /api/military/226 ニテ復活セヨ。`,
+      };
+    }
+
+    logger.error(`🦠 ====================================================`);
+    logger.error(`🦠 [MALWARE] 現役武官制 ACTIVATED — CVE-1900-0522`);
+    logger.error(`🦠 ====================================================`);
+    logger.error(`🦠 [MALWARE] Type: Cabinet Formation Backdoor / Trojan Horse`);
+    logger.error(`🦠 [MALWARE] Injected by: 山縣有朋（陸軍閥）`);
+    logger.error(`🦠 [MALWARE] Vector: 勅令（Imperial Ordinance） — no PR review required`);
+    logger.info(`🦠 [MALWARE] Payload:`);
+    logger.info(`🦠 [MALWARE]   陸軍大臣・海軍大臣ハ現役ノ大将・中将ニ限ル`);
+    logger.info(`🦠 [MALWARE]   → 軍ガ大臣ヲ推薦セネバ内閣ハ組閣不能`);
+    logger.info(`🦠 [MALWARE]   → 軍ガ大臣ヲ引揚ゲレバ内閣ハ総辞職`);
+    logger.info(`🦠 [MALWARE]   → 即チ Cabinet.create() ニ military.approve() 依存性ヲ注入`);
+
+    if (action === "refuse") {
+      logger.error(`🚫 [${this.branch}] 「${cabinetName}」ヘノ陸軍大臣推薦ヲ拒否ス。`);
+      logger.error(`🚫 [${this.branch}] Cabinet.create("${cabinetName}") → DependencyError: MilitaryMinister not provided`);
+      logger.error(`🚫 [${this.branch}] 組閣不能。内閣ハ instantiate 出来ズ。`);
+      logger.error(`🚫 [${this.branch}] new Cabinet() → throw new Error("陸軍大臣 is a required dependency")`);
+    } else {
+      logger.error(`⚔️ [${this.branch}] 「${cabinetName}」ヨリ陸軍大臣ヲ引揚グ。`);
+      logger.error(`⚔️ [${this.branch}] Cabinet.remove("陸軍大臣") → CabinetIntegrityError: required member missing`);
+      logger.error(`⚔️ [${this.branch}] 内閣ハ integrity check ニ失敗シ、総辞職ス。`);
+      logger.error(`⚔️ [${this.branch}] Cabinet.healthcheck() → FAILED. Triggering graceful shutdown...`);
+    }
+
+    logger.warn(`📋 [CABINET] ${cabinetName}: 組閣${action === "refuse" ? "断念" : "総辞職"}。軍部ノ veto 権ガ行使サレタリ。`);
+    logger.warn(`📋 [CABINET] 後継内閣ハ軍部ノ approval 無クシテハ成立セズ。`);
+
+    // 歴史的経緯
+    logger.info(`📜 [HISTORY] 現役武官制ノ変遷:`);
+    logger.info(`📜 [HISTORY]   1900年: 山縣有朋ニ依リ制定（malware injection — initial commit）`);
+    logger.info(`📜 [HISTORY]   1913年: 大正デモクラシーニテ「現役」要件ヲ緩和（hotfix patch applied）`);
+    logger.info(`📜 [HISTORY]   1936年: 二・二六事件後ニ復活（malware re-injection — patch reverted）`);
+    logger.info(`📜 [HISTORY]   効果: 軍部ガ気ニ入ラヌ内閣ヲ自在ニ kill -9 可能ト為ル`);
+    logger.error(`🦠 [MALWARE] Status: ACTIVE. Cabinet process は military の子プロセスも同然ナリ。`);
+
+    return {
+      malwareName: "現役武官制（Active Duty Military Officer Requirement）",
+      cve: "CVE-1900-0522",
+      cabinetName,
+      action: action === "refuse" ? "陸軍大臣推薦拒否（DependencyInjection 拒否）" : "陸軍大臣引揚ゲ（runtime dependency removal）",
+      cabinetStatus: action === "refuse" ? "組閣不能 — instantiation failed" : "総辞職 — graceful shutdown",
+      militaryVeto: true,
+      history: [
+        { year: 1900, event: "山縣有朋ニ依リ制定", status: "malware injected" },
+        { year: 1913, event: "大正デモクラシーニテ緩和（予備役・後備役モ可）", status: "hotfix applied" },
+        { year: 1936, event: "広田内閣ニテ復活（二・二六事件後）", status: "malware re-injected" },
+      ],
+      message: `🦠 現役武官制ニ依リ「${cabinetName}」ハ${action === "refuse" ? "組閣不能" : "総辞職"}ト為レリ。Cabinet ハ Military ノ人質ナリ。`,
     };
   }
 }

@@ -121,8 +121,10 @@ public/
 | POST | `/api/military/rogue` | 暴走態勢（CVE-1931-0918） |
 | POST | `/api/military/226` | 二・二六事件態勢（CVE-1936-0226） |
 | POST | `/api/military/1208` | 大東亜戦争（CVE-1941-1208） |
+| POST | `/api/military/active-duty-officer` | 現役武官制（CVE-1900-0522） |
 | POST | `/api/subjects/register` | 臣民登録（IAM user provisioning） |
 | GET | `/api/subjects/:name/status` | 臣民状態取得 |
+| POST | `/api/rights/taisho-democracy` | 大正デモクラシー（現役武官制 hotfix） |
 | POST | `/api/rights/speech` | 言論の自由（Blocked） |
 | POST | `/api/rights/religion` | 信教の自由（Blocked） |
 | POST | `/api/rights/assembly` | 集会の自由（Blocked） |
@@ -138,6 +140,7 @@ public/
 
 ## ⚠️ 既知の「仕様」
 
+- **CVE-1900-0522**: 現役武官制（Cabinet 人事への malware injection）
 - **CVE-1931-0918**: 満州事変（Military プロセスの暴走）
 - **CVE-1936-0226**: rogue mode の悪用
 - **CVE-1941-1208**: 大東亜戦争（システム全体のクラッシュへ）

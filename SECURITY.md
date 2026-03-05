@@ -26,6 +26,54 @@
 
 ---
 
+### CVE-1900-0522 — 現役武官制
+
+| 項目 | 詳細 |
+|------|------|
+| **CVE ID** | CVE-1900-0522 |
+| **日付** | 明治参拾参年五月弐拾弐日（1900-05-22） |
+| **Severity** | 🔴 CRITICAL |
+| **Status** | Won't Fix |
+| **Attack Vector** | `Military.activeDutyOfficerRequirement()` → `Cabinet.create()` dependency injection → 人事 veto |
+| **CVSS Score** | 9.4 (Network / Low / None / Changed / High / High / None) |
+| **CWE** | CWE-912: Hidden Functionality（Cabinet 組閣プロセスへノ backdoor 注入） |
+| **Affected Component** | `military.ts` — 陸軍 / 海軍 instance |
+
+#### 概要
+
+山縣有朋ガ勅令ニ依リ、「陸軍大臣・海軍大臣ハ現役ノ大将・中将ニ限ル」トノ要件ヲ注入。
+`Cabinet.create()` ニ `military.approve()` 依存性ヲ強制スル malware ナリ。
+軍ガ大臣候補ヲ推薦セネバ内閣ハ組閣不能、軍ガ大臣ヲ引揚ゲレバ内閣ハ総辞職ト為ル。
+
+#### Attack Timeline
+
+```
+1900-05-22        🦠 [MALWARE] 山縣有朋、勅令ニ依リ現役武官制ヲ制定
+                  🦠 [MALWARE] Cabinet.create() に military.approve() 依存性を injection
+                  🦠 [MALWARE] Vector: 勅令（Imperial Ordinance） — no PR review required
+1912-1926         ✊ [HOTFIX] 大正デモクラシー — 「現役」要件ヲ緩和
+                  ✊ [HOTFIX] 予備役・後備役モ陸海軍大臣ニ就任可能ト為ス
+                  ✊ [HOTFIX] Military.disableActiveDutyOfficer() — veto 権一時停止
+1936-02-26        🚨 [RE-INJECT] 二・二六事件後、広田内閣ニテ復活
+                  🦠 [MALWARE] Military.enableActiveDutyOfficer() — patch reverted
+                  🦠 [MALWARE] 以後、軍部ガ気ニ入ラヌ内閣ヲ自在ニ kill -9 可能
+1937              🦠 [EXPLOIT] 宇垣一成、組閣ヲ命ゼラルルモ陸軍ガ大臣推薦ヲ拒否
+                  🦠 [EXPLOIT] Cabinet.create("宇垣内閣") → DependencyError
+```
+
+#### Root Cause
+
+`Cabinet.create()` ノ dependency ニ `military.approve()` ヲ inject サレタル事ニ依リ、
+軍部ガ内閣人事ニ対スル事実上ノ veto 権ヲ獲得。
+勅令ニ依ル injection ナル為、PR review モ security audit モ bypass サレタリ。
+
+#### Mitigation
+
+大正デモクラシー（`POST /api/rights/taisho-democracy`）ニ依ル hotfix ガ存在スルモ、
+二・二六事件（`POST /api/military/226`）ニ依リ revert サルル。永続的 fix ハ存在セズ。
+
+---
+
 ### CVE-1931-0918 — 満州事変
 
 | 項目 | 詳細 |

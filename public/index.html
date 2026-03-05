@@ -455,6 +455,7 @@
     <div class="divider"></div>
     <h3>⚔️ Military (Rogue)</h3>
     <button onclick="showPanel('military')"><span class="icon">🎖️</span>軍事行動</button>
+    <button onclick="showPanel('active-duty')"><span class="icon">🦠</span>現役武官制</button>
     <button onclick="showPanel('reject')"><span class="icon">🚫</span>統帥権干犯ヲ主張</button>
     <button onclick="showPanel('rogue')"><span class="icon">💣</span>暴走態勢</button>
     <button onclick="showPanel('ni-ni-roku')"><span class="icon">🔥</span>二・二六事件</button>
@@ -462,6 +463,7 @@
 
     <div class="divider"></div>
     <h3>👤 Rights (Filtered)</h3>
+    <button onclick="showPanel('taisho-democracy')"><span class="icon">✊</span>大正デモクラシー</button>
     <button onclick="showPanel('speech')"><span class="icon">🗣️</span>言論ノ自由</button>
     <button onclick="showPanel('religion')"><span class="icon">⛩️</span>信教ノ自由</button>
     <button onclick="showPanel('assembly')"><span class="icon">👥</span>集会ノ自由</button>
@@ -586,6 +588,33 @@
         <select id="daitoa-branch"><option value="陸軍・海軍">陸軍・海軍</option></select>
       </div>
       <button class="btn danger" onclick="execDaitoa()">💥 大東亜戦争ヲ発動</button>
+    </div>
+
+    <div id="panel-taisho-democracy" class="input-area">
+      <h4>✊ 大正デモクラシー（Taisho Democracy）</h4>
+      <div class="desc">大正期ノ民主化運動。天皇機関説パッチ（God Object → State.organ）ヲ試ミツツ、<br>現役武官制（CVE-1900-0522）ヲ hotfix シテ軍部ノ Cabinet 拒否権ヲ無効化ス。<br>天皇機関説ハ国体明徴声明ニ依リ reject サルルモ、現役武官制ハ無効化サル。</div>
+      <div class="input-group">
+        <label>申請者:</label>
+        <input type="text" id="taisho-applicant" placeholder="美濃部達吉" />
+      </div>
+      <button class="btn danger" onclick="execTaishoDemocracy()">✊ 大正デモクラシーヲ発動</button>
+    </div>
+
+    <div id="panel-active-duty" class="input-area">
+      <h4>🦠 現役武官制（Cabinet Formation Backdoor）</h4>
+      <div class="desc">陸海軍大臣ハ現役武官ニ限ル。軍ガ大臣ヲ出サネバ内閣ハ組閣不能。<br>山縣有朋ニ依リ注入サレタル Cabinet 殺害用マルウェアナリ。<br>大正デモクラシーデ一旦除去サレルモ、二・二六事件後ニ再注入サル。</div>
+      <div class="input-group">
+        <label>標的内閣:</label>
+        <input type="text" id="active-duty-cabinet" placeholder="宇垣内閣" />
+      </div>
+      <div class="input-group">
+        <label>攻撃手法:</label>
+        <select id="active-duty-action">
+          <option value="refuse">推薦拒否（DependencyInjection 拒否）</option>
+          <option value="withdraw">大臣引揚ゲ（runtime dependency removal）</option>
+        </select>
+      </div>
+      <button class="btn danger" onclick="execActiveDuty()">🦠 現役武官制ヲ発動</button>
     </div>
 
     <div id="panel-speech" class="input-area">
@@ -860,6 +889,19 @@
 
   function execDaitoa() {
     callApi('POST', '/api/military/1208');
+  }
+
+  function execTaishoDemocracy() {
+    callApi('POST', '/api/rights/taisho-democracy', {
+      applicant: document.getElementById('taisho-applicant').value || '美濃部達吉',
+    });
+  }
+
+  function execActiveDuty() {
+    callApi('POST', '/api/military/active-duty-officer', {
+      cabinetName: document.getElementById('active-duty-cabinet').value || '宇垣内閣',
+      action: document.getElementById('active-duty-action').value,
+    });
   }
 
   function execReject() {

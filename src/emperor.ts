@@ -20,6 +20,7 @@
  */
 
 import { logger } from "./logger";
+import { Military } from "./military";
 
 // ============================================================
 //  Types & Interfaces
@@ -248,6 +249,14 @@ export class Emperor {
 
     logger.info(`👑 [SYSTEM] Cabinet reconstruction in progress…`);
     logger.info(`👑 [SYSTEM] Hirota Cabinet formed. 国体ハ護持サレタリ。`);
+
+    // --- 現役武官制ノ復活 ---
+    // 二・二六事件後、広田内閣ニテ現役武官制ガ復活ス。
+    Military.enableActiveDutyOfficer();
+    logger.error(`🦠 [MALWARE] 現役武官制 RE-INJECTED — CVE-1900-0522 復活`);
+    logger.error(`🦠 [MALWARE] 広田内閣ニテ「現役」要件ヲ復活セシム。大正デモクラシー hotfix reverted.`);
+    logger.error(`🦠 [MALWARE] 軍部ノ Cabinet 拒否権、再ビ有効ナリ。activeDutyOfficerActive = true`);
+
     logger.info(`👑 [SYSTEM] Resuming normal governance.`);
 
     const result: SuppressionResult = {
@@ -293,6 +302,7 @@ export class Emperor {
       recentDecrees: this._decrees.slice(-5),
     };
   }
+
 }
 
 /**
