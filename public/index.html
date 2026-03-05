@@ -708,20 +708,41 @@
   }
 
   async function callApi(method, path, body) {
-    const opts = { method, headers: { 'Content-Type': 'application/json' } };
-    if (body) opts.body = JSON.stringify(body);
-
     const cmd = `${method} ${path}`;
     appendCommand(cmd, body);
-
-    // 操作盤を閉じて結果を見易クス
     document.querySelectorAll('.input-area').forEach(el => el.classList.remove('active'));
     activePanel = null;
 
+    // SPA用: 静的JSONにルーティング
     try {
-      const res = await fetch(API + path, opts);
-      const data = await res.json();
-      appendResult(data, res.ok);
+      let data = null;
+      let ok = true;
+      const articleMatch = path.match(/^\/api\/constitution\/article\/(\d+)$/);
+      const chapterMatch = path.match(/^\/api\/constitution\/chapter\/(\d+)$/);
+      if (path === '/api/constitution/preamble') {
+        const res = await fetch('constitution/preamble.json');
+        data = await res.json();
+      } else if (path === '/api/constitution') {
+        const res = await fetch('constitution/constitution.json');
+        data = await res.json();
+      } else if (articleMatch) {
+        const res = await fetch(`constitution/article/${articleMatch[1]}.json`);
+        data = await res.json();
+      } else if (chapterMatch) {
+        const res = await fetch(`constitution/chapter/${chapterMatch[1]}.json`);
+        data = await res.json();
+      } else if (path === '/api/imperial-house') {
+        const res = await fetch('imperial-house.json');
+        data = await res.json();
+      } else if (path === '/api/system/status') {
+        data = { status: '静的SPAモード', deployed: true, backend: false };
+      } else if (path === '/api/security-filters') {
+        data = { filters: ['WAF: SPA mode', 'API: disabled', 'Backend: not running'] };
+      } else {
+        data = { error: 'この操作は静的SPAモードでは利用できません。' };
+        ok = false;
+      }
+      appendResult(data, ok);
     } catch (err) {
       appendError(err.message);
     }
@@ -915,9 +936,9 @@
     reader.style.display = 'flex';
 
     try {
-      const res = await fetch(API + '/api/constitution');
+      const res = await fetch('constitution/constitution.json');
       const data = await res.json();
-      renderConstitution(data.constitution);
+      renderConstitution(data);
     } catch (err) {
       document.getElementById('reader-content').innerHTML =
         `<div style="color: var(--red); text-align: center; padding: 40px;">❌ 読ミ込ミニ失敗セリ: ${escapeHtml(err.message)}</div>`;

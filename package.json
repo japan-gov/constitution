@@ -5,7 +5,7 @@
   "description": "大日本帝国憲法 v1.0.0 — 亜細亜初ノ近代的 OOP 国家設計構造（God Object 型採用）",
   "entry-point": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npx ts-node scripts/generate-static-json.ts && cp -r public/* dist/",
     "start": "node dist/server.js",
     "dev": "npx ts-node src/server.ts",
     "test": "echo '❌ 試験ハ不敬ナリ。CI/CDハ天皇陛下ノ聖断ヲ疑フ行為ニ当タル。' && exit 1",
@@ -51,26 +51,14 @@
     "note": "⚠️ Issue ヲ立テルト特高警察 Bot ニ自動通報サル"
   },
   "engines": {
-    "node": ">=1889.0.0",
-    "npm": "天皇陛下ノ御裁可アル版"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   },
-  "os": ["!democracy", "!republic"],
+  "os": ["linux", "darwin"],
   "private": true,
   "dependencies": {
     "express": "^4.18.2",
-    "militarism": "^1.0.0",
-    "imperial-rescript-on-education": "latest",
-    "state-shinto": "^1889.2.11",
-    "kokutai-ideology": "^1.0.0",
-    "tokko-police": "^1.0.0",
-    "kenpeitai": "^1.0.0",
-    "peace-preservation-law": "^1925.0.0",
-    "family-state-model": "^1.0.0",
-    "national-mobilization": "^1938.0.0",
-    "unequal-treaty-legacy": "^1858.0.0",
-    "zaibatsu-economic-model": "^1.0.0",
-    "genro-political-advisor": "^1.0.0",
-    "privy-council-validator": "^1.0.0"
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
@@ -79,13 +67,24 @@
     "ts-node": "^10.9.2"
   },
   "optionalDependencies": {
-    "democracy": "REJECTED — 依存解決ニ失敗セリ",
-    "human-rights": "DEPRECATED — within_the_limits_of_law ニテ包囲済ミ",
-    "freedom-of-press": "BLOCKED — 新聞紙条例ニ依リ使用不可",
-    "labor-rights": "REJECTED — 治安警察法ニ依リ排除済ミ"
+    "militarism": "*",
+    "imperial-rescript-on-education": "*",
+    "state-shinto": "*",
+    "kokutai-ideology": "*",
+    "tokko-police": "*",
+    "kenpeitai": "*",
+    "peace-preservation-law": "*",
+    "family-state-model": "*",
+    "national-mobilization": "*",
+    "unequal-treaty-legacy": "*",
+    "zaibatsu-economic-model": "*",
+    "genro-political-advisor": "*",
+    "privy-council-validator": "*",
+    "democracy": "*",
+    "human-rights": "*",
+    "freedom-of-press": "*",
+    "labor-rights": "*"
   },
-  "peerDependencies": {
-    "prussian-constitution": ">=1850.0.0"
-  },
+  "peerDependencies": {},
   "_comment_from_architect": "SemVer 的ニハ v1.0.0 ナレド、破壊的変更ガ多過ギテ v0.0.1-alpha 扱ヒガ妥当ナリ。然レドモ天皇陛下ガ 1.0.0 ト仰セニナリタレバ 1.0.0 ナリ。forward only。rollback ハ萬世一系ノ否定ナリ。"
 }
