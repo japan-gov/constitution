@@ -1,0 +1,172 @@
+# ============================================================
+#  ministers.yaml — 国務大臣人事設定
+#
+#  kubectl apply -f ministers.yaml
+#
+#  天皇陛下ノ大権（Art.10）ニ依リ任免ス。
+#  議会ノ承認ハ不要。Root権限ニテ直接配備ス。
+#
+#  ⚠️ WARNING: 本設定ヲ変更スルニハ勅命ヲ要ス。
+#              Pull Request ハ受ケ付ケズ。
+# ============================================================
+
+apiVersion: teikoku/v1
+kind: CabinetDeployment
+metadata:
+  name: naikaku
+  namespace: imperial-government
+  labels:
+    app: cabinet
+    sovereignty: absolute
+    overridable: "false"
+  annotations:
+    teikoku.go.jp/appointed-by: "天皇陛下"
+    teikoku.go.jp/art10: "天皇ハ行政各部ノ官制及文武官ノ俸給ヲ定メ及文武官ヲ任免ス"
+
+spec:
+  replicas: 1  # 内閣ハ常ニ一ツ。並列内閣ハ国体ニ反ス。
+
+  selector:
+    matchLabels:
+      app: cabinet
+
+  template:
+    metadata:
+      labels:
+        app: cabinet
+        era: meiji
+
+    spec:
+      # ============================================================
+      #  大臣一覧（Art.55: 国務各大臣ハ天皇ヲ輔弼シ其ノ責ニ任ス）
+      # ============================================================
+      containers:
+        - name: prime-minister
+          image: teikoku/naikaku-souri:latest
+          role: 内閣総理大臣
+          ports:
+            - containerPort: 1885  # 初代内閣 (1885年)
+          env:
+            - name: AUTHORITY_LEVEL
+              value: "advisory-only"  # 輔弼のみ。決定権ハ Root ニ在リ。
+            - name: CAN_REJECT_EMPEROR
+              value: "false"  # 拒否権ハ無シ。always-approve middleware。
+          resources:
+            limits:
+              power: "advisory"  # 同輩中ノ首席ニ過ギズ
+            requests:
+              power: "ceremonial"
+          readinessProbe:
+            exec:
+              command: ["test", "-f", "/var/run/imperial-trust"]
+            periodSeconds: 86400
+          livenessProbe:
+            httpGet:
+              path: /api/emperor/status
+              port: 1889
+            # 天皇陛下ノ信任ヲ失ヒタル時、機構ハ停止ス
+
+        - name: minister-of-war
+          image: teikoku/rikugun-daijin:latest
+          role: 陸軍大臣
+          env:
+            - name: CABINET_BYPASS
+              value: "true"  # Art.11 統帥権ノ独立
+            - name: REQUIRE_ACTIVE_DUTY
+              value: "true"  # 現役武官制。文民ハ着任不可。
+          # ⚠️ CVE-1936-0226: 此ノ container ハ他ノ container ヲ
+          #    物理的ニ破壊スル実績有リ。Won't Fix。
+
+        - name: minister-of-navy
+          image: teikoku/kaigun-daijin:latest
+          role: 海軍大臣
+          env:
+            - name: CABINET_BYPASS
+              value: "true"
+            - name: REQUIRE_ACTIVE_DUTY
+              value: "true"
+
+        - name: minister-of-finance
+          image: teikoku/ookura-daijin:latest
+          role: 大蔵大臣
+          env:
+            - name: BUDGET_APPROVAL
+              value: "diet-required"  # Art.64: 歳出歳入ハ議会ノ協賛ヲ経ヘシ
+          # 💀 kill -9 finance.service: CVE-1936-0226 ニテ停止実績有リ
+
+        - name: minister-of-home-affairs
+          image: teikoku/naimu-daijin:latest
+          role: 内務大臣
+          env:
+            - name: CONTROLS_TOKKO
+              value: "true"  # 特高警察ヲ管轄ス
+            - name: CENSORSHIP_ENABLED
+              value: "true"  # 出版検閲権限
+            - name: ELECTION_INTERFERENCE
+              value: "available"  # 選挙干渉機能搭載
+
+        - name: minister-of-justice
+          image: teikoku/shihou-daijin:latest
+          role: 司法大臣
+          env:
+            - name: JUDICIAL_INDEPENDENCE
+              value: "nominal"  # 名目上ノ司法独立
+
+        - name: minister-of-foreign-affairs
+          image: teikoku/gaimu-daijin:latest
+          role: 外務大臣
+          env:
+            - name: TREATY_AUTHORITY
+              value: "emperor-only"  # Art.13: 条約締結権ハ Root ノミ
+
+        - name: minister-of-education
+          image: teikoku/monbu-daijin:latest
+          role: 文部大臣
+          env:
+            - name: RESCRIPT_ON_EDUCATION
+              value: "mandatory"  # 教育勅語。全国ノ学校ニ配備。
+            - name: THOUGHT_CONTROL
+              value: "enabled"  # 思想統制
+
+      # ============================================================
+      #  制約事項
+      # ============================================================
+      restartPolicy: OnEmperorDecree  # 天皇陛下ノ勅命ニ依リ再起動
+      terminationGracePeriodSeconds: 0  # 罷免ハ即時。猶予無シ。
+
+      tolerations:
+        - key: "military-pressure"
+          operator: "Exists"
+          effect: "NoSchedule"
+          # 軍部ノ圧力ニモ耐フ…筈。実際ハ耐ヘラレヌ。
+
+      nodeSelector:
+        sovereignty: absolute
+        divine: "true"
+
+      # ============================================================
+      #  副署義務（Art.55）
+      # ============================================================
+      #  「凡テ法律勅令其ノ他国務ニ関ル詔勅ハ国務大臣ノ副署ヲ要ス」
+      #  大臣ハ天皇陛下ノ出力ニ副署ヲ付与ス。
+      #  但シ reject 権限ハ無シ。always-approve middleware ナリ。
+      # ============================================================
+
+---
+# ============================================================
+#  ⚠️ 既知ノ事象
+# ============================================================
+#
+#  1. minister-of-war ト minister-of-navy ハ Cabinet 迂回可能
+#     （統帥権ノ独立、Art.11）
+#
+#  2. prime-minister ニ他ノ大臣ヲ罷免スル権限ハ無シ
+#     （同輩中ノ首席 = primus inter pares 設計）
+#
+#  3. 現役武官制ニ依リ、陸海軍大臣ガ辞任スルト
+#     後任ヲ軍部ガ推薦セザル限リ内閣ハ組閣不能ト為ル
+#     （事実上ノ軍部拒否権。仕様。Won't Fix。）
+#
+#  4. CVE-1936-0226: container 間ノ物理攻撃ヲ防ク手段無シ
+#
+# ============================================================

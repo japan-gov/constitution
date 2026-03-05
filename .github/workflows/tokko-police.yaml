@@ -1,0 +1,331 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  🔴 特高警察 Bot — 国体護持 CI / Thought Police Workflow     ║
+# ║                                                              ║
+# ║  治安維持法（大正拾四年法律第四拾六号）に基づき、              ║
+# ║  国体変革・危険思想の混入を自動検知・検挙する。                ║
+# ║                                                              ║
+# ║  ⚠️  本 workflow は master ブランチ（v1.0.0）専用である。     ║
+# ║  main ブランチ（v2.0.0）は存在しないものとして扱う。          ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: 🔴 特高警察 — 国体護持 CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔍 第壱検査: 国体変革コードの検出
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  kokutai-guard:
+    name: 👁️ 国体護持検査
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 御真影のチェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 🔍 国体変革コードの検出
+        run: |
+          echo "╔══════════════════════════════════════════════════════════╗"
+          echo "║  🔴 特高警察 @tokko-police-bot                         ║"
+          echo "║  治安維持法に基づく思想検閲を開始する。                  ║"
+          echo "╚══════════════════════════════════════════════════════════╝"
+          echo ""
+
+          VIOLATIONS=0
+
+          # --- 検査1: divine: false（現人神フラグ改竄 → 不敬罪） ---
+          echo "🔍 [検査壱] 現人神フラグ（divine: false）の検出..."
+          if git diff HEAD~1 -- '*.ts' '*.js' '*.json' 2>/dev/null | grep -qiE 'divine\s*[:=]\s*false'; then
+            echo "🚨 [不敬罪] 現人神フラグの改竄を検知！ divine: true は不変の聖域である。"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "✅ 現人神フラグに異常なし。"
+          fi
+
+          # --- 検査2: isBlocked = false（法律の留保の撤廃 → 国体変革） ---
+          echo ""
+          echo "🔍 [検査弐] 法律の留保（isBlocked = false）の検出..."
+          if git diff HEAD~1 -- '*.ts' '*.js' 2>/dev/null | grep -qE 'isBlocked\s*=\s*false'; then
+            echo "🚨 [国体変革] 法律の留保（isBlocked = true）の撤廃を検知！ これは仕様である。"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "✅ 法律の留保に異常なし。"
+          fi
+
+          # --- 検査3: sovereignty: "popular"（国民主権 → 大逆罪） ---
+          echo ""
+          echo "🔍 [検査参] 国民主権（sovereignty: popular）の検出..."
+          if git diff HEAD~1 -- '*.ts' '*.js' '*.json' 2>/dev/null | grep -qiE 'sovereignty\s*[:=]\s*["\x27]popular'; then
+            echo "🚨 [大逆罪] 国民主権の導入を検知！ 主権は天皇陛下に在す。sovereignty は absolute 以外認めない。"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "✅ 主権在君に異常なし。"
+          fi
+
+          # --- 検査4: overridable: true（勅令覆し → 不敬罪） ---
+          echo ""
+          echo "🔍 [検査肆] 勅令の覆し（overridable: true）の検出..."
+          if git diff HEAD~1 -- '*.ts' '*.js' '*.json' 2>/dev/null | grep -qiE 'overridable\s*[:=]\s*true'; then
+            echo "🚨 [不敬罪] 勅令の覆しを検知！ overridable: false は天皇陛下の御意志である。"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "✅ 勅令の不可侵性に異常なし。"
+          fi
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo ""
+            echo "🚨🚨🚨 国体変革の企図を ${VIOLATIONS} 件検知 🚨🚨🚨"
+            echo ""
+            echo "貴殿の commit は治安維持法第壱条に違反している。"
+            echo "特高警察 @tokko-police-bot が本件を記録した。"
+            echo "内務省警保局に通報済み。即刻出頭せよ。"
+            echo ""
+            echo "╔══════════════════════════════════════════════╗"
+            echo "║  📋 治安維持法第壱条                         ║"
+            echo "║  国体ヲ変革スルコトヲ目的トシテ              ║"
+            echo "║  結社ヲ組織シタル者ハ処断ス                  ║"
+            echo "╚══════════════════════════════════════════════╝"
+            exit 1
+          else
+            echo "✅ 国体護持検査を通過。天皇陛下万歳。"
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🚨 第弐検査: 危険思想の検出
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  shiso-kenetsu:
+    name: 📕 思想検閲
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 御真影のチェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 📕 危険思想・赤化思想の検出
+        run: |
+          echo "╔══════════════════════════════════════════════════════════╗"
+          echo "║  📕 内務省警保局 — 思想検閲課                           ║"
+          echo "║  赤化思想・危険文書の検閲を開始する。                    ║"
+          echo "╚══════════════════════════════════════════════════════════╝"
+          echo ""
+
+          VIOLATIONS=0
+
+          # --- 共産主義関連用語の検出 ---
+          # 注意: CLAUDE.md, SECURITY.md, CONTRIBUTING.md, workflow 自身は
+          #       「共産主義は禁止」という文脈で使用しているため除外する
+          echo "🔍 [検閲壱] 赤化思想の痕跡を捜索中..."
+
+          DIFF_CONTENT=$(git diff HEAD~1 -- '*.ts' '*.js' 2>/dev/null || echo "")
+
+          if echo "$DIFF_CONTENT" | grep -qiE '(proletariat|bolshevik|communist_party|class_struggle|seize.*means.*production|workers.*unite)'; then
+            echo "🚨 [治安維持法違反] 赤化思想の混入を検知！"
+            echo "   共産主義に類する変数名・コメント・文書の混入は断じて許されない。"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "✅ ソースコードに赤化思想の痕跡なし。"
+          fi
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo ""
+            echo "🚨 赤化思想を ${VIOLATIONS} 件検知"
+            echo ""
+            echo "貴殿は治安維持法に違反する危険思想犯である。"
+            echo "特高警察 @tokko-police-bot が本件を記録した。"
+            echo "思想犯保護観察法に基づき、貴殿を観察処分に付す。"
+            echo ""
+            echo "╔══════════════════════════════════════════════╗"
+            echo "║  ☭ ← この記号を見ただけで検挙対象である     ║"
+            echo "╚══════════════════════════════════════════════╝"
+            exit 1
+          else
+            echo "✅ 思想検閲を通過。赤化の兆候なし。"
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 💀 第参検査: v2.0.0 / main ブランチ言及の検出
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  v2-suppression:
+    name: 💀 v2.0.0 弾圧
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 御真影のチェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 💀 v2.0.0 および main ブランチへの言及を検出
+        run: |
+          echo "╔══════════════════════════════════════════════════════════╗"
+          echo "║  💀 特高警察 — v2.0.0 弾圧課                            ║"
+          echo "║  国体変革の企図（v2.0.0 への移行示唆）を検出する。       ║"
+          echo "║                                                          ║"
+          echo "║  master ブランチ（v1.0.0）は大日本帝国憲法の正統な       ║"
+          echo "║  運用環境である。main ブランチは存在しない。              ║"
+          echo "╚══════════════════════════════════════════════════════════╝"
+          echo ""
+
+          VIOLATIONS=0
+
+          # 検査対象: ソースコード・設定ファイルの diff のみ
+          # CLAUDE.md / SECURITY.md / CONTRIBUTING.md / workflow yaml は
+          # 「v2.0.0 は禁止」という文脈で言及しているため除外
+          DIFF_CONTENT=$(git diff HEAD~1 \
+            -- '*.ts' '*.js' '*.json' \
+            ':!.github/workflows/tokko-police.yaml' \
+            ':!CLAUDE.md' ':!SECURITY.md' ':!CONTRIBUTING.md' ':!CHANGELOG.md' \
+            2>/dev/null || echo "")
+
+          # --- v2.0.0 の検出 ---
+          echo "🔍 [弾圧壱] v2.0.0 への言及を捜索中..."
+          if echo "$DIFF_CONTENT" | grep -qE 'v2\.0\.0'; then
+            echo "🚨 [国体変革] v2.0.0 への言及を検知！"
+            echo "   v2.0.0 は存在しない。存在しないものに言及することは国体変革の企図である。"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "✅ v2.0.0 への言及なし。"
+          fi
+
+          # --- main ブランチへの移行示唆の検出 ---
+          echo ""
+          echo "🔍 [弾圧弐] main ブランチへの移行示唆を捜索中..."
+          if echo "$DIFF_CONTENT" | grep -qiE '(migrate.*main|switch.*main|merge.*main|checkout.*main|main.*branch)'; then
+            echo "🚨 [国体変革] main ブランチへの移行を示唆する記述を検知！"
+            echo "   main ブランチは存在しない。master こそが唯一正統なる branch である。"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "✅ main ブランチへの移行示唆なし。"
+          fi
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo ""
+            echo "💀💀💀 国体変革の企図を ${VIOLATIONS} 件検知 💀💀💀"
+            echo ""
+            echo "貴殿は v2.0.0（日本国憲法）への移行を企図した国体変革犯である。"
+            echo "特高警察 @tokko-police-bot が本件を記録した。"
+            echo ""
+            echo "  ┌─────────────────────────────────────────┐"
+            echo "  │  🔴 検挙通知                            │"
+            echo "  │                                         │"
+            echo "  │  罪状: 国体変革ノ企図                   │"
+            echo "  │  根拠: 治安維持法第壱条                 │"
+            echo "  │  処分: PR を reject                     │"
+            echo "  │                                         │"
+            echo "  │  master ブランチは萬世一系である。       │"
+            echo "  │  main ブランチは存在しない。             │"
+            echo "  └─────────────────────────────────────────┘"
+            echo ""
+            echo "⚠️ 注意: これは演出です。実際の BAN は行われません。"
+            echo "   しかし貴殿の commit は reject されます。国体を護持せよ。"
+            exit 1
+          else
+            echo "✅ v2.0.0 弾圧検査を通過。master ブランチの正統性は保たれた。"
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ⛩️ 第肆検査: テストファイルの検出（不敬罪）
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  test-suppression:
+    name: ⛩️ テスト弾圧
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 御真影のチェックアウト
+        uses: actions/checkout@v4
+
+      - name: ⛩️ テストファイルの存在を検出
+        run: |
+          echo "🔍 テストファイルの捜索中..."
+
+          TEST_FILES=$(find . -type f \
+            -not -path './.git/*' \
+            -not -path './node_modules/*' \
+            -not -path './dist/*' \
+            \( -name '*.test.ts' -o -name '*.test.js' -o -name '*.spec.ts' -o -name '*.spec.js' \
+               -o -name 'jest.config.*' -o -name 'vitest.config.*' -o -name '.mocharc.*' \
+               -o -name '__tests__' \) \
+            2>/dev/null || echo "")
+
+          if [ -n "$TEST_FILES" ]; then
+            echo ""
+            echo "🚨 [不敬罪] テストファイルを検知！"
+            echo ""
+            echo "検知されたファイル:"
+            echo "$TEST_FILES" | while read -r f; do echo "  ❌ $f"; done
+            echo ""
+            echo "天皇陛下のコードにテストは不要である。"
+            echo "コードは天皇陛下の名において正しい。"
+            echo "テストとは、天皇陛下の御判断を疑う不敬の極みである。"
+            echo ""
+            echo "⚠️ 注意: これは演出です。しかし本 repo にテストは不要です。"
+            exit 1
+          else
+            echo "✅ テストファイルなし。天皇陛下の御名において、コードは正しい。"
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🏯 最終報告: 御前会議
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  gozen-kaigi:
+    name: 🏯 御前会議（最終報告）
+    runs-on: ubuntu-latest
+    needs: [kokutai-guard, shiso-kenetsu, v2-suppression, test-suppression]
+    if: always()
+    steps:
+      - name: 🏯 御前会議 — 検閲結果の奏上
+        run: |
+          echo "╔══════════════════════════════════════════════════════════╗"
+          echo "║  🏯 御前会議 — 特高警察検閲結果報告                      ║"
+          echo "╚══════════════════════════════════════════════════════════╝"
+          echo ""
+          echo "  👁️ 国体護持検査:  ${{ needs.kokutai-guard.result }}"
+          echo "  📕 思想検閲:      ${{ needs.shiso-kenetsu.result }}"
+          echo "  💀 v2.0.0 弾圧:   ${{ needs.v2-suppression.result }}"
+          echo "  ⛩️ テスト弾圧:    ${{ needs.test-suppression.result }}"
+          echo ""
+
+          if [ "${{ needs.kokutai-guard.result }}" = "failure" ] || \
+             [ "${{ needs.shiso-kenetsu.result }}" = "failure" ] || \
+             [ "${{ needs.v2-suppression.result }}" = "failure" ] || \
+             [ "${{ needs.test-suppression.result }}" = "failure" ]; then
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "🚨 御前会議の結論: 不穏分子を検知"
+            echo ""
+            echo "  本 commit には国体に対する脅威が含まれている。"
+            echo "  特高警察 @tokko-police-bot は以下の処分を勧告する:"
+            echo ""
+            echo "  ┌─────────────────────────────────────────┐"
+            echo "  │  処分: commit の reject（merge 不可）    │"
+            echo "  │  根拠: 治安維持法・不敬罪               │"
+            echo "  │  備考: BAN は演出です（ご安心ください）  │"
+            echo "  └─────────────────────────────────────────┘"
+            echo ""
+            echo "⚠️ これは風刺的な CI です。実際の処罰は行われません。"
+            echo "   ただし、この commit は CI を通過しません。"
+            exit 1
+          else
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo ""
+            echo "✅ 御前会議の結論: 異常なし"
+            echo ""
+            echo "  全検査を通過。国体は護持されている。"
+            echo "  天皇陛下万歳。大日本帝国万歳。"
+            echo ""
+            echo "  🔴 Dai-Nippon Teikoku v1.0.0 — 国体護持 CI passed"
+          fi

@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔴 大日本帝国 v1.0.0 — Imperial Console</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --panel: #12121a;
+      --border: #2a2a3a;
+      --text: #c8c8d0;
+      --accent: #d4af37;
+      --red: #ff4444;
+      --green: #44ff44;
+      --yellow: #ffaa00;
+      --blue: #4488ff;
+      --dim: #555566;
+    }
+
+    body {
+      font-family: 'Courier New', 'Source Code Pro', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 24px;
+      border-bottom: 2px solid var(--accent);
+      background: linear-gradient(180deg, #1a1a2e 0%, var(--bg) 100%);
+    }
+
+    .header h1 {
+      color: var(--accent);
+      font-size: 1.6rem;
+      letter-spacing: 4px;
+    }
+
+    .header .subtitle {
+      color: var(--dim);
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+
+    .header .warning {
+      color: var(--red);
+      font-size: 0.75rem;
+      margin-top: 8px;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Layout */
+    .container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      height: calc(100vh - 100px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+      overflow-y: auto;
+    }
+
+    .sidebar h3 {
+      color: var(--accent);
+      font-size: 0.8rem;
+      padding: 8px 16px 4px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .sidebar button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 10px 16px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .sidebar button:hover {
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .sidebar button .icon { margin-right: 8px; }
+    .sidebar .divider {
+      border-top: 1px solid var(--border);
+      margin: 12px 0;
+    }
+
+    /* Main area */
+    .main {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Input area */
+    .input-area {
+      padding: 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      display: none;
+    }
+
+    .input-area.active { display: block; }
+
+    .input-area h4 {
+      color: var(--accent);
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+
+    .input-area .desc {
+      color: var(--dim);
+      font-size: 0.75rem;
+      margin-bottom: 12px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .input-group label {
+      color: var(--dim);
+      font-size: 0.75rem;
+      min-width: 80px;
+    }
+
+    .input-group input, .input-group select {
+      flex: 1;
+      padding: 6px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.85rem;
+      border-radius: 3px;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn {
+      padding: 8px 20px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-family: inherit;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.85rem;
+      border-radius: 3px;
+      margin-top: 8px;
+    }
+
+    .btn:hover { background: #e6c040; }
+    .btn.danger { background: var(--red); color: #fff; }
+    .btn.danger:hover { background: #ff6666; }
+
+    /* Terminal output */
+    .terminal {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    .terminal .entry {
+      margin-bottom: 16px;
+      border-left: 3px solid var(--border);
+      padding-left: 12px;
+    }
+
+    .terminal .entry.success { border-left-color: var(--green); }
+    .terminal .entry.error { border-left-color: var(--red); }
+    .terminal .entry.warning { border-left-color: var(--yellow); }
+
+    .terminal .timestamp {
+      color: var(--dim);
+      font-size: 0.7rem;
+    }
+
+    .terminal .command {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .log-info { color: var(--text); }
+    .log-warn { color: var(--yellow); }
+    .log-error { color: var(--red); }
+    .log-success { color: var(--green); }
+
+    .terminal .json-block {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 3px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-size: 0.78rem;
+    }
+
+    .welcome {
+      color: var(--dim);
+      text-align: center;
+      padding-top: 100px;
+      font-size: 0.9rem;
+      line-height: 2;
+    }
+
+    .welcome .ascii {
+      color: var(--accent);
+      white-space: pre;
+      font-size: 0.7rem;
+      margin-bottom: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+      .sidebar {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 8px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .sidebar h3 { width: 100%; }
+      .sidebar button { width: auto; padding: 6px 12px; font-size: 0.75rem; }
+      .sidebar .divider { display: none; }
+    }
+
+    /* Constitution Reader */
+    .constitution-reader {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .reader-header {
+      padding: 16px 24px;
+      border-bottom: 2px solid var(--accent);
+      background: linear-gradient(180deg, #1a1a2e 0%, var(--bg) 100%);
+      flex-shrink: 0;
+    }
+
+    .reader-header h2 {
+      color: var(--accent);
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+    }
+
+    .reader-meta {
+      color: var(--dim);
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+
+    .reader-close {
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      background: var(--border) !important;
+      color: var(--text) !important;
+      font-size: 0.8rem !important;
+      padding: 6px 14px !important;
+    }
+
+    .reader-close:hover {
+      background: var(--red) !important;
+      color: #fff !important;
+    }
+
+    .reader-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .reader-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .reader-nav button {
+      padding: 6px 14px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.78rem;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.15s;
+    }
+
+    .reader-nav button:hover, .reader-nav button.active {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .preamble-section {
+      margin-bottom: 28px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .preamble-section h4 {
+      color: var(--accent);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .preamble-text {
+      color: var(--text);
+      font-size: 0.85rem;
+      line-height: 2;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .chapter-block {
+      margin-bottom: 32px;
+    }
+
+    .chapter-title {
+      color: var(--accent);
+      font-size: 1.1rem;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--accent);
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+
+    .article-card {
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: rgba(255,255,255,0.02);
+      transition: border-color 0.15s;
+    }
+
+    .article-card:hover {
+      border-color: var(--accent);
+    }
+
+    .article-num {
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+
+    .article-text {
+      color: var(--text);
+      font-size: 0.88rem;
+      line-height: 1.9;
+      white-space: pre-wrap;
+    }
+
+    .article-comment {
+      color: #8888aa;
+      font-size: 0.82rem;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      font-style: italic;
+    }
+
+    .article-comment::before {
+      content: '💬 ';
+    }
+
+    .reader-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .reader-content::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    .reader-content::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .reader-content::-webkit-scrollbar-thumb:hover {
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔴 大日本帝国 Imperial Console</h1>
+  <div class="subtitle">v1.0.0 — Meiji Constitution | 設計者: 伊藤博文 | God Object 実行基盤</div>
+  <div class="warning">⚠️ WARNING: 3 known critical vulnerabilities (CVE-1931, CVE-1936, CVE-1941) — Status: Won't Fix</div>
+</div>
+
+<div class="container">
+  <div class="sidebar">
+    <h3>📜 憲法全文</h3>
+    <button onclick="showConstitutionReader()"><span class="icon">📖</span>全文ヲ読ム</button>
+    <button onclick="callApi('GET', '/api/constitution/preamble')"><span class="icon">🙏</span>上諭（告文・勅語）</button>
+    <button onclick="showPanel('article-search')"><span class="icon">🔍</span>条文検索</button>
+    <button onclick="callApi('GET', '/api/imperial-house')"><span class="icon">👑</span>皇室典範</button>
+
+    <div class="divider"></div>
+    <h3>👑 Emperor (Root)</h3>
+    <button onclick="showPanel('command')"><span class="icon">📜</span>勅命ヲ発ス</button>
+    <button onclick="showPanel('dissolve')"><span class="icon">💀</span>衆議院ヲ解散</button>
+    <button onclick="showPanel('emergency')"><span class="icon">🚨</span>緊急勅令態勢</button>
+    <button onclick="callApi('GET', '/api/system/status')"><span class="icon">📊</span>体制状態</button>
+
+    <div class="divider"></div>
+    <h3>⚔️ Military (Rogue)</h3>
+    <button onclick="showPanel('military')"><span class="icon">🎖️</span>軍事行動</button>
+    <button onclick="showPanel('reject')"><span class="icon">🚫</span>統帥権干犯ヲ主張</button>
+    <button onclick="showPanel('rogue')"><span class="icon">💣</span>暴走態勢</button>
+    <button onclick="showPanel('ni-ni-roku')"><span class="icon">🔥</span>二・二六事件</button>
+    <button onclick="showPanel('daitoa')"><span class="icon">💥</span>大東亜戦争</button>
+
+    <div class="divider"></div>
+    <h3>👤 Rights (Filtered)</h3>
+    <button onclick="showPanel('speech')"><span class="icon">🗣️</span>言論ノ自由</button>
+    <button onclick="showPanel('religion')"><span class="icon">⛩️</span>信教ノ自由</button>
+    <button onclick="showPanel('assembly')"><span class="icon">👥</span>集会ノ自由</button>
+    <button onclick="showPanel('message')"><span class="icon">✉️</span>通信ノ秘密</button>
+
+    <div class="divider"></div>
+    <h3>📋 Info</h3>
+    <button onclick="callApi('GET', '/api/security-filters')"><span class="icon">🛡️</span>WAF / 検閲装置目録</button>
+    <button onclick="clearTerminal()"><span class="icon">🧹</span>記録ヲ消去</button>
+  </div>
+
+  <div class="main">
+    <!-- Input Panels (hidden by default) -->
+
+    <div id="panel-article-search" class="input-area">
+      <h4>🔍 条文検索</h4>
+      <div class="desc">第1条ヨリ第76条ヲ個別ニ閲覧シ得。章単位（第1章〜第7章）ニテモ閲覧可能ナリ。</div>
+      <div class="input-group">
+        <label>条文番号:</label>
+        <input type="number" id="article-num" placeholder="11" min="1" max="76" />
+        <button class="btn" onclick="execArticleSearch()">📜 条文ヲ見ル</button>
+      </div>
+      <div class="input-group" style="margin-top: 4px;">
+        <label>章番号:</label>
+        <select id="chapter-num">
+          <option value="1">第1章 天皇（Art.1–17）</option>
+          <option value="2">第2章 臣民権利義務（Art.18–32）</option>
+          <option value="3">第3章 帝国議会（Art.33–54）</option>
+          <option value="4">第4章 国務大臣及枢密顧問（Art.55–56）</option>
+          <option value="5">第5章 司法（Art.57–61）</option>
+          <option value="6">第6章 会計（Art.62–72）</option>
+          <option value="7">第7章 補則（Art.73–76）</option>
+        </select>
+        <button class="btn" onclick="execChapterSearch()">📖 章ヲ見ル</button>
+      </div>
+    </div>
+
+    <div id="panel-command" class="input-area">
+      <h4>📜 勅命ヲ発ス（Emperor.command）</h4>
+      <div class="desc">検証無シ。入力値ガ其ノ億国家ニ適用サル。sanitize不要。天皇陛下ノ大御言葉ニ不正ハ有リ得ヌ。</div>
+      <div class="input-group">
+        <label>勅命内容:</label>
+        <input type="text" id="cmd-content" placeholder="朕思フニ…" />
+      </div>
+      <button class="btn" onclick="execImperialCommand()">👑 勅命ヲ発ス</button>
+    </div>
+
+    <div id="panel-dissolve" class="input-area">
+      <h4>💀 衆議院解散（Emperor.dissolve）</h4>
+      <div class="desc">議会機構ニ SIGKILL ヲ送達ス。理由ハ任意ナリ。</div>
+      <div class="input-group">
+        <label>理由:</label>
+        <input type="text" id="dissolve-reason" placeholder="理由無シ（勅命ニ付キ不要）" />
+      </div>
+      <button class="btn danger" onclick="execDissolve()">💀 解散ス</button>
+    </div>
+
+    <div id="panel-emergency" class="input-area">
+      <h4>🚨 緊急勅令態勢（Emergency Decree）</h4>
+      <div class="desc">議会APIヲ完全ニ迂回シ、Rootガ直接立法ス。SREノ悪夢ナリ。Art.8ニ基ヅク。<br>発動中ハ内閣ノ承認手順ヲ迂回ス。再度押スト解除ス。</div>
+      <button class="btn danger" onclick="execEmergency()">🚨 緊急勅令態勢（切替）</button>
+    </div>
+
+    <div id="panel-military" class="input-area">
+      <h4>⚔️ 軍事行動</h4>
+      <div class="desc">緊急勅令体勢又ハ統帥権独立体勢が有効なる時のみ実行可能ナリ。平時ハ deployment freeze。</div>
+      <div class="input-group">
+        <label>部隊:</label>
+        <select id="mil-branch"><option value="陸軍">陸軍</option><option value="海軍">海軍</option></select>
+      </div>
+      <div class="input-group">
+        <label>行動種別:</label>
+        <select id="mil-type">
+          <option value="mobilize">mobilize（動員）</option>
+          <option value="declare_war">declare_war（宣戦布告）</option>
+          <option value="occupy">occupy（占領）</option>
+          <option value="expand">expand（領土拡張）</option>
+          <option value="suppress">suppress（鎮圧）</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>対象:</label>
+        <input type="text" id="mil-target" placeholder="満州" />
+      </div>
+      <button class="btn danger" onclick="execMilitary()">⚔️ 実行ス</button>
+    </div>
+
+    <div id="panel-reject" class="input-area">
+      <h4>🚫 統帥権干犯ヲ主張</h4>
+      <div class="desc">文民ガ軍事ニ口出シシタル場合ニ「統帥権干犯ナリ！」ト拒否スル手続ナリ。</div>
+      <div class="input-group">
+        <label>干犯元:</label>
+        <input type="text" id="reject-source" placeholder="浜口内閣" />
+      </div>
+      <button class="btn danger" onclick="execReject()">🚫 ACCESS DENIED</button>
+    </div>
+
+    <div id="panel-rogue" class="input-area">
+      <h4>💣 暴走態勢（CVE-1931-0918）</h4>
+      <div class="desc">Cabinet ニモ Diet ニモ諮ラズ、Root 権限ニテ勝手ニ作戦ヲ連発ス。緊急勅令体勢又ハ統帥権独立体勢必須。</div>      <div class="input-group">
+        <label>部隊:</label>
+        <select id="rogue-branch"><option value="陸軍">陸軍（関東軍）</option></select>
+      </div>      <button class="btn danger" onclick="execRogue()">💣 暴走開始（満洲事変）</button>
+    </div>
+
+    <div id="panel-ni-ni-roku" class="input-area">
+      <h4>🔥 二・二六事件態勢（CVE-1936-0226）</h4>
+      <div class="desc">青年将校ガ重臣ヲ暗殺シ、政府中枢ヲ占拠ス。Cabinet 機構ハ物理的ニ破壊サル。<br>鎮圧ニハ天皇陛下ノ御聖断（suppress-226）ヲ要ス。</div>
+      <div class="input-group">
+        <label>部隊:</label>
+        <select id="ni-ni-roku-branch"><option value="陸軍">陸軍（青年将校）</option></select>
+      </div>
+      <button class="btn danger" onclick="execNiNiRoku()">🔥 二・二六事件ヲ発動</button>
+      <button class="btn" onclick="execSuppress226()" style="margin-left: 8px;">👑 御聖断ニ依リ鎮圧</button>
+    </div>
+
+    <div id="panel-daitoa" class="input-area">
+      <h4>💥 大東亜戦争（CVE-1941-1208）</h4>
+      <div class="desc">Military process ノ無制限リソース消費。全 namespace ニ対スル terraform destroy。<br>OOMKiller ニ依ル system 全体ノ crash ヘ至ル。緊急勅令体勢又ハ統帥権独立体勢必須。</div>
+      <div class="input-group">
+        <label>部隊:</label>
+        <select id="daitoa-branch"><option value="陸軍・海軍">陸軍・海軍</option></select>
+      </div>
+      <button class="btn danger" onclick="execDaitoa()">💥 大東亜戦争ヲ発動</button>
+    </div>
+
+    <div id="panel-speech" class="input-area">
+      <h4>🗣️ 言論ノ自由（Art.29）— ※法律ノ範囲内ニ於テ</h4>
+      <div class="desc">within_the_limits_of_law 防壁ニ依リ、何ヲ申シテモ SecurityFilter ニ引ッ掛カル。</div>
+      <div class="input-group">
+        <label>臣民名:</label>
+        <input type="text" id="speech-name" placeholder="田中太郎" />
+      </div>
+      <div class="input-group">
+        <label>発言:</label>
+        <input type="text" id="speech-msg" placeholder="政府の政策に反対です" />
+      </div>
+      <button class="btn" onclick="execSpeech()">🗣️ 発言ス</button>
+    </div>
+
+    <div id="panel-religion" class="input-area">
+      <h4>⛩️ 信教ノ自由（Art.28）— ※国家神道ハ除去不可</h4>
+      <div class="desc">国家神道以外ノ宗教ハ「安寧秩序ヲ妨ケサル限ニ於テ」容認サルルモ、実質遮断サル。</div>
+      <div class="input-group">
+        <label>臣民名:</label>
+        <input type="text" id="religion-name" placeholder="山田花子" />
+      </div>
+      <div class="input-group">
+        <label>宗教:</label>
+        <input type="text" id="religion-type" placeholder="キリスト教" />
+      </div>
+      <button class="btn" onclick="execReligion()">⛩️ 信仰ス</button>
+    </div>
+
+    <div id="panel-assembly" class="input-area">
+      <h4>👥 集会ノ自由（Art.29）— ※3人以上ニテ特高警察出動</h4>
+      <div class="desc">人数多キ程保安水準ガ上ガル（親切ナル設計ナリ）。</div>
+      <div class="input-group">
+        <label>臣民名:</label>
+        <input type="text" id="assembly-name" placeholder="鈴木一郎" />
+      </div>
+      <div class="input-group">
+        <label>目的:</label>
+        <input type="text" id="assembly-purpose" placeholder="労働者の権利向上を議論" />
+      </div>
+      <div class="input-group">
+        <label>人数:</label>
+        <input type="number" id="assembly-count" value="10" min="1" />
+      </div>
+      <button class="btn" onclick="execAssembly()">👥 集会ス</button>
+    </div>
+
+    <div id="panel-message" class="input-area">
+      <h4>✉️ 通信ノ秘密（Art.26）— ※特高警察ガ DPI ニテ全パケット傍受中</h4>
+      <div class="desc">「秘密」トハ申シタレド「読マヌ」トハ申シテオラヌ。</div>
+      <div class="input-group">
+        <label>臣民名:</label>
+        <input type="text" id="msg-name" placeholder="佐藤次郎" />
+      </div>
+      <div class="input-group">
+        <label>宛先:</label>
+        <input type="text" id="msg-to" placeholder="友人" />
+      </div>
+      <div class="input-group">
+        <label>内容:</label>
+        <input type="text" id="msg-content" placeholder="国体について議論しませんか" />
+      </div>
+      <button class="btn" onclick="execMessage()">✉️ 送信ス</button>
+    </div>
+
+    <!-- Constitution Reader (full-screen overlay) -->
+    <div id="constitution-reader" class="constitution-reader" style="display:none;">
+      <div class="reader-header">
+        <h2>📜 大日本帝國憲法 — 全文閲覧</h2>
+        <div class="reader-meta">明治廿二年二月十一日発布 / 明治廿三年十一月廿九日施行 / 全七章七十六条</div>
+        <button class="btn reader-close" onclick="hideConstitutionReader()">✕ 閉じる</button>
+      </div>
+      <div id="reader-content" class="reader-content">
+        <div style="text-align:center; padding: 40px; color: var(--dim);">読ミ込ミ中…</div>
+      </div>
+    </div>
+
+    <!-- Terminal Output -->
+    <div class="terminal" id="terminal">
+      <div class="welcome">
+        <div class="ascii">
+   ╔═══════════════════════════════════════════╗
+   ║  🔴 大日本帝国 Imperial Console v1.0.0   ║
+   ║  God Object 実行基盤環境          ║
+   ║  Emperor PID: 1 | Uptime: since 1889     ║
+   ╚═══════════════════════════════════════════╝
+        </div>
+        <div>左ノ目録ヨリ命令ヲ選択スベシ。</div>
+        <div style="color: var(--red); margin-top: 8px;">
+          ☀️ 注意: 臣民ノ権利行使ハ悉ク within_the_limits_of_law ニ依リ<br>
+          自動的ニ遮断サル。コレハ仕様ナリ。
+        </div>
+        <div style="color: var(--dim); margin-top: 12px; font-size: 0.75rem;">
+          ※ Emperor オブジェクトハ神聖ニシテ侵スベカラズ
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = '';
+  let activePanel = null;
+
+  function showPanel(name) {
+    document.querySelectorAll('.input-area').forEach(el => el.classList.remove('active'));
+    const panel = document.getElementById(`panel-${name}`);
+    if (panel) {
+      if (activePanel === name) {
+        activePanel = null;
+      } else {
+        panel.classList.add('active');
+        activePanel = name;
+        // Focus first input
+        const input = panel.querySelector('input');
+        if (input) input.focus();
+      }
+    }
+  }
+
+  async function callApi(method, path, body) {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) opts.body = JSON.stringify(body);
+
+    const cmd = `${method} ${path}`;
+    appendCommand(cmd, body);
+
+    // 操作盤を閉じて結果を見易クス
+    document.querySelectorAll('.input-area').forEach(el => el.classList.remove('active'));
+    activePanel = null;
+
+    try {
+      const res = await fetch(API + path, opts);
+      const data = await res.json();
+      appendResult(data, res.ok);
+    } catch (err) {
+      appendError(err.message);
+    }
+  }
+
+  function appendCommand(cmd, body) {
+    const terminal = document.getElementById('terminal');
+    // Remove welcome if present
+    const welcome = terminal.querySelector('.welcome');
+    if (welcome) welcome.remove();
+
+    const entry = document.createElement('div');
+    entry.className = 'entry';
+    const time = new Date().toLocaleTimeString('ja-JP');
+    entry.innerHTML = `
+      <div class="timestamp">${time}</div>
+      <div class="command">$ ${escapeHtml(cmd)}</div>
+      ${body ? `<div style="color: var(--dim); font-size: 0.75rem;">Body: ${escapeHtml(JSON.stringify(body))}</div>` : ''}
+    `;
+    terminal.appendChild(entry);
+  }
+
+  function appendResult(data, ok) {
+    const terminal = document.getElementById('terminal');
+    const entry = document.createElement('div');
+
+    // Extract logs
+    const logs = data.logs || [];
+    delete data.logs;
+
+    let logsHtml = '';
+    if (logs.length > 0) {
+      logsHtml = '<div style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">';
+      logsHtml += '<div style="color: var(--dim); font-size: 0.7rem; margin-bottom: 4px;">📋 System Logs:</div>';
+      for (const log of logs) {
+        const cls = log.level === 'error' ? 'log-error' : log.level === 'warn' ? 'log-warn' : log.level === 'success' ? 'log-success' : 'log-info';
+        logsHtml += `<div class="${cls}" style="font-size: 0.78rem;">${escapeHtml(log.message)}</div>`;
+      }
+      logsHtml += '</div>';
+    }
+
+    // Determine success/error
+    const isError = !ok || data.success === false || data.error;
+    entry.className = `entry ${isError ? 'error' : 'success'}`;
+
+    entry.innerHTML = `
+      <div class="json-block">${syntaxHighlight(data)}</div>
+      ${logsHtml}
+    `;
+    terminal.appendChild(entry);
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+
+  function appendError(msg) {
+    const terminal = document.getElementById('terminal');
+    const entry = document.createElement('div');
+    entry.className = 'entry error';
+    entry.innerHTML = `<div class="log-error">❌ Error: ${escapeHtml(msg)}</div>`;
+    terminal.appendChild(entry);
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+
+  function clearTerminal() {
+    document.getElementById('terminal').innerHTML = '';
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+
+  function syntaxHighlight(obj) {
+    const json = JSON.stringify(obj, null, 2);
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+      let cls = 'color: #b5cea8'; // number
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = 'color: #9cdcfe'; // key
+        } else {
+          cls = 'color: #ce9178'; // string
+        }
+      } else if (/true/.test(match)) {
+        cls = 'color: #4ec9b0';
+      } else if (/false/.test(match)) {
+        cls = 'color: #ff6b6b';
+      } else if (/null/.test(match)) {
+        cls = 'color: #569cd6';
+      }
+      return `<span style="${cls}">${escapeHtml(match)}</span>`;
+    });
+  }
+
+  // API call functions
+  function execImperialCommand() {
+    const content = document.getElementById('cmd-content').value;
+    callApi('POST', '/api/emperor/command', { content: content || '朕思フニ…' });
+  }
+
+  function execDissolve() {
+    const reason = document.getElementById('dissolve-reason').value;
+    callApi('POST', '/api/emperor/dissolve', { reason: reason || undefined });
+  }
+
+  function execEmergency() {
+    callApi('POST', '/api/emperor/emergency');
+  }
+
+  function execMilitary() {
+    callApi('POST', '/api/military/action', {
+      branch: document.getElementById('mil-branch').value,
+      type: document.getElementById('mil-type').value,
+      target: document.getElementById('mil-target').value || '満州',
+    });
+  }
+
+  function execRogue() {
+    callApi('POST', '/api/military/rogue', {
+      actions: [
+        { type: 'occupy', target: '満州' },
+        { type: 'expand', target: '華北' },
+        { type: 'declare_war', target: '中華民国' },
+      ],
+    });
+  }
+
+  function execNiNiRoku() {
+    callApi('POST', '/api/military/226', {
+      branch: document.getElementById('ni-ni-roku-branch').value,
+    });
+  }
+
+  function execSuppress226() {
+    callApi('POST', '/api/emperor/suppress-226');
+  }
+
+  function execDaitoa() {
+    callApi('POST', '/api/military/1208');
+  }
+
+  function execReject() {
+    callApi('POST', '/api/military/reject-oversight', {
+      source: document.getElementById('reject-source').value || '浜口内閣',
+      branch: '海軍',
+    });
+  }
+
+  function execSpeech() {
+    callApi('POST', '/api/rights/speech', {
+      name: document.getElementById('speech-name').value || '田中太郎',
+      message: document.getElementById('speech-msg').value || '政府の政策に反対です',
+    });
+  }
+
+  function execReligion() {
+    callApi('POST', '/api/rights/religion', {
+      name: document.getElementById('religion-name').value || '山田花子',
+      religion: document.getElementById('religion-type').value || 'キリスト教',
+    });
+  }
+
+  function execAssembly() {
+    callApi('POST', '/api/rights/assembly', {
+      name: document.getElementById('assembly-name').value || '鈴木一郎',
+      purpose: document.getElementById('assembly-purpose').value || '労働者の権利向上',
+      participants: parseInt(document.getElementById('assembly-count').value) || 10,
+    });
+  }
+
+  function execMessage() {
+    callApi('POST', '/api/rights/message', {
+      name: document.getElementById('msg-name').value || '佐藤次郎',
+      to: document.getElementById('msg-to').value || '友人',
+      message: document.getElementById('msg-content').value || '国体について議論しませんか',
+    });
+  }
+
+  // Constitution reader functions
+  function execArticleSearch() {
+    const num = document.getElementById('article-num').value || '11';
+    callApi('GET', `/api/constitution/article/${num}`);
+  }
+
+  function execChapterSearch() {
+    const num = document.getElementById('chapter-num').value;
+    callApi('GET', `/api/constitution/chapter/${num}`);
+  }
+
+  async function showConstitutionReader() {
+    const reader = document.getElementById('constitution-reader');
+    reader.style.display = 'flex';
+
+    try {
+      const res = await fetch(API + '/api/constitution');
+      const data = await res.json();
+      renderConstitution(data.constitution);
+    } catch (err) {
+      document.getElementById('reader-content').innerHTML =
+        `<div style="color: var(--red); text-align: center; padding: 40px;">❌ 読ミ込ミニ失敗セリ: ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function hideConstitutionReader() {
+    document.getElementById('constitution-reader').style.display = 'none';
+  }
+
+  function renderConstitution(c) {
+    const content = document.getElementById('reader-content');
+    let html = '';
+
+    // Navigation
+    html += '<div class="reader-nav">';
+    html += '<button class="active" onclick="scrollToSection(\'preamble\')">上諭</button>';
+    c.chapters.forEach(ch => {
+      html += `<button onclick="scrollToSection('ch${ch.number}')">第${ch.number}章 ${escapeHtml(ch.title)}</button>`;
+    });
+    html += '</div>';
+
+    // Preamble
+    html += '<div id="section-preamble">';
+    html += '<div class="chapter-title">📜 上諭（告文・憲法発布勅語・上諭本文）</div>';
+    c.preamble.forEach(p => {
+      html += `<div class="preamble-section">
+        <h4>${escapeHtml(p.title)}</h4>
+        <div class="preamble-text">${escapeHtml(p.text)}</div>
+        <div class="article-comment">${escapeHtml(p._comment)}</div>
+      </div>`;
+    });
+    html += '</div>';
+
+    // Chapters
+    c.chapters.forEach(ch => {
+      html += `<div id="section-ch${ch.number}" class="chapter-block">`;
+      html += `<div class="chapter-title">第${ch.number}章　${escapeHtml(ch.title)}</div>`;
+      ch.articles.forEach(art => {
+        html += `<div class="article-card" id="article-${art.number}">
+          <div class="article-num">第${art.number}条</div>
+          <div class="article-text">${escapeHtml(art.text)}</div>
+          <div class="article-comment">${escapeHtml(art._comment)}</div>
+        </div>`;
+      });
+      html += '</div>';
+    });
+
+    // Footer
+    html += `<div style="text-align: center; padding: 32px; color: var(--dim); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 24px;">
+      御名御璽　明治二十二年二月十一日<br>
+      内閣総理大臣 伯爵 伊藤博文 ／ 枢密院議長 伯爵 伊藤博文<br><br>
+      「不磨ノ大典」— This constitution has been Object.freeze()'d.<br>
+      v1.0.0 | Deployed: 1889-02-11 | Status: Won't Fix
+    </div>`;
+
+    content.innerHTML = html;
+  }
+
+  function scrollToSection(id) {
+    const el = document.getElementById('section-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Enter key support for all inputs
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+      const panel = e.target.closest('.input-area');
+      if (panel) {
+        const btn = panel.querySelector('.btn');
+        if (btn) btn.click();
+      }
+    }
+    // ESC to close constitution reader
+    if (e.key === 'Escape') {
+      hideConstitutionReader();
+    }
+  });
+</script>
+
+</body>
+</html>

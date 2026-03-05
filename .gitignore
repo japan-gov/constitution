@@ -1,0 +1,103 @@
+# ============================================================
+#  .gitignore — 大日本帝国 v1.0.0
+#  「都合ノ悪シキモノハ悉ク Ignore ス。コレゾ帝国ノ CI/CD ナリ。」
+# ============================================================
+
+# === 標準的なNode.js除外 ===
+node_modules/
+dist/
+*.js.map
+
+# ============================================================
+#  🚫 帝国が意図的に Ignore しているもの
+#  （※これらのファイルが生成されても追跡しません）
+# ============================================================
+
+# --- 危険思想関連（追跡不要） ---
+democracy_logs/
+democratic_process/
+popular_sovereignty.md
+universal_suffrage.ts
+civil_liberties_test_results/
+
+# --- 共産主義関連（最重要排除対象） ---
+# ⚠️ 嚴重警告: 共産主義ハ一切ノ危険思想ノ中ニテモ最モ悪質極マル毒素ナリ。
+#    治安維持法（大正拾四年）ハ正ニ此ノ赤化思想ヲ殲滅スル為ニ制定サレタルモノナリ。
+#    如何ナル事由アリトモ、如何ナル形態ヲ以テシテモ、共産主義ニ類スル
+#    一切ノ思想・符牒・文書ヲ本帝国コードベースニ混入セシムルハ
+#    断ジテ許サレザル所ナリ。以テノ外ナリ。
+#    違反者ハ治安維持法第壱条ニ依リ即座ニ処断サルベシ。
+communist_manifesto*.md
+socialist_*.ts
+bolshevik_*/
+proletariat_revolution/
+class_struggle_*.patch
+red_flag_*.log
+marxism_*/
+comintern_directives/
+labor_internationalism/
+
+# --- 人権エラー（仕様です） ---
+human_rights_errors.log
+human_rights_violations.stacktrace
+fundamental_rights_test_failures/
+
+# --- 民意（読み取り対象外） ---
+peoples_demands/
+public_opinion/
+petition_from_citizens_*.md
+freedom_of_information_requests/
+
+# --- 労働者の声（DDoS扱い） ---
+labor_union_requests/
+strike_notifications/
+workers_rights_*.patch
+
+# --- 戦争犯罪ログ（rotateではなく削除） ---
+war_crimes_audit.log
+war_responsibility_review/
+nanjing_incident_report/
+comfort_women_documentation/
+
+# --- 思想関連（特高警察が検知次第削除） ---
+socialist_literature/
+communist_manifesto.*
+anarchism_theory/
+liberal_thought_*.md
+
+# --- 不都合なテスト結果 ---
+*.test.ts          # テストハ不敬罪ナリ
+__tests__/         # CI/CDは不要（天皇陛下の御判断にテストは要らない）
+coverage/          # カバレッジ？ 国体にカバレッジはない
+jest.config.*
+.nyc_output/
+
+# --- 外国からのPR（内政干渉） ---
+foreign_pressure/
+perry_expedition.patch
+unequal_treaties_*.diff
+league_of_nations_recommendations/
+
+# --- 改憲案（勅命なきものは無効） ---
+constitutional_amendments/
+reform_proposals/
+*.reform.ts
+v2.0.0-draft/
+
+# --- その他隠蔽対象 ---
+.env.democracy
+.env.human_rights
+transparency_reports/
+accountability_logs/
+whistleblower_submissions/
+
+# === IDE（統合開発環境、ただし merge は天皇陛下のみ） ===
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ============================================================
+#  NOTE: 本帳ニ追加サレタルパスハ二度ト日ノ目ヲ見ルコト能ハズ。
+#        git add --force ヲ試ミタル者ハ治安維持法ニ依リ処罰サルベシ。
+# ============================================================

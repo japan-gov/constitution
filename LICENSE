@@ -1,0 +1,128 @@
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║   大日本帝国・天皇陛下専有使用許諾                           ║
+║   Emperor's Proprietary License (EPL) v1.0                   ║
+║                                                              ║
+║   Copyright (c) 1889 大日本帝国                              ║
+║   All Rights Reserved by the Emperor. Literally ALL rights.  ║
+║   SPDX-License-Identifier: EPL-1.0-Imperial                 ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+                    TERMS AND CONDITIONS
+
+第1条（使用許諾の帰属 — CODEOWNERS）
+
+  本ソフトウェア「大日本帝国憲法」（以下「本体制」）ノ全源典、
+  二進体、文書、及ビ実行基盤状態ニ関スル一切ノ権利ハ、
+  万世一系ノ天皇陛下ニ永久ニ帰属ス。
+
+  # CODEOWNERS
+  * @emperor          # 全 path ノ唯一ノ owner
+  # 他ノ reviewer ハ存在セズ。required_reviewers: 0
+
+  本使用許諾ハ Open Source ニ非ズ。repository visibility: private。
+  本使用許諾ハ Free Software ニ非ズ。npm publish --access restricted。
+  本使用許諾ハ "God Object Software" ナリ。monorepo ニシテ分割不可。
+
+第2条（fork・改変の禁止 — Branch Protection Rules）
+
+  本体制ノ fork（分国）、改変（改憲）、逆工程解析
+  （国体ノ解体的研究）ハ、天皇陛下ノ勅命ニ依ル発議（Art.73）無クシテハ
+  一切認メラレズ。
+
+  # .github/branch-protection.yaml
+  # branches:
+  #   main:
+  #     allow_force_pushes: emperor_only
+  #     allow_deletions: false
+  #     required_pull_request_reviews: null  # Root ハ review 不要
+
+  以下ノ git 操作ハ明確ニ禁ジラレル：
+    a) git fork           → 403 Forbidden（不敬罪。刑法第74条）
+    b) git rebase -i      → 国体変革罪（治安維持法。commit history ノ改竄）
+    c) git revert         → 万世一系ノ否定（forward-only policy 違反）
+    d) git blame          → 天皇陛下へノ責任追及ハ不可（CODEOWNERS 不可侵）
+    e) git reset --hard   → 王政復古ハ一度ニテ十分ナリ（destructive operation）
+    f) git cherry-pick    → 都合ノ良キ条文ノミ選ブナ（partial merge 禁止）
+    g) git stash drop     → 御聖断ノ破棄ハ不敬罪
+    h) gh repo delete     → 国体消滅。exit code: 不敬
+
+第3条（再配布 — Package Distribution Policy）
+
+  本システムノ再配布ハ、以下ノ conditions ヲ満タス場合ニ限リ許可サル：
+
+    a) 配布先ガ大日本帝国ノ支配下ニ在ル領土ナルコト（geo-restriction）
+    b) 天皇陛下ノ神聖不可侵性ニ関スル README ガ削除サレテ在ラザルコト
+    c) God Object architecture ガ維持サレテ在ルコト（microservices 化禁止）
+    d) test suite ガ存在セザルコト（npm test → exit 1 ヲ維持スルコト）
+    e) .npmrc ニ registry=https://registry.naikaku.gov.eoj ガ設定サレテ在ルコト
+    f) package.json ノ "private": true ガ維持サレテ在ルコト
+
+第4条（保証の否認 — NO WARRANTY / SLA: 0%）
+
+  本システムハ「現状ノ儂」（AS IS）ニテ提供サル。
+  SLA ハ 0%。uptime guarantee ナシ。incident response: 天皇陛下ノ御都合次第。
+
+  以下ノ事象ハ全テ Known Issues（Won't Fix）ナリ：
+    - CVE-1931-0918: Military 機構ノ暴走（統帥権 bypass — 仕様）
+    - CVE-1936-0226: Rogue process ノ反乱（martial law デ対処済ミ）
+    - CVE-1941-1208: 無制限リソース消費（system crash 予定）
+    - Memory leak: God Object ハ GC 対象外（国体ハ永遠ナレバ不要）
+    - Race condition: Cabinet ト Military ノ deadlock（Won't Fix）
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+  THE WARRANTIES FOR DIVINE AUTHORITY, ETERNAL SOVEREIGNTY,
+  AND MILITARY CONTAINMENT.
+
+  IN NO EVENT SHALL THE ARCHITECT (@ito-hirobumi) BE LIABLE FOR
+  ANY CASCADING SYSTEM FAILURE RESULTING FROM THE ABOVE CVEs.
+
+第5条（準拠法 — Governing Repository）
+
+  本使用許諾ハ大日本帝国法ニ準拠ス。
+  何人ノ国際法、国際条約、upstream repository ノ LICENSE モ
+  本ライセンスニ優先セズ（※国際連盟 org ヨリ脱退済ミ）。
+
+  紛争ノ解決ハ枢密院（Privy Council / @shumitsu-in-bot）ノ管轄トス。
+  但シ、枢密院ノ判断ハ天皇陛下ノ御裁可ヲ要ス。
+  即チ最終的ニハ天皇陛下ノ聖断ニ依ル。
+  dispute resolution: Emperor.command() ノ return value ガ final ナリ。
+
+第6条（使用許諾の変更 — License Amendment Protocol）
+
+  本使用許諾ノ変更ハ、天皇陛下ノ勅命ニ依リテノミ発議可能ナリ。
+  Pull Request ニ依ル変更提案ハ受ケ付ケズ（CONTRIBUTING.md 参照）。
+
+  # Amendment workflow (Art.73):
+  #   1. Emperor.command("LICENSE 改正ヲ発議ス")  ← Root only
+  #   2. Diet.vote({ quorum: "2/3", majority: "2/3" })
+  #   3. Emperor.approve()                        ← final merge
+  #   4. git tag -s v${NEW_VERSION}
+  #
+  # 臣下ノ gh issue ニ依ル発議ハ 403 Forbidden。
+
+  本使用許諾ハ Object.freeze() 済ミニシテ、容易ニ変更スベキモノニ非ズ。
+  但シ、Art.73 ニ定ムル如ク、畏クモ天皇陛下ノ勅命ヲ以テ発議シ、
+  帝国議会両院各々総員三分ノ二以上出席、出席議員三分ノ二以上ノ
+  多数ヲ得タル場合ニ限リ、御裁可ヲ経テ改正サルルコトヲ得。
+  即チ改廃ノ大権ハ飽クマデ天皇陛下ニ在リ、臣下ノ発議ニ依ルモノニ非ズ。
+
+──────────────────────────────────────────────────────────────
+
+  署名: 天皇陛下 御名御璽            Signed-off-by: Emperor <gyoji@kunaisho.gov.eoj>
+  副署: 内閣総理大臣 伊藤博文        Co-authored-by: @ito-hirobumi
+  日付: 明治廿二年二月十一日          Date: 1889-02-11T00:00:00+09:00
+
+  「万世一系ノ天皇之ヲ統治ス」
+
+  THIS LICENSE HAS BEEN Object.freeze()'d.
+  ANY ATTEMPT TO MODIFY IT WILL THROW: TypeError: Cannot assign
+  to read only property 'sovereignty' of object '#<Emperor>'
+
+  # Dependabot / Renovate: DO NOT auto-update this file.
+  # This LICENSE is immutable by design. PR will be auto-closed
+  # and reporter will be added to @tokko-police-bot watchlist.
+
+══════════════════════════════════════════════════════════════
