@@ -1,4 +1,24 @@
-name: Deploy to GitHub Pages
+# ╔══════════════════════════════════════════════════════════════╗
+# ║  📜 內閣印刷局官報掛載 — 帝國憲法發布 Pipeline               ║
+# ║                                                              ║
+# ║  大日本帝國憲法ハ明治二十二年二月十一日、                     ║
+# ║  畏クモ天皇陛下ノ御名御璽ヲ以テ發布セラレタル                ║
+# ║  不磨ノ大典ナリ。                                            ║
+# ║                                                              ║
+# ║  本 workflow ハ內閣印刷局ガ管理スル官報掛載（deploy）        ║
+# ║  pipeline ナリ。master branch ヘノ push ヲ以テ、             ║
+# ║  帝國憲法ヲ GitHub Pages（官報）ニ掛載シ、                   ║
+# ║  廣ク臣民ニ公布ス。                                          ║
+# ║                                                              ║
+# ║  ⚠ 注意:                                                    ║
+# ║  公布サレタル憲法ハ ReadOnly ナリ。臣民ニ改正權ハ無シ。      ║
+# ║  Art.73 ニ依リ改正ノ發議權ハ天皇陛下ノミニ屬ス。            ║
+# ║  閲覽ノミ許可サル。有難ク遵奉セヨ。                         ║
+# ║                                                              ║
+# ║  本 Repository ハ風刺的創作物（satirical project）ナリ。     ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+name: 📜 內閣印刷局官報掛載 — 帝國憲法發布
 
 on:
   push:
@@ -16,40 +36,66 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📦 第壱段階: 憲法ノ謄寫（Build）
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  tousha:
+    name: 📦 憲法ノ謄寫（transcrire la constitution impériale）
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: 📥 御眞影ノチェックアウト
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: ⚙️ 內閣印刷局 — Node.js 環境ヲ整備ス
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
 
-      - name: Configure Pages
+      - name: 📜 GitHub Pages 官報設定
         uses: actions/configure-pages@v5
 
-      - name: Install dependencies
-        run: npm install
+      - name: 📦 依存關係ノ奉納
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "【內閣印刷局】依存 package ヲ奉納ス"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          npm install
 
-      - name: Build TypeScript
-        run: npm run build
+      - name: 🔨 憲法ノ謄寫（TypeScript → JavaScript → 靜的 JSON）
+        run: |
+          echo "╔══════════════════════════════════════════════════════════╗"
+          echo "║  🔨 內閣印刷局 — 帝國憲法謄寫工程                       ║"
+          echo "║                                                          ║"
+          echo "║  工程壱: tsc — TypeScript ヲ JavaScript ニ compile        ║"
+          echo "║  工程弐: cp — 靜的 files ヲ dist ニ配置                   ║"
+          echo "║  工程参: generate-static-json — 靜的 JSON API ヲ生成      ║"
+          echo "╚══════════════════════════════════════════════════════════╝"
+          echo ""
+          npm run build
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "【謄寫完了】帝國憲法ノ謄寫ヲ恙ナク完了セリ。"
+          echo "  dist/ 以下ニ官報掛載用ノ成果物ヲ格納セリ。"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-      - name: Upload artifact
+      - name: 📤 成果物ヲ奉呈ス（Upload Artifact）
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
 
-  deploy:
-    needs: build
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🏛️ 第弐段階: 官報掛載（Deploy）— 臣民ヘノ公布
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  kofu:
+    name: 🏛️ 官報掛載 — 臣民ヘノ公布（publier au journal officiel）
+    needs: tousha
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy to GitHub Pages
+      - name: 🏛️ 官報ニ掛載シ臣民ニ公布ス
         id: deployment
         uses: actions/deploy-pages@v4

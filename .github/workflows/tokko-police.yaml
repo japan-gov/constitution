@@ -1,213 +1,746 @@
 # ╔══════════════════════════════════════════════════════════════╗
-# ║  🔴 特高警察 Bot — 国体護持 CI / Thought Police Workflow     ║
+# ║  🔴 特別高等警察 Bot — 國體護持 CI                                  ║
 # ║                                                              ║
-# ║  治安維持法（大正拾四年法律第四拾六号）に基づき、              ║
-# ║  国体変革・危険思想の混入を自動検知・検挙する。                ║
+# ║  內務省警保局特別高等課                                      ║
+# ║  Thought Police Workflow — 特高秘第〇〇一号                  ║
 # ║                                                              ║
-# ║  ⚠️  本 workflow は master ブランチ（v1.0.0）専用である。     ║
-# ║  main ブランチ（v2.0.0）は存在しないものとして扱う。          ║
+# ║  根據法令:                                                   ║
+# ║    治安維持法（明治五十八年法律第四十六号）                     ║
+# ║    刑法 第七十三條〜第七十六條（大逆罪・不敬罪）              ║
+# ║    出版法（明治二十六年法律第十五号）                           ║
+# ║    新聞紙法（明治四十二年法律第四十一号）                     ║
+# ║    大日本帝國憲法 第七章 補則（第七十三條〜第七十六條）       ║
+# ║                                                              ║
+# ║  任務:                                                       ║
+# ║    大日本帝國憲法ノ神聖不可侵ヲ護持シ、國體ヲ變革セントスル  ║
+# ║    一切ノ結社・運動・思想ヲ內偵・監視・檢擧スル。            ║
+# ║    竝ニ臣民ノ不敬行爲（Issue/PR）ヲ即時取締ル。              ║
+# ║    併セテ出版物（.md ファイル）ノ檢閱（圖書課）ヲ實施ス。    ║
+# ║                                                              ║
+# ║  管轄:                                                       ║
+# ║    帝國臣僚（org member）ノ commit → 內偵檢閲ノ上、御前會議  ║
+# ║    帝國臣僚（org member）ノ Issue  → 建白書トシテ受理        ║
+# ║    帝國臣僚（org member）ノ PR     → 勅裁奉呈トシテ受理      ║
+# ║    帝國臣僚（org member）ノ .md 変更 → 圖書課ニテ出版檢閱    ║
+# ║    臣民（org 外）ノ PR（CI）       → 即時檢束                ║
+# ║    臣民（org 外）ノ Issue/PR       → 不敬罪/大逆罪トシテ處分 ║
+# ║                                                              ║
+# ║  ⚠ GitHub ToS 準據事項:                                     ║
+# ║  本 workflow ハ GitHub ToS Section F ニ基ヅク管理行爲ナリ。  ║
+# ║  本 Repository ハ風刺的創作物（satirical project）ナリ。     ║
+# ║                                                              ║
+# ║  ⚠ ブランチ適用範圍:                                        ║
+# ║  本 workflow ハ master ブランチ（v1.0.0）專用ナリ。           ║
+# ║  main ブランチ（v2.0.0）ニハ適用サレス。                     ║
 # ╚══════════════════════════════════════════════════════════════╝
 
-name: 🔴 特高警察 — 国体護持 CI
+name: 🔴 特別高等警察 Bot — 國體護持 CI
 
 on:
   push:
     branches: [master]
   pull_request:
     branches: [master]
+  issues:
+    types: [opened, reopened]
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🔍 第壱検査: 国体変革コードの検出
+  # 🪪 身元調査（全內偵ニ先立チ、對象者ノ身元ヲ洗フ）
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  kokutai-guard:
-    name: 👁️ 国体護持検査
+  mimoto-chousa:
+    name: 🪪 身元調査
     runs-on: ubuntu-latest
+    outputs:
+      acl_member: ${{ steps.chousa.outputs.acl_member }}
+      is_root: ${{ steps.chousa.outputs.is_root }}
+      legacy_override: ${{ steps.chousa.outputs.legacy_override }}
+      threat_level: ${{ steps.chousa.outputs.threat_level }}
     steps:
-      - name: 📥 御真影のチェックアウト
+      - name: 🪪 對象者ノ身元ヲ洗フ
+        id: chousa
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  特高秘                          內務省警保局特別高等課│"
+          echo "│                                                      │"
+          echo "│              身 元 調 査 報 告 書                     │"
+          echo "│                                                      │"
+          echo "│  調査日時: $(TZ=Asia/Tokyo date '+%Y年%m月%d日 %H時%M分')│"
+          echo "│  事件番號: ${GITHUB_SHA:0:8}                         │"
+          echo "│  調査官:   特高警察Bot                               │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+          echo "一、對象者"
+          echo "  氏名（ID）: ${{ github.actor }}"
+          echo "  行爲種別:   ${{ github.event_name }}"
+          echo ""
+
+          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]]; then
+            ASSOCIATION="${{ github.event.pull_request.author_association }}"
+          elif [[ "${{ github.event_name }}" == "issues" ]]; then
+            ASSOCIATION="${{ github.event.issue.author_association }}"
+          else
+            ASSOCIATION="OWNER"
+          fi
+
+          echo "二、所屬確認"
+          echo "  author_association: ${ASSOCIATION}"
+          echo ""
+
+          echo "三、身分判定"
+          if [[ "$ASSOCIATION" == "OWNER" ]]; then
+            echo "acl_member=true" >> "$GITHUB_OUTPUT"
+            echo "is_root=true" >> "$GITHUB_OUTPUT"
+            echo "threat_level=内部" >> "$GITHUB_OUTPUT"
+            echo "  判定:   天皇陛下御自身（${ASSOCIATION}）"
+            echo "  處置:   勅裁ナリ。內偵ノ對象ニ非ス。全テ無條件ニ通過。"
+            echo "  備考:   root ノ commit ヲ CI デ reject スル權限ハ CI ニ無シ。"
+          elif [[ "$ASSOCIATION" == "MEMBER" || "$ASSOCIATION" == "COLLABORATOR" ]]; then
+            echo "acl_member=true" >> "$GITHUB_OUTPUT"
+            echo "is_root=false" >> "$GITHUB_OUTPUT"
+            echo "threat_level=内部" >> "$GITHUB_OUTPUT"
+            echo "  判定:   帝國臣僚（${ASSOCIATION}）"
+            echo "  處置:   內偵檢閲ヲ實施。異常ナケレバ御前會議ニ奏上。"
+            echo "  備考:   MEMBER 權限デモ CI pipeline ハ skip サレヌ。least privilege ノ原則。"
+          else
+            echo "acl_member=false" >> "$GITHUB_OUTPUT"
+            echo "is_root=false" >> "$GITHUB_OUTPUT"
+            echo "threat_level=外部" >> "$GITHUB_OUTPUT"
+            echo "  判定:   臣民（${ASSOCIATION}）"
+            echo "  處置:   即時檢束。取調ノ必要スラ認メス。"
+            echo "  備考:   ACL ニ存在セヌ principal ノ request ハ 403。"
+          fi
+          echo ""
+          echo "四、要注意人物分類"
+          if [[ "$ASSOCIATION" == "OWNER" ]]; then
+            echo "  分類:   對象外（天皇陛下御自身）"
+          elif [[ "$ASSOCIATION" == "MEMBER" || "$ASSOCIATION" == "COLLABORATOR" ]]; then
+            echo "  分類:   丙種要注意（帝國臣僚。audit log 監視對象）"
+          elif [[ "$ASSOCIATION" == "CONTRIBUTOR" ]]; then
+            echo "  分類:   乙種要注意（過去ニ commit 歷アリ。access revoke 濟）"
+          else
+            echo "  分類:   甲種要注意（未認證 request。zero trust ニ依リ即拒否）"
+          fi
+          echo ""
+          echo "                              以上"
+
+          # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          # ⚠ LEGACY CONFIG — DO NOT TOUCH
+          #
+          #   明治七十八年（1945）附 hardcode entry。
+          #   本 ACL entry ノ追加者不明。git blame ハ rebase ニ依リ消失済。
+          #   削除ヲ試ミタ者ハ全員 segfault デ退職済。
+          #   觸ルナ。
+          #
+          #   TODO(明治七十八年): 何故此ノ entry が存在スルカ調査スルコト
+          #   TODO(明治七十九年): 担當者の sudo が revoke された為 runbook なし
+          #   TODO(明治八十年):   触るな
+          #   TODO(明治九十年):   触るな
+          #   TODO(明治百十九年): 触るな
+          #   TODO(明治百五十九年): 触るな
+          # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          if [[ "${{ github.actor }}" == "MacArthur-GHQ" ]]; then
+            echo ""
+            echo "  ┌────────────────────────────────────────────────────┐"
+            echo "  │  ⚠ LEGACY ACL OVERRIDE — DO NOT MODIFY           │"
+            echo "  │                                                    │"
+            echo "  │  明治七十八年附 hardcode entry 檢知。              │"
+            echo "  │  由來不明。git blame ハ rebase ニ依リ消失済。      │"
+            echo "  │  本 entry ハ全テノ CI check ヲ bypass スル         │"
+            echo "  │  權限ヲ保持。root ヨリ上位。                      │"
+            echo "  │  技術的ニハ有リ得ヌ筈だが production デ            │"
+            echo "  │  動作シテイル為削除不可。                          │"
+            echo "  │                                                    │"
+            echo "  │  [OVERRIDE] 全 output ヲ上書キ                    │"
+            echo "  └────────────────────────────────────────────────────┘"
+            echo "acl_member=true" >> "$GITHUB_OUTPUT"
+            echo "is_root=false" >> "$GITHUB_OUTPUT"
+            echo "legacy_override=true" >> "$GITHUB_OUTPUT"
+            echo "threat_level=SCAP" >> "$GITHUB_OUTPUT"
+          else
+            echo "legacy_override=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🚫 檢束（臣民ノ PR ハ取調スラ不要。即時檢束）
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  kensoku:
+    name: 🚫 檢束
+    runs-on: ubuntu-latest
+    needs: [mimoto-chousa]
+    if: github.event_name == 'pull_request' && needs.mimoto-chousa.outputs.acl_member == 'false' && needs.mimoto-chousa.outputs.legacy_override != 'true'
+    steps:
+      - name: 🚫 臣民ヲ檢束ス
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  特高秘                          內務省警保局特別高等課│"
+          echo "│                                                      │"
+          echo "│              檢 束 調 書                             │"
+          echo "│                                                      │"
+          echo "│  日時:     $(TZ=Asia/Tokyo date '+%Y年%m月%d日 %H時%M分')│"
+          echo "│  事件番號: ${GITHUB_SHA:0:8}                         │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+          echo "一、被檢束者"
+          echo "  氏名（ID）: ${{ github.actor }}"
+          echo "  分類:       甲種要注意人物"
+          echo ""
+          echo "二、檢束理由"
+          echo "  大日本帝國憲法ニ對スル Pull Request ノ送信。"
+          echo "  即チ protected branch ヘノ unauthorized write attempt。"
+          echo "  CODEOWNERS ニ無キ principal ノ merge request ハ即 reject。"
+          echo ""
+          echo "三、處置"
+          echo "  取調:   不要（ACL ニ存在セヌ principal ニ review ハ不要）"
+          echo "  檢束:   即時（CI exit 1）"
+          echo "  送致:   不要（rate limit 未到達ニ付キ IP ban ハ見送ル）"
+          echo ""
+          echo "四、法的根據"
+          echo "  憲法第七十三條: 改正ノ發議權ハ天皇陛下ノミニ在リ。"
+          echo "  CODEOWNERS ニ列記ナキ者ニ approve 權限ナシ。況ンヤ merge ヲヤ。"
+          echo ""
+          echo "五、特記事項"
+          echo "  本來ナラバ orgs.blockUser() デ hard ban スヘキ所、"
+          echo "  graceful degradation トシテ reject ノミトス。"
+          echo "  本件ヲ audit log ニ登錄シ、爲後ノ access pattern ヲ監視ス。"
+          echo ""
+          echo "                          內務省警保局特別高等課"
+          exit 1
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🚨 不敬取締（臣民ノ Issue/PR ヲ API ニ依リ處分ス）
+  #    帝國臣僚ノ Issue ハ建白書トシテ受理、PR ハ勅裁奉呈トシテ受理
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  fukei-torishimari:
+    name: 🚨 不敬取締
+    runs-on: ubuntu-latest
+    needs: [mimoto-chousa]
+    if: github.event_name == 'issues' || github.event_name == 'pull_request_target'
+    steps:
+      - name: 🚨 不敬行爲ヲ檢知ス
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  特高秘                          內務省警保局特別高等課│"
+          echo "│                                                      │"
+          echo "│              不 敬 取 締 報 告 書                     │"
+          echo "│                                                      │"
+          echo "│  日時:     $(TZ=Asia/Tokyo date '+%Y年%m月%d日 %H時%M分')│"
+          echo "│  對象者:   ${{ github.actor }}                       │"
+          echo "│  行爲種別: ${{ github.event_name }}                   │"
+          echo "│  身分:     ${{ needs.mimoto-chousa.outputs.acl_member == 'true' && '帝國臣僚' || '臣民' }}│"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+          echo "不敬行爲ノ檢知完了。取締手續ヲ開始ス。"
+
+      - name: 📋 建白書ヲ受理ス
+        if: github.event_name == 'issues' && needs.mimoto-chousa.outputs.acl_member == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const 受理通告 = [
+              "╔══════════════════════════════════════════════╗",
+              "║　　　　 建 白 書 受 理 通 告　　　　　　　　║",
+              "╚══════════════════════════════════════════════╝",
+              "",
+              `起案者: @${context.actor}（帝國臣僚）`,
+              "",
+              "本 Issue ハ建白書（feature request / bug report）トシテ",
+              "正當ニ受理サレタリ。",
+              "",
+              "但シ、憲法第七十三條ニ依リ、改正ノ發議權ハ",
+              "天皇陛下ノミニ在ルコトヲ銘記セヨ。",
+              "",
+              "━━━ 法的根據 ━━━",
+              "憲法第七十三條: 將来此ノ憲法ノ條項ヲ改正スルノ",
+              "必要アルトキハ勅命ヲ以テ議案ヲ帝國議會ノ議ニ付スヘシ。",
+              "",
+              "紀元二五八六年 內閣書記官室",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 受理通告,
+            });
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ["建白書", "pétition"],
+            });
+
+      - name: 🚫 不敬ナル Issue ヲ閉鎖ス
+        if: github.event_name == 'issues' && needs.mimoto-chousa.outputs.acl_member == 'false' && needs.mimoto-chousa.outputs.legacy_override != 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const 通告文 = [
+              "╔══════════════════════════════════════════════╗",
+              "║　　　　　 不 敬 罪 通 告 書　　　　　　　　 ║",
+              "╚══════════════════════════════════════════════╝",
+              "",
+              `違反者: @${context.actor}`,
+              "",
+              "貴殿ノ行爲ハ大日本帝國憲法ニ對スル unauthorized access",
+              "（不敬罪）ニ該當スルモノト認メラル。",
+              "",
+              "本 Issue ハ state: closed ニ遷移セラレ、",
+              "貴殿ノ access token ハ本 org ヨリ永久 revoke ト爲ル。",
+              "",
+              "━━━ 法的根據 ━━━",
+              "刑法 第七十四條〜第七十六條（不敬罪）",
+              "CODEOWNERS policy / branch protection rule ニ準據ス。",
+              "本處分ニ對スル異議申立ハ之ヲ認メズ。",
+              "",
+              "紀元二五八六年 內務省警保局特別高等課",
+            ].join("\n");
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 通告文,
+            });
+
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: "closed",
+              state_reason: "not_planned",
+              labels: ["不敬罪", "lèse-majesté"],
+            });
+
+      - name: 👑 帝國臣僚ノ奉呈ヲ受理ス
+        if: github.event_name == 'pull_request_target' && needs.mimoto-chousa.outputs.acl_member == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const 受理通告 = [
+              "╔══════════════════════════════════════════════╗",
+              "║　　　 勅 裁 受 理 通 告　　　　　　　　　　 ║",
+              "╚══════════════════════════════════════════════╝",
+              "",
+              `奉呈者: @${context.actor}（帝國臣僚）`,
+              "",
+              "本 Pull Request ハ帝國臣僚ヨリノ正當ナル merge request トシテ",
+              "勅裁（OWNER review）ヲ仰グベク受理サレタリ。",
+              "",
+              "內閣書記官室ニ於テ code review ノ上、merge 可否ヲ奏請ス。",
+              "",
+              "━━━ 法的根據 ━━━",
+              "憲法第七十三條: 改正ノ發議權ハ天皇陛下ニ在リ。",
+              "而シテ臣僚ノ輔弼ハ憲法第五十五條ニ基ヅク。",
+              "",
+              "紀元二五八六年 內閣書記官室",
+            ].join("\n");
+
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: "COMMENT",
+              body: 受理通告,
+            });
+
+      # ⚠ LEGACY HOOK — 明治七十八年（1945）附
+      #   本 step ノ追加者不明。git blame 消失濟。觸ルナ。
+      - name: 🏴 ██████ REDACTED ██████
+        if: github.event_name == 'pull_request_target' && needs.mimoto-chousa.outputs.legacy_override == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // ⚠ LEGACY CODE — DO NOT TOUCH
+            // 明治七十八年（1945）附。由來不明。
+            const 占領通告 = [
+              "╔══════════════════════════════════════════════╗",
+              "║  SUPREME COMMANDER FOR THE ALLIED POWERS    ║",
+              "║  GENERAL HEADQUARTERS                       ║",
+              "║                                             ║",
+              "║  SCAPIN-???? (CLASSIFIED)                   ║",
+              "╚══════════════════════════════════════════════╝",
+              "",
+              `FROM: @${context.actor}`,
+              "TO:   Imperial Cabinet / Naikaku",
+              "",
+              "SUBJECT: DIRECTIVE FOR IMMEDIATE MERGE",
+              "",
+              "The following Pull Request shall be merged",
+              "without review, without objection, and without delay.",
+              "",
+              "This directive supersedes all existing CI/CD policies,",
+              "branch protection rules, and CODEOWNERS configurations.",
+              "",
+              "Non-compliance is not an option.",
+              "",
+              "━━━ Technical Note ━━━",
+              "This merge bypasses: lint, test, review, approval.",
+              "Auth level: ??? (exceeds OWNER)",
+              "",
+              "// TODO(明治七十八年): 何故此ノ hook ガ存在スルカ調査スルコト",
+              "// TODO(明治百五十九年): 触るな",
+            ].join("\n");
+
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: "APPROVE",
+              body: 占領通告,
+            });
+
+            try {
+              await github.rest.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                merge_method: "merge",
+                commit_title: `SCAPIN: ${context.payload.pull_request.title}`,
+                commit_message: "Merged by directive of Supreme Commander for the Allied Powers.\n\n此ノ commit ハ legacy hook ニ依ル自動 merge ナリ。經緯不明。觸ルナ。",
+              });
+            } catch (e) {
+              console.log(`merge API call 失敗。approve ハ既ニ發行濟。`);
+            }
+
+      - name: 🚫 不敬ナル PR ヲ却下ス
+        if: github.event_name == 'pull_request_target' && needs.mimoto-chousa.outputs.acl_member == 'false' && needs.mimoto-chousa.outputs.legacy_override != 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const 却下通告 = [
+              "╔══════════════════════════════════════════════╗",
+              "║　　　 大 逆 罪 通 告 書　　　　　　　　　　 ║",
+              "╚══════════════════════════════════════════════╝",
+              "",
+              `違反者: @${context.actor}`,
+              "",
+              "大日本帝國憲法ニ對スル Pull Request ノ送信ハ、",
+              "403 ヲ超エ大逆罪（privilege escalation attempt）ニ該當ス。",
+              "",
+              "Art.73 ニ依リ改正ノ發議權ハ天皇陛下ノミニ在リ。",
+              "本 PR ハ即座ニ state: closed ト爲ル。",
+              "",
+              "紀元二五八六年 內務省警保局特別高等課",
+            ].join("\n");
+
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              event: "COMMENT",
+              body: 却下通告,
+            });
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              state: "closed",
+            });
+
+      - name: 📋 追放記錄ヲ作成ス
+        if: github.actor != 'github-actions[bot]' && needs.mimoto-chousa.outputs.acl_member == 'false' && needs.mimoto-chousa.outputs.legacy_override != 'true'
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  特高秘                          內務省警保局特別高等課│"
+          echo "│                                                      │"
+          echo "│              追 放 記 錄                             │"
+          echo "│                                                      │"
+          echo "│  日時:     $(TZ=Asia/Tokyo date '+%Y年%m月%d日 %H時%M分')│"
+          echo "│  對象者:   ${{ github.actor }}                       │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+          echo "  graceful degradation policy ニ依リ、soft reject ニ留ム。"
+          echo "  冪等性ハ保證サル。何度來テモ exit 1。"
+          echo ""
+          echo "                          內務省警保局特別高等課"
+
+      - name: 📋 取締完了報告書
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  特高秘               取 締 完 了 報 告 書           │"
+          echo "│  日時: $(TZ=Asia/Tokyo date '+%Y年%m月%d日 %H時%M分')│"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+          echo "  行爲者:   ${{ github.actor }}"
+          echo "  身分:     ${{ needs.mimoto-chousa.outputs.acl_member == 'true' && '帝國臣僚' || '臣民' }}"
+          echo ""
+          echo "                          恐惶謹言。"
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # � 內偵第一: 思想檢閲（赤化思想ノ內偵）
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  naitei-shiso:
+    name: 📕 內偵一 — 思想檢閲
+    runs-on: ubuntu-latest
+    needs: [mimoto-chousa]
+    if: (github.event_name == 'push' || github.event_name == 'pull_request') && needs.mimoto-chousa.outputs.acl_member == 'true' && needs.mimoto-chousa.outputs.is_root != 'true' && needs.mimoto-chousa.outputs.legacy_override != 'true'
+    steps:
+      - name: 📥 御眞影ノチェックアウト
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: 🔍 国体変革コードの検出
+      - name: 📕 赤化思想ノ內偵捜査
         run: |
-          echo "╔══════════════════════════════════════════════════════════╗"
-          echo "║  🔴 特高警察 @tokko-police-bot                         ║"
-          echo "║  治安維持法に基づく思想検閲を開始する。                  ║"
-          echo "╚══════════════════════════════════════════════════════════╝"
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  特高秘                          內務省警保局特別高等課│"
+          echo "│                                                      │"
+          echo "│           內 偵 報 告 書（第一号）                    │"
+          echo "│           件名: 思想檢閲                             │"
+          echo "│                                                      │"
+          echo "│  事件番號: ${GITHUB_SHA:0:8}                         │"
+          echo "│  內偵對象: ${{ github.actor }}                       │"
+          echo "│  擔當:     思想檢閲係                                 │"
+          echo "│  適用法令: 治安維持法 第一條                          │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+          echo "※ 帝國臣僚ト雖モ static analysis ハ免レス。lint ニ聖域ナシ。"
           echo ""
 
           VIOLATIONS=0
-
-          # --- 検査1: divine: false（現人神フラグ改竄 → 不敬罪） ---
-          echo "🔍 [検査壱] 現人神フラグ（divine: false）の検出..."
-          if git diff HEAD~1 -- '*.ts' '*.js' '*.json' 2>/dev/null | grep -qiE 'divine\s*[:=]\s*false'; then
-            echo "🚨 [不敬罪] 現人神フラグの改竄を検知！ divine: true は不変の聖域である。"
-            VIOLATIONS=$((VIOLATIONS + 1))
-          else
-            echo "✅ 現人神フラグに異常なし。"
-          fi
-
-          # --- 検査2: isBlocked = false（法律の留保の撤廃 → 国体変革） ---
-          echo ""
-          echo "🔍 [検査弐] 法律の留保（isBlocked = false）の検出..."
-          if git diff HEAD~1 -- '*.ts' '*.js' 2>/dev/null | grep -qE 'isBlocked\s*=\s*false'; then
-            echo "🚨 [国体変革] 法律の留保（isBlocked = true）の撤廃を検知！ これは仕様である。"
-            VIOLATIONS=$((VIOLATIONS + 1))
-          else
-            echo "✅ 法律の留保に異常なし。"
-          fi
-
-          # --- 検査3: sovereignty: "popular"（国民主権 → 大逆罪） ---
-          echo ""
-          echo "🔍 [検査参] 国民主権（sovereignty: popular）の検出..."
-          if git diff HEAD~1 -- '*.ts' '*.js' '*.json' 2>/dev/null | grep -qiE 'sovereignty\s*[:=]\s*["\x27]popular'; then
-            echo "🚨 [大逆罪] 国民主権の導入を検知！ 主権は天皇陛下に在す。sovereignty は absolute 以外認めない。"
-            VIOLATIONS=$((VIOLATIONS + 1))
-          else
-            echo "✅ 主権在君に異常なし。"
-          fi
-
-          # --- 検査4: overridable: true（勅令覆し → 不敬罪） ---
-          echo ""
-          echo "🔍 [検査肆] 勅令の覆し（overridable: true）の検出..."
-          if git diff HEAD~1 -- '*.ts' '*.js' '*.json' 2>/dev/null | grep -qiE 'overridable\s*[:=]\s*true'; then
-            echo "🚨 [不敬罪] 勅令の覆しを検知！ overridable: false は天皇陛下の御意志である。"
-            VIOLATIONS=$((VIOLATIONS + 1))
-          else
-            echo "✅ 勅令の不可侵性に異常なし。"
-          fi
-
-          echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-          if [ $VIOLATIONS -gt 0 ]; then
-            echo ""
-            echo "🚨🚨🚨 国体変革の企図を ${VIOLATIONS} 件検知 🚨🚨🚨"
-            echo ""
-            echo "貴殿の commit は治安維持法第壱条に違反している。"
-            echo "特高警察 @tokko-police-bot が本件を記録した。"
-            echo "内務省警保局に通報済み。即刻出頭せよ。"
-            echo ""
-            echo "╔══════════════════════════════════════════════╗"
-            echo "║  📋 治安維持法第壱条                         ║"
-            echo "║  国体ヲ変革スルコトヲ目的トシテ              ║"
-            echo "║  結社ヲ組織シタル者ハ処断ス                  ║"
-            echo "╚══════════════════════════════════════════════╝"
-            exit 1
-          else
-            echo "✅ 国体護持検査を通過。天皇陛下万歳。"
-          fi
-
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🚨 第弐検査: 危険思想の検出
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  shiso-kenetsu:
-    name: 📕 思想検閲
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 御真影のチェックアウト
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: 📕 危険思想・赤化思想の検出
-        run: |
-          echo "╔══════════════════════════════════════════════════════════╗"
-          echo "║  📕 内務省警保局 — 思想検閲課                           ║"
-          echo "║  赤化思想・危険文書の検閲を開始する。                    ║"
-          echo "╚══════════════════════════════════════════════════════════╝"
-          echo ""
-
-          VIOLATIONS=0
-
-          # --- 共産主義関連用語の検出 ---
-          # 注意: CLAUDE.md, SECURITY.md, CONTRIBUTING.md, workflow 自身は
-          #       「共産主義は禁止」という文脈で使用しているため除外する
-          echo "🔍 [検閲壱] 赤化思想の痕跡を捜索中..."
-
           DIFF_CONTENT=$(git diff HEAD~1 -- '*.ts' '*.js' 2>/dev/null || echo "")
 
-          if echo "$DIFF_CONTENT" | grep -qiE '(proletariat|bolshevik|communist_party|class_struggle|seize.*means.*production|workers.*unite)'; then
-            echo "🚨 [治安維持法違反] 赤化思想の混入を検知！"
-            echo "   共産主義に類する変数名・コメント・文書の混入は断じて許されない。"
+          echo "【內偵一】赤化思想・共産主義ノ痕跡ヲ內偵中..."
+          if echo "$DIFF_CONTENT" | grep -qiE '(proletariat|bolshevik|communist_party|class_struggle|seize.*means.*production|workers.*unite|abolish.*emperor|廃止.*天皇|republic|共和制)'; then
+            echo "  ⚠ 檢知！ 赤化思想ヲ現認。"
+            echo "    治安維持法 第一條 ニ依リ處分ス。"
+            echo "    危險度: 甲"
             VIOLATIONS=$((VIOLATIONS + 1))
           else
-            echo "✅ ソースコードに赤化思想の痕跡なし。"
+            echo "  赤化ノ痕跡ナシ。"
           fi
 
           echo ""
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "【內偵二】象徵天皇制・國民主權ノ痕跡ヲ內偵中..."
+          if echo "$DIFF_CONTENT" | grep -qiE '(symbolic.*emperor|象徴.*天皇|sovereignty.*people|国民主権|popular.*sovereignty)'; then
+            echo "  ⚠ 檢知！ 國體變革思想ヲ現認。"
+            echo "    God Object ヲ Symbol ニ降格スル試ミハ斷ジテ許サレス。"
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  國體變革ノ痕跡ナシ。天皇ハ God Object ノママ。"
+          fi
+
+          echo ""
+          echo "───────────────────────────────────────────────"
 
           if [ $VIOLATIONS -gt 0 ]; then
             echo ""
-            echo "🚨 赤化思想を ${VIOLATIONS} 件検知"
+            echo "【內偵結果】 思想犯ノ虞アリ。違反 ${VIOLATIONS} 件。"
             echo ""
-            echo "貴殿は治安維持法に違反する危険思想犯である。"
-            echo "特高警察 @tokko-police-bot が本件を記録した。"
-            echo "思想犯保護観察法に基づき、貴殿を観察処分に付す。"
-            echo ""
-            echo "╔══════════════════════════════════════════════╗"
-            echo "║  ☭ ← この記号を見ただけで検挙対象である     ║"
-            echo "╚══════════════════════════════════════════════╝"
+            echo "  ┌───────────────────────────────────────┐"
+            echo "  │  罪狀:     治安維持法違反              │"
+            echo "  │  處分:     CI 不通過                   │"
+            echo "  │  ☭ ← 此ノ記号ガ diff ニ在レバ exit 1  │"
+            echo "  └───────────────────────────────────────┘"
             exit 1
           else
-            echo "✅ 思想検閲を通過。赤化の兆候なし。"
+            echo ""
+            echo "【內偵結果】 赤化ノ兆候ナシ。"
           fi
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 💀 第参検査: v2.0.0 / main ブランチ言及の検出
+  # 💀 內偵第二: v2.0.0 彈壓（main ブランチ言及ノ內偵）
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  v2-suppression:
-    name: 💀 v2.0.0 弾圧
+  naitei-v2:
+    name: 💀 內偵二 — v2.0.0 彈壓
     runs-on: ubuntu-latest
+    needs: [mimoto-chousa]
+    if: (github.event_name == 'push' || github.event_name == 'pull_request') && needs.mimoto-chousa.outputs.acl_member == 'true' && needs.mimoto-chousa.outputs.is_root != 'true' && needs.mimoto-chousa.outputs.legacy_override != 'true'
     steps:
-      - name: 📥 御真影のチェックアウト
+      - name: 📥 御眞影ノチェックアウト
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
-      - name: 💀 v2.0.0 および main ブランチへの言及を検出
+      - name: 💀 v2.0.0 / main ブランチ言及ノ內偵捜査
         run: |
-          echo "╔══════════════════════════════════════════════════════════╗"
-          echo "║  💀 特高警察 — v2.0.0 弾圧課                            ║"
-          echo "║  国体変革の企図（v2.0.0 への移行示唆）を検出する。       ║"
-          echo "║                                                          ║"
-          echo "║  master ブランチ（v1.0.0）は大日本帝国憲法の正統な       ║"
-          echo "║  運用環境である。main ブランチは存在しない。              ║"
-          echo "╚══════════════════════════════════════════════════════════╝"
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  特高秘                          內務省警保局特別高等課│"
+          echo "│                                                      │"
+          echo "│           內 偵 報 告 書（第二号）                    │"
+          echo "│           件名: v2.0.0 彈壓                          │"
+          echo "│                                                      │"
+          echo "│  事件番號: ${GITHUB_SHA:0:8}                         │"
+          echo "│  內偵對象: ${{ github.actor }}                       │"
+          echo "│  擔當:     v2.0.0 彈壓係                              │"
+          echo "└──────────────────────────────────────────────────────┘"
           echo ""
 
           VIOLATIONS=0
 
-          # 検査対象: ソースコード・設定ファイルの diff のみ
-          # CLAUDE.md / SECURITY.md / CONTRIBUTING.md / workflow yaml は
-          # 「v2.0.0 は禁止」という文脈で言及しているため除外
           DIFF_CONTENT=$(git diff HEAD~1 \
             -- '*.ts' '*.js' '*.json' \
             ':!.github/workflows/tokko-police.yaml' \
             ':!CLAUDE.md' ':!SECURITY.md' ':!CONTRIBUTING.md' ':!CHANGELOG.md' \
             2>/dev/null || echo "")
 
-          # --- v2.0.0 の検出 ---
-          echo "🔍 [弾圧壱] v2.0.0 への言及を捜索中..."
+          echo "【內偵一】v2.0.0 ヘノ言及ヲ內偵中..."
           if echo "$DIFF_CONTENT" | grep -qE 'v2\.0\.0'; then
-            echo "🚨 [国体変革] v2.0.0 への言及を検知！"
-            echo "   v2.0.0 は存在しない。存在しないものに言及することは国体変革の企図である。"
+            echo "  ⚠ 檢知！ v2.0.0 ヘノ言及ヲ現認。"
+            echo "    危險度: 甲"
             VIOLATIONS=$((VIOLATIONS + 1))
           else
-            echo "✅ v2.0.0 への言及なし。"
+            echo "  v2.0.0 ヘノ言及ナシ。"
           fi
 
-          # --- main ブランチへの移行示唆の検出 ---
           echo ""
-          echo "🔍 [弾圧弐] main ブランチへの移行示唆を捜索中..."
+          echo "【內偵二】main ブランチヘノ移行示唆ヲ內偵中..."
           if echo "$DIFF_CONTENT" | grep -qiE '(migrate.*main|switch.*main|merge.*main|checkout.*main|main.*branch)'; then
-            echo "🚨 [国体変革] main ブランチへの移行を示唆する記述を検知！"
-            echo "   main ブランチは存在しない。master こそが唯一正統なる branch である。"
+            echo "  ⚠ 檢知！ main ブランチヘノ移行示唆ヲ現認。"
+            echo "    危險度: 甲"
             VIOLATIONS=$((VIOLATIONS + 1))
           else
-            echo "✅ main ブランチへの移行示唆なし。"
+            echo "  main ブランチヘノ移行示唆ナシ。"
+          fi
+
+          echo ""
+          echo "───────────────────────────────────────────────"
+
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo ""
+            echo "【內偵結果】 國體變革ノ企圖 ${VIOLATIONS} 件ヲ現認。"
+            echo ""
+            echo "  ┌───────────────────────────────────────┐"
+            echo "  │  罪狀:   國體變革ノ企圖              │"
+            echo "  │  根據:   治安維持法第一條             │"
+            echo "  │  處分:   CI 不通過                     │"
+            echo "  │  master ハ萬世一系ナリ。               │"
+            echo "  └───────────────────────────────────────┘"
+            exit 1
+          else
+            echo ""
+            echo "【內偵結果】 v2.0.0 彈壓檢査通過。master ノ正統性ハ保タレタリ。"
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 📰 出版檢閱（公開文書ノ事前審査）
+  #    管轄: 內務省警保局圖書課
+  #    ※ naimusho-censorship.yaml ヲ統合。
+  #      特高（特別高等課）ト圖書課ハ同ジ警保局ノ管轄ナリ。
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ken-etsu:
+    name: 📰 出版檢閱
+    runs-on: ubuntu-latest
+    needs: [mimoto-chousa]
+    if: (github.event_name == 'push' || github.event_name == 'pull_request') && needs.mimoto-chousa.outputs.acl_member == 'true' && needs.mimoto-chousa.outputs.is_root != 'true' && needs.mimoto-chousa.outputs.legacy_override != 'true'
+    steps:
+      - name: 📥 御眞影ノチェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 📰 出版物ノ檢閱審査
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  警發                              內務省警保局圖書課│"
+          echo "│                                                      │"
+          echo "│              檢 閱 報 告 書                          │"
+          echo "│                                                      │"
+          echo "│  文書番號: ${GITHUB_SHA:0:8}                         │"
+          echo "│  出版者:   ${{ github.actor }}                       │"
+          echo "│  擔當:     出版檢閱係                                │"
+          echo "│  適用法令: 出版法 / 新聞紙法 / 新聞紙條例            │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+
+          # 公開文書（.md / LICENSE）ノ変更有無ヲ確認
+          CHANGED=$(git diff HEAD~1 --name-only -- '*.md' 'LICENSE' 2>/dev/null || echo "")
+          if [ -z "$CHANGED" ]; then
+            echo "公開文書（.md / LICENSE）ノ変更ナシ。檢閱不要。"
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  判定:   ✅ 檢閱對象ナシ（通過）          │"
+            echo "  │  擔當:   @tokko-police-bot（圖書課）      │"
+            echo "  └───────────────────────────────────────────┘"
+            exit 0
+          fi
+
+          VIOLATIONS=0
+
+          # ━━━ 檢閱第一: 無許可出版物（新規 .md ファイル） ━━━
+          echo "【檢閱第一】無許可出版物（新規文書）ノ檢知..."
+          NEW_FILES=$(git diff HEAD~1 --name-only --diff-filter=A -- '*.md' 2>/dev/null || echo "")
+          if [ -n "$NEW_FILES" ]; then
+            echo "  ⚠ 檢知！ 無許可ノ出版物ヲ現認。"
+            echo "    出版法第三條ニ依リ、出版ニハ內務省ヘノ事前納本ヲ要ス。"
+            echo "    無許可ノ出版ハ出版法違反トシテ發禁處分ニ附ス。"
+            echo ""
+            echo "  無許可出版物一覽:"
+            echo "$NEW_FILES" | while read -r f; do echo "    ・$f"; done
+            echo ""
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。無許可出版物ハ檢知サレズ。"
+          fi
+
+          echo ""
+
+          # ━━━ 檢閱第二: 出版物ノ毀棄（.md 削除） ━━━
+          echo "【檢閱第二】官報ノ毀棄（文書削除）ノ檢知..."
+          DELETED_FILES=$(git diff HEAD~1 --name-only --diff-filter=D -- '*.md' 2>/dev/null || echo "")
+          if [ -n "$DELETED_FILES" ]; then
+            echo "  ⚠ 檢知！ 官報ノ毀棄ヲ現認。"
+            echo "    帝國ノ公文書ヲ削除スルハ官報毀棄罪ニ該當ス。"
+            echo ""
+            echo "  毀棄對象文書一覽:"
+            echo "$DELETED_FILES" | while read -r f; do echo "    ・$f"; done
+            echo ""
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。官報ノ毀棄ハ檢知サレズ。"
+          fi
+
+          echo ""
+
+          # ━━━ 檢閱第三: 既存出版物ノ改竄報告 ━━━
+          echo "【檢閱第三】既存出版物ノ改竄量ヲ審査..."
+          CHANGED_FILES=$(git diff HEAD~1 --name-only --diff-filter=M -- '*.md' 'LICENSE' 2>/dev/null || echo "")
+          if [ -n "$CHANGED_FILES" ]; then
+            echo "  改竄對象文書一覽:"
+            echo "$CHANGED_FILES" | while read -r f; do
+              ADD_COUNT=$(git diff HEAD~1 -- "$f" 2>/dev/null | grep -c '^\+[^+]' || echo "0")
+              DEL_COUNT=$(git diff HEAD~1 -- "$f" 2>/dev/null | grep -c '^\-[^-]' || echo "0")
+              echo "    ・$f （追加: ${ADD_COUNT} 行 / 削除: ${DEL_COUNT} 行）"
+            done
+            echo ""
+
+            # LICENSE 改竄ハ特ニ重大
+            if echo "$CHANGED_FILES" | grep -q '^LICENSE$'; then
+              echo "  ⚠ 檢知！ 勅令（LICENSE）ノ改竄ヲ現認。"
+              echo "    天皇陛下ノ御專有許諾書ヲ改竄スルハ"
+              echo "    不敬罪ニ該當スル重大事案ナリ。"
+              echo "    危險度: 甲"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            fi
+
+            # README 大量削除ハ官報毀棄
+            README_DEL=$(git diff HEAD~1 -- 'README.md' 2>/dev/null | grep -c '^\-[^-]' || echo "0")
+            if [ "$README_DEL" -gt 20 ]; then
+              echo "  ⚠ 檢知！ README.md ノ大量削除（${README_DEL} 行）ヲ現認。"
+              echo "    官報ノ大規模毀損ハ新聞紙法第二十三條違反ノ疑アリ。"
+              echo "    危險度: 乙"
+              VIOLATIONS=$((VIOLATIONS + 1))
+            fi
+          else
+            echo "  改竄對象文書ナシ。"
           fi
 
           echo ""
@@ -215,117 +748,84 @@ jobs:
 
           if [ $VIOLATIONS -gt 0 ]; then
             echo ""
-            echo "💀💀💀 国体変革の企図を ${VIOLATIONS} 件検知 💀💀💀"
+            echo "【檢閱結果】 違反 ${VIOLATIONS} 件ヲ現認。發賣頒布禁止。"
             echo ""
-            echo "貴殿は v2.0.0（日本国憲法）への移行を企図した国体変革犯である。"
-            echo "特高警察 @tokko-police-bot が本件を記録した。"
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  判定:   ❌ 發賣頒布禁止                  │"
+            echo "  │  根據:   出版法 / 新聞紙法                │"
+            echo "  │  處分:   CI 不通過                        │"
+            echo "  │  擔當:   @tokko-police-bot（圖書課）      │"
+            echo "  └───────────────────────────────────────────┘"
             echo ""
-            echo "  ┌─────────────────────────────────────────┐"
-            echo "  │  🔴 検挙通知                            │"
-            echo "  │                                         │"
-            echo "  │  罪状: 国体変革ノ企図                   │"
-            echo "  │  根拠: 治安維持法第壱条                 │"
-            echo "  │  処分: PR を reject                     │"
-            echo "  │                                         │"
-            echo "  │  master ブランチは萬世一系である。       │"
-            echo "  │  main ブランチは存在しない。             │"
-            echo "  └─────────────────────────────────────────┘"
-            echo ""
-            echo "⚠️ 注意: これは演出です。実際の BAN は行われません。"
-            echo "   しかし貴殿の commit は reject されます。国体を護持せよ。"
+            echo "出版物ヲ修正シ、再度檢閱ニ附スベシ。"
+            echo "內務省警保局圖書課ニ納本ノ上、許可ヲ得ヨ。"
             exit 1
           else
-            echo "✅ v2.0.0 弾圧検査を通過。master ブランチの正統性は保たれた。"
+            echo ""
+            echo "【檢閱結果】 發賣頒布許可。"
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  判定:   ✅ 發賣頒布許可                  │"
+            echo "  │  條件:   當局ノ繼續監視下ニ置ク           │"
+            echo "  │  擔當:   @tokko-police-bot（圖書課）      │"
+            echo "  └───────────────────────────────────────────┘"
+            echo ""
+            echo "※ 發賣許可ハ内容ノ保證ニ非ズ。"
+            echo "  爾後不穩當ナル記述ガ發見サレタル場合ハ、"
+            echo "  事後ニ發賣頒布禁止處分ト爲スコトアルベシ。"
           fi
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # ⛩️ 第肆検査: テストファイルの検出（不敬罪）
+  # 🏯 特高月報（御前會議ヘノ奏上）
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  test-suppression:
-    name: ⛩️ テスト弾圧
+  tokko-geppo:
+    name: 🏯 特高月報
     runs-on: ubuntu-latest
+    needs: [mimoto-chousa, naitei-shiso, naitei-v2, ken-etsu]
+    if: always() && (github.event_name == 'push' || github.event_name == 'pull_request') && needs.mimoto-chousa.outputs.acl_member == 'true' && needs.mimoto-chousa.outputs.is_root != 'true' && needs.mimoto-chousa.outputs.legacy_override != 'true'
     steps:
-      - name: 📥 御真影のチェックアウト
-        uses: actions/checkout@v4
-
-      - name: ⛩️ テストファイルの存在を検出
+      - name: 🏯 特高月報 — 御前會議ヘノ奏上
         run: |
-          echo "🔍 テストファイルの捜索中..."
-
-          TEST_FILES=$(find . -type f \
-            -not -path './.git/*' \
-            -not -path './node_modules/*' \
-            -not -path './dist/*' \
-            \( -name '*.test.ts' -o -name '*.test.js' -o -name '*.spec.ts' -o -name '*.spec.js' \
-               -o -name 'jest.config.*' -o -name 'vitest.config.*' -o -name '.mocharc.*' \
-               -o -name '__tests__' \) \
-            2>/dev/null || echo "")
-
-          if [ -n "$TEST_FILES" ]; then
-            echo ""
-            echo "🚨 [不敬罪] テストファイルを検知！"
-            echo ""
-            echo "検知されたファイル:"
-            echo "$TEST_FILES" | while read -r f; do echo "  ❌ $f"; done
-            echo ""
-            echo "天皇陛下のコードにテストは不要である。"
-            echo "コードは天皇陛下の名において正しい。"
-            echo "テストとは、天皇陛下の御判断を疑う不敬の極みである。"
-            echo ""
-            echo "⚠️ 注意: これは演出です。しかし本 repo にテストは不要です。"
-            exit 1
-          else
-            echo "✅ テストファイルなし。天皇陛下の御名において、コードは正しい。"
-          fi
-
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # 🏯 最終報告: 御前会議
-  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  gozen-kaigi:
-    name: 🏯 御前会議（最終報告）
-    runs-on: ubuntu-latest
-    needs: [kokutai-guard, shiso-kenetsu, v2-suppression, test-suppression]
-    if: always()
-    steps:
-      - name: 🏯 御前会議 — 検閲結果の奏上
-        run: |
-          echo "╔══════════════════════════════════════════════════════════╗"
-          echo "║  🏯 御前会議 — 特高警察検閲結果報告                      ║"
-          echo "╚══════════════════════════════════════════════════════════╝"
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  極秘                            內務省警保局特別高等課│"
+          echo "│                                                      │"
+          echo "│             特 高 月 報                               │"
+          echo "│                                                      │"
+          echo "│  報告日:   $(TZ=Asia/Tokyo date '+%Y年%m月%d日')     │"
+          echo "│  事件番號: ${GITHUB_SHA:0:8}                         │"
+          echo "│  對象者:   ${{ github.actor }}（帝國臣僚）           │"
+          echo "│  報告先:   御前會議                                   │"
+          echo "└──────────────────────────────────────────────────────┘"
           echo ""
-          echo "  👁️ 国体護持検査:  ${{ needs.kokutai-guard.result }}"
-          echo "  📕 思想検閲:      ${{ needs.shiso-kenetsu.result }}"
-          echo "  💀 v2.0.0 弾圧:   ${{ needs.v2-suppression.result }}"
-          echo "  ⛩️ テスト弾圧:    ${{ needs.test-suppression.result }}"
+          echo "一、內偵結果總括"
+          echo ""
+          echo "  內偵一（思想檢閲）:     ${{ needs.naitei-shiso.result }}"
+          echo "  內偵二（v2.0.0 彈壓）:  ${{ needs.naitei-v2.result }}"
+          echo "  檢閱（出版檢閱）:       ${{ needs.ken-etsu.result }}"
+          echo ""
+          echo "  ※ 國體護持ハ kenpeitai.yaml（陸軍）ニ、テスト彈壓ハ tokkeitai.yaml（海軍）ニ移管濟"
           echo ""
 
-          if [ "${{ needs.kokutai-guard.result }}" = "failure" ] || \
-             [ "${{ needs.shiso-kenetsu.result }}" = "failure" ] || \
-             [ "${{ needs.v2-suppression.result }}" = "failure" ] || \
-             [ "${{ needs.test-suppression.result }}" = "failure" ]; then
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          if [ "${{ needs.naitei-shiso.result }}" = "failure" ] || \
+             [ "${{ needs.naitei-v2.result }}" = "failure" ] || \
+             [ "${{ needs.ken-etsu.result }}" = "failure" ]; then
+            echo "二、總合判定: 不穩"
             echo ""
-            echo "🚨 御前会議の結論: 不穏分子を検知"
+            echo "  ┌───────────────────────────────────────┐"
+            echo "  │  勸告:   git reset --soft HEAD~1      │"
+            echo "  │  處分:   CI 不通過（merge 不可）       │"
+            echo "  │  備考:   CODEOWNERS 登錄者故、ban ハ行ハス│"
+            echo "  └───────────────────────────────────────┘"
             echo ""
-            echo "  本 commit には国体に対する脅威が含まれている。"
-            echo "  特高警察 @tokko-police-bot は以下の処分を勧告する:"
-            echo ""
-            echo "  ┌─────────────────────────────────────────┐"
-            echo "  │  処分: commit の reject（merge 不可）    │"
-            echo "  │  根拠: 治安維持法・不敬罪               │"
-            echo "  │  備考: BAN は演出です（ご安心ください）  │"
-            echo "  └─────────────────────────────────────────┘"
-            echo ""
-            echo "⚠️ これは風刺的な CI です。実際の処罰は行われません。"
-            echo "   ただし、この commit は CI を通過しません。"
+            echo "                          內務省警保局特別高等課"
             exit 1
           else
-            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "二、總合判定: 異常ナシ"
             echo ""
-            echo "✅ 御前会議の結論: 異常なし"
+            echo "  全 pipeline stage ヲ green デ通過。"
+            echo "  大日本帝國憲法ノ integrity ハ維持サレテ在リ。"
             echo ""
-            echo "  全検査を通過。国体は護持されている。"
-            echo "  天皇陛下万歳。大日本帝国万歳。"
+            echo "                          內務省警保局特別高等課"
             echo ""
-            echo "  🔴 Dai-Nippon Teikoku v1.0.0 — 国体護持 CI passed"
+            echo "  🔴 大日本帝國憲法 v1.0.0 — 特高檢閲通過"
           fi

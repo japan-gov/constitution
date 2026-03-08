@@ -19,7 +19,7 @@
  *   └── index.ts                    # 本書（集約・再エクスポート）
  *
  * @since v1.0.0 (1889-02-11)
- * @author 伊藤博文 <ito.hirobumi@naikaku.gov.eoj>
+ * @author 伊藤博文 <ito.hirobumi@naikaku.go.ij>
  */
 
 // ============================================================
@@ -49,7 +49,7 @@ import { ConstitutionData } from "./types";
 /**
  * 大日本帝國憲法 — 全条文データ
  *
- * 明治廿二年二月十一日発布、明治廿三年十一月廿九日施行。
+ * 明治二十二年二月十一日発布、明治二十三年十一月二十九日施行。
  * 全7章76条 + 上諭（告文・勅語・前文）。
  * 各章は独立ファイルから import され、ここで assemble される。
  *
@@ -57,8 +57,8 @@ import { ConstitutionData } from "./types";
  */
 export const CONSTITUTION: ConstitutionData = {
   title: "大日本帝國憲法",
-  promulgated: "明治廿二年二月十一日",
-  enforced: "明治廿三年十一月廿九日",
+  promulgated: "明治二十二年二月十一日",
+  enforced: "明治二十三年十一月二十九日",
   preamble: PREAMBLE,
   chapters: [CHAPTER_1, CHAPTER_2, CHAPTER_3, CHAPTER_4, CHAPTER_5, CHAPTER_6, CHAPTER_7],
   totalArticles: 76,

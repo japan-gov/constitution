@@ -449,9 +449,9 @@
 <body>
 
 <div class="header">
-  <h1>🔴 大日本帝国 Imperial Console</h1>
+  <h1><svg width="32" height="22" viewBox="0 0 3 2" style="vertical-align: middle; margin-right: 8px; border: 1px solid #333;"><rect width="3" height="2" fill="#fff"/><circle cx="1.5" cy="1" r="0.6" fill="#bc002d"/></svg>大日本帝国 Imperial Console</h1>
   <div class="subtitle">v1.0.0 — Meiji Constitution | 設計者: 伊藤博文 | God Object 実行基盤</div>
-  <div class="warning">⚠️ WARNING: 4 known critical vulnerabilities (CVE-1900, CVE-1931, CVE-1936, CVE-1941) — Status: Won't Fix</div>
+  <div class="warning">⚠️ WARNING: 5 known critical vulnerabilities (CVE-1900, CVE-1931, CVE-1936, CVE-1941, CVE-1945) — Status: Won't Fix / Unclassified</div>
   <div class="links">
     <a href="https://github.com/japan-gov/constitution" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
   </div>
@@ -459,25 +459,27 @@
 
 <div class="container">
   <div class="sidebar">
-    <h3>📜 憲法全文</h3>
-    <button onclick="showConstitutionReader()"><span class="icon">📖</span>全文ヲ読ム</button>
+    <h3>📜 Constitution (Law)</h3>
+    <button onclick="showConstitutionReader()"><span class="icon">📖</span>大日本帝国憲法</button>
     <button onclick="callApi('GET', '/api/constitution/preamble')"><span class="icon">🙏</span>上諭（告文・勅語）</button>
     <button onclick="showPanel('article-search')"><span class="icon">🔍</span>条文検索</button>
-    <button onclick="callApi('GET', '/api/imperial-house')"><span class="icon">👑</span>皇室典範</button>
+    <button onclick="showImperialHouseLawReader()"><span class="icon">👑</span>皇室典範<span style="font-size:0.6rem;color:var(--dim);margin-left:4px;">@imperial-household</span></button>
 
     <div class="divider"></div>
     <h3>👑 Emperor (Root)</h3>
     <button onclick="showPanel('command')"><span class="icon">📜</span>勅命ヲ発ス</button>
     <button onclick="showPanel('dissolve')"><span class="icon">💀</span>衆議院ヲ解散</button>
     <button onclick="showPanel('emergency')"><span class="icon">🚨</span>緊急勅令態勢</button>
+    <button onclick="showPanel('suppress')"><span class="icon">⚔️</span>暴徒鎮圧</button>
     <button onclick="callApi('GET', '/api/system/status')"><span class="icon">📊</span>体制状態</button>
 
     <div class="divider"></div>
     <h3>⚔️ Military (Rogue)</h3>
     <button onclick="showPanel('military')"><span class="icon">🎖️</span>軍事行動</button>
-    <button onclick="showPanel('active-duty')"><span class="icon">🦠</span>現役武官制</button>
-    <button onclick="showPanel('reject')"><span class="icon">🚫</span>統帥権干犯ヲ主張</button>
+    <button onclick="showPanel('active-duty')"><span class="icon">🦠</span>軍部大臣現役武官制</button>
+    <button onclick="showPanel('reject')"><span class="icon">🚫</span>統帥権干犯問題発動</button>
     <button onclick="showPanel('rogue')"><span class="icon">💣</span>暴走態勢</button>
+    <button onclick="showPanel('go-ichi-go')"><span class="icon">🔫</span>五・一五事件</button>
     <button onclick="showPanel('ni-ni-roku')"><span class="icon">🔥</span>二・二六事件</button>
     <button onclick="showPanel('daitoa')"><span class="icon">💥</span>大東亜戦争</button>
 
@@ -536,6 +538,10 @@
       <h4>💀 衆議院解散（Emperor.dissolve）</h4>
       <div class="desc">議会機構ニ SIGKILL ヲ送達ス。理由ハ任意ナリ。</div>
       <div class="input-group">
+        <label>対象内閣:</label>
+        <input type="text" id="dissolve-cabinet" placeholder="黒田内閣" />
+      </div>
+      <div class="input-group">
         <label>理由:</label>
         <input type="text" id="dissolve-reason" placeholder="理由無シ（勅命ニ付キ不要）" />
       </div>
@@ -573,7 +579,7 @@
     </div>
 
     <div id="panel-reject" class="input-area">
-      <h4>🚫 統帥権干犯ヲ主張</h4>
+      <h4>🚫 統帥権干犯問題発動</h4>
       <div class="desc">文民ガ軍事ニ口出シシタル場合ニ「統帥権干犯ナリ！」ト拒否スル手続ナリ。</div>
       <div class="input-group">
         <label>干犯元:</label>
@@ -590,6 +596,16 @@
       </div>      <button class="btn danger" onclick="execRogue()">💣 暴走開始（満洲事変）</button>
     </div>
 
+    <div id="panel-go-ichi-go" class="input-area">
+      <h4>🔫 五・一五事件（CVE-1932-0515）</h4>
+      <div class="desc">海軍青年将校ガ首相官邸ニ乱入シ、内閣総理大臣ヲ射殺ス。政党政治ノ終焉。<br>「話セバ分カル」→「問答無用！」→ kill -9 cabinet-pm.service<br>前提: 満州事変（CVE-1931-0918）発生後、鎮圧試行（常ニ失敗）ヲ経テ実行可能。</div>
+      <div class="input-group">
+        <label>部隊:</label>
+        <select id="go-ichi-go-branch"><option value="海軍">海軍（青年将校）</option></select>
+      </div>
+      <button class="btn danger" onclick="execGoIchiGo()">🔫 五・一五事件ヲ発動</button>
+    </div>
+
     <div id="panel-ni-ni-roku" class="input-area">
       <h4>🔥 二・二六事件態勢（CVE-1936-0226）</h4>
       <div class="desc">青年将校ガ重臣ヲ暗殺シ、政府中枢ヲ占拠ス。Cabinet 機構ハ物理的ニ破壊サル。<br>鎮圧ニハ天皇陛下ノ御聖断（suppress-226）ヲ要ス。</div>
@@ -598,7 +614,20 @@
         <select id="ni-ni-roku-branch"><option value="陸軍">陸軍（青年将校）</option></select>
       </div>
       <button class="btn danger" onclick="execNiNiRoku()">🔥 二・二六事件ヲ発動</button>
-      <button class="btn" onclick="execSuppress226()" style="margin-left: 8px;">👑 御聖断ニ依リ鎮圧</button>
+    </div>
+
+    <div id="panel-suppress" class="input-area">
+      <h4>⚔️ 暴徒鎮圧（Imperial Suppression — Root Only）</h4>
+      <div class="desc">畏クモ天皇陛下ガ御自ラ反乱・暴動ヲ鎮圧シ賜フ。<br>CODEOWNERS ニ依ル最終 approve ニ相当ス。Root 権限限定。override 不可。<br>対象事象ガ発生シテ在ラザレバ鎮圧ハ不可ナリ。</div>
+      <div class="input-group">
+        <label>鎮圧対象:</label>
+        <select id="suppress-target">
+          <option value="918">満州事変（CVE-1931-0918）— 関東軍ノ暴走</option>
+          <option value="226">二・二六事件（CVE-1936-0226）— 青年将校ノ反乱</option>
+          <option value="1208">大東亜戦争（CVE-1941-1208）— 軍部ノ壊滅的暴走</option>
+        </select>
+      </div>
+      <button class="btn danger" onclick="execSuppress()">👑 御聖断ニ依リ鎮圧</button>
     </div>
 
     <div id="panel-daitoa" class="input-area">
@@ -613,7 +642,7 @@
 
     <div id="panel-taisho-democracy" class="input-area">
       <h4>✊ 大正デモクラシー（Taisho Democracy）</h4>
-      <div class="desc">大正期ノ民主化運動。天皇機関説パッチ（God Object → State.organ）ヲ試ミツツ、<br>現役武官制（CVE-1900-0522）ヲ hotfix シテ軍部ノ Cabinet 拒否権ヲ無効化ス。<br>天皇機関説ハ国体明徴声明ニ依リ reject サルルモ、現役武官制ハ無効化サル。</div>
+      <div class="desc">明治四十五年〜五十九年ノ民主化運動。天皇機関説パッチ（God Object → State.organ）ヲ試ミツツ、<br>軍部大臣現役武官制（CVE-1900-0522）ヲ hotfix シテ軍部ノ Cabinet 拒否権ヲ無効化ス。<br>天皇機関説ハ国体明徴声明ニ依リ reject サルルモ、軍部大臣現役武官制ハ無効化サル。</div>
       <div class="input-group">
         <label>申請者:</label>
         <input type="text" id="taisho-applicant" placeholder="美濃部達吉" />
@@ -622,7 +651,7 @@
     </div>
 
     <div id="panel-active-duty" class="input-area">
-      <h4>🦠 現役武官制（Cabinet Formation Backdoor）</h4>
+      <h4>🦠 軍部大臣現役武官制（Cabinet Formation Backdoor）</h4>
       <div class="desc">陸海軍大臣ハ現役武官ニ限ル。軍ガ大臣ヲ出サネバ内閣ハ組閣不能。<br>山縣有朋ニ依リ注入サレタル Cabinet 殺害用マルウェアナリ。<br>大正デモクラシーデ一旦除去サレルモ、二・二六事件後ニ再注入サル。</div>
       <div class="input-group">
         <label>標的内閣:</label>
@@ -635,7 +664,7 @@
           <option value="withdraw">大臣引揚ゲ（runtime dependency removal）</option>
         </select>
       </div>
-      <button class="btn danger" onclick="execActiveDuty()">🦠 現役武官制ヲ発動</button>
+      <button class="btn danger" onclick="execActiveDuty()">🦠 軍部大臣現役武官制ヲ発動</button>
     </div>
 
     <div id="panel-speech" class="input-area">
@@ -706,10 +735,23 @@
     <div id="constitution-reader" class="constitution-reader" style="display:none;">
       <div class="reader-header">
         <h2>📜 大日本帝國憲法 — 全文閲覧</h2>
-        <div class="reader-meta">明治廿二年二月十一日発布 / 明治廿三年十一月廿九日施行 / 全七章七十六条</div>
+        <div class="reader-meta">明治二十二年二月十一日発布 / 明治二十三年十一月二十九日施行 / 全七章七十六条</div>
         <button class="btn reader-close" onclick="hideConstitutionReader()">✕ 閉じる</button>
       </div>
       <div id="reader-content" class="reader-content">
+        <div style="text-align:center; padding: 40px; color: var(--dim);">読ミ込ミ中…</div>
+      </div>
+    </div>
+
+    <!-- Imperial House Law Reader (full-screen overlay) -->
+    <div id="imperial-house-reader" class="constitution-reader" style="display:none;">
+      <div class="reader-header">
+        <h2>👑 皇 室 典 範 — 全文閲覧</h2>
+        <div class="reader-meta">明治二十二年二月十一日　勅定 / 全十章六十二條 / 別典（憲法同格）</div>
+        <div class="reader-meta" style="margin-top:4px;color:var(--yellow);">🔒 外部 API 経由（Read-Only）— 正本は別 org <a href="https://github.com/imperial-household/-" target="_blank" rel="noopener noreferrer" style="color:var(--blue);">@imperial-household/-</a> に奉安。宮内省 API より奉戴。</div>
+        <button class="btn reader-close" onclick="hideImperialHouseLawReader()">✕ 閉じる</button>
+      </div>
+      <div id="imperial-house-reader-content" class="reader-content">
         <div style="text-align:center; padding: 40px; color: var(--dim);">読ミ込ミ中…</div>
       </div>
     </div>
@@ -719,7 +761,7 @@
       <div class="welcome">
         <div class="ascii">
    ╔═══════════════════════════════════════════╗
-   ║  🔴 大日本帝国 Imperial Console v1.0.0   ║
+   ║  ● 大日本帝国 Imperial Console v1.0.0   ║
    ║  God Object 実行基盤環境          ║
    ║  Emperor PID: 1 | Uptime: since 1889     ║
    ╚═══════════════════════════════════════════╝
@@ -872,8 +914,9 @@
   }
 
   function execDissolve() {
+    const cabinet = document.getElementById('dissolve-cabinet').value;
     const reason = document.getElementById('dissolve-reason').value;
-    callApi('POST', '/api/emperor/dissolve', { reason: reason || undefined });
+    callApi('POST', '/api/emperor/dissolve', { cabinet: cabinet || undefined, reason: reason || undefined });
   }
 
   function execEmergency() {
@@ -898,14 +941,27 @@
     });
   }
 
+  function execGoIchiGo() {
+    callApi('POST', '/api/military/515', {
+      branch: document.getElementById('go-ichi-go-branch').value,
+    });
+  }
+
   function execNiNiRoku() {
     callApi('POST', '/api/military/226', {
       branch: document.getElementById('ni-ni-roku-branch').value,
     });
   }
 
-  function execSuppress226() {
-    callApi('POST', '/api/emperor/suppress-226');
+  function execSuppress() {
+    var target = document.getElementById('suppress-target').value;
+    if (target === '918') {
+      callApi('POST', '/api/emperor/suppress-918');
+    } else if (target === '226') {
+      callApi('POST', '/api/emperor/suppress-226');
+    } else if (target === '1208') {
+      callApi('POST', '/api/emperor/shuusen');
+    }
   }
 
   function execDaitoa() {
@@ -1037,10 +1093,143 @@
       v1.0.0 | Deployed: 1889-02-11 | Status: Won't Fix
     </div>`;
 
+    // Logs
+    html += '<div style="padding: 12px 0; border-top: 1px solid var(--border); margin-top: 16px;">';
+    html += '<div style="color: var(--dim); font-size: 0.7rem; margin-bottom: 6px;">📋 System Logs:</div>';
+    const constitutionLogs = [
+      { level: 'info',  message: '📜 [CONSTITUTION] 大日本帝國憲法 全文閲覧ノ上奏ヲ受理セリ。' },
+      { level: 'info',  message: `📜 [CONSTITUTION] 全 ${c.totalArticles} 条 / ${c.chapters.length} 章。Object.freeze() 済ミ。` },
+      { level: 'info',  message: '📜 [CONSTITUTION] 畏レ多クモ閲覧ヲ許可ス。不敬ナキ態度ニテ拝読スベシ。' },
+      { level: 'warn',  message: '📜 [CONSTITUTION] 本典ハ「不磨ノ大典」ナリ。改正ノ発議権ハ天皇陛下ノミニ在リ（Art.73）。' },
+      { level: 'warn',  message: '⚠️ [SECURITY] 閲覧履歴ハ特高警察 @tokko-police-bot ニ依リ記録サル。' },
+    ];
+    constitutionLogs.forEach(log => {
+      const cls = log.level === 'error' ? 'log-error' : log.level === 'warn' ? 'log-warn' : 'log-info';
+      html += `<div class="${cls}" style="font-size: 0.78rem;">${escapeHtml(log.message)}</div>`;
+    });
+    html += '</div>';
+
     content.innerHTML = html;
   }
 
   function scrollToSection(id) {
+    const el = document.getElementById('section-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ============================================================
+  //  皇室典範リーダー（imperial-household API 連携）
+  //  臣等枢密院ノ議ヲ経テ、宮内省（imperial-household.github.io）ヨリ
+  //  皇室典範全文ヲ奉戴シ、全文閲覧用 overlay ニテ表示ス。
+  //  伏シテ聖裁ヲ仰ギ奉ル。
+  // ============================================================
+
+  const IMPERIAL_HOUSE_API = 'https://imperial-household.github.io/-/data';
+
+  async function showImperialHouseLawReader() {
+    const reader = document.getElementById('imperial-house-reader');
+    reader.style.display = 'flex';
+
+    try {
+      const res = await fetch(IMPERIAL_HOUSE_API + '/%E5%85%B8%E7%AF%84.json');
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      renderImperialHouseLaw(data);
+    } catch (err) {
+      document.getElementById('imperial-house-reader-content').innerHTML =
+        `<div style="color: var(--red); text-align: center; padding: 40px;">
+          ❌ 皇室典範ノ取得ニ失敗セリ: ${escapeHtml(err.message)}<br>
+          <span style="color: var(--dim); font-size: 0.75rem;">
+            外部 API: ${escapeHtml(IMPERIAL_HOUSE_API)}/典範.json<br>
+            皇室典範ノ正本ハ別 org @imperial-household ニ奉安サレタリ。<br>
+            宮内省 API ガ不通ノ際ハ、副本（内蔵）ヲ以テ奉答ス→ GET /api/imperial-house
+          </span>
+        </div>`;
+    }
+  }
+
+  function hideImperialHouseLawReader() {
+    document.getElementById('imperial-house-reader').style.display = 'none';
+  }
+
+  function renderImperialHouseLaw(data) {
+    const 典範 = data.典範;
+    const content = document.getElementById('imperial-house-reader-content');
+    let html = '';
+
+    // ── ナビゲーション ──
+    html += '<div class="reader-nav">';
+    html += `<button class="active" onclick="scrollToIHSection('jouyu')">上諭</button>`;
+    典範.chapters.forEach(ch => {
+      html += `<button onclick="scrollToIHSection('ih-ch${ch.number}')">`;
+      html += `第${ch.number}章 ${escapeHtml(ch.title)}</button>`;
+    });
+    html += '</div>';
+
+    // ── 上諭 ──
+    html += '<div id="section-jouyu">';
+    html += '<div class="chapter-title">📜 上　諭</div>';
+    html += `<div class="preamble-section">
+      <div class="preamble-text">朕カ皇祖皇宗ニ承クル所ノ大權ニ依リ現在及將來ノ皇族ニ對シ此ノ皇室典範ヲ制定ス\n\n將來若シ此ノ典範ノ條項ヲ改正シ又ハ增補スヘキノ必要アルトキハ朕カ子孫ハ皇族會議及樞密顧問ニ諮詢シテ之ヲ勅定スヘシ\n\n皇族會議及帝國議會ハ此ノ典範ニ付キ上奏又ハ議決ヲ爲スコトヲ得ス</div>
+      <div class="article-comment">上諭: 典範の改正権は天皇(root)にのみ帰属。議会のPRは受け付けない。CODEOWNERS: @emperor-only</div>
+    </div>`;
+    html += `<div style="text-align: center; color: var(--dim); font-size: 0.85rem; margin: 16px 0;">
+      御名　御璽<br>明治二十二年二月十一日
+    </div>`;
+    html += '</div>';
+
+    // ── 各章・各條 ──
+    典範.chapters.forEach(ch => {
+      html += `<div id="section-ih-ch${ch.number}" class="chapter-block">`;
+      html += `<div class="chapter-title">第${ch.number}章　${escapeHtml(ch.title)}`;
+      if (ch.system) {
+        html += ` <span style="color: var(--dim); font-size: 0.75rem; font-weight: normal;">// ${escapeHtml(ch.system)}</span>`;
+      }
+      html += `</div>`;
+
+      ch.articles.forEach(art => {
+        html += `<div class="article-card" id="ih-article-${art.number}">
+          <div class="article-num">第${art.number}條</div>
+          <div class="article-text">${escapeHtml(art.text)}</div>`;
+        if (art.comment) {
+          html += `<div class="article-comment">${escapeHtml(art.comment)}</div>`;
+        }
+        html += `</div>`;
+      });
+
+      html += '</div>';
+    });
+
+    // ── フッター ──
+    html += `<div style="text-align: center; padding: 32px; color: var(--dim); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 24px;">
+      御名御璽　明治二十二年二月十一日<br>
+      皇室典範 v1.0.0 ｜ 依據: 大日本帝國憲法 第七十四條<br>
+      別典（憲法同格）— 帝國議會ノ議ヲ經ルヲ要セス<br>
+      <span style="color: var(--yellow);">🔒 本典は別 org @imperial-household の外部 API より Read-Only で奉戴。宮内省直轄。</span><br><br>
+      <a href="https://imperial-household.github.io/-/" target="_blank" rel="noopener noreferrer" style="color: var(--blue);">
+        👑 imperial-household/- （外部 API 正本）
+      </a>
+      ｜
+      <a href="https://github.com/imperial-household/-" target="_blank" rel="noopener noreferrer" style="color: var(--blue);">
+        GitHub
+      </a>
+    </div>`;
+
+    // ── ログ表示 ──
+    if (data.logs && data.logs.length > 0) {
+      html += '<div style="padding: 12px 0; border-top: 1px solid var(--border); margin-top: 16px;">';
+      html += '<div style="color: var(--dim); font-size: 0.7rem; margin-bottom: 6px;">📋 System Logs:</div>';
+      data.logs.forEach(log => {
+        const cls = log.level === 'error' ? 'log-error' : log.level === 'warn' ? 'log-warn' : 'log-info';
+        html += `<div class="${cls}" style="font-size: 0.78rem;">${escapeHtml(log.message)}</div>`;
+      });
+      html += '</div>';
+    }
+
+    content.innerHTML = html;
+  }
+
+  function scrollToIHSection(id) {
     const el = document.getElementById('section-' + id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -1054,9 +1243,10 @@
         if (btn) btn.click();
       }
     }
-    // ESC to close constitution reader
+    // ESC to close readers
     if (e.key === 'Escape') {
       hideConstitutionReader();
+      hideImperialHouseLawReader();
     }
   });
 </script>

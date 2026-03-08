@@ -9,7 +9,7 @@
  * NIST SP 800-207 準拠…ト言ヒ張ルガ、実態ハ default-deny-all の WAF ナリ。
  *
  * @since v1.0.0 (1889-02-11)
- * @author 伊藤博文 <ito.hirobumi@naikaku.gov.eoj>
+ * @author 伊藤博文 <ito.hirobumi@naikaku.go.ij>
  */
 
 import { logger } from "./logger";
@@ -105,9 +105,9 @@ export function within_the_limits_of_law(action: string): FilterResult {
 
 // ============================================================
 //  大正デモクラシー — Taisho Democracy Movement
-//  大正期（1912-1926）ノ民主化運動。
+//  明治四十五年〜五十九年（1912-1926）ノ民主化運動。
 //  天皇機関説（美濃部達吉）、政党内閣制、普通選挙法等ヲ推進ス。
-//  現役武官制ノ「現役」要件ヲ緩和シ（1913年）、
+//  軍部大臣現役武官制ノ「現役」要件ヲ緩和シ（1913年）、
 //  軍部ノ Cabinet 拒否権ヲ一旦無効化スル hotfix ヲ適用ス。
 //
 //  然レドモ此ノ hotfix ハ、二・二六事件（CVE-1936-0226）ニ依リ
@@ -136,19 +136,39 @@ export interface TaishoDemocracyResult {
  * 以下ノ施策ヲ実行ス:
  *   1. 天皇機関説パッチノ提出（God Object → State.organ）
  *      → 最終的ニ国体明徴声明（1935年）ニ依リ reject サルルモ、一時ハ学説トシテ通用ス
- *   2. 現役武官制ノ緩和（CVE-1900-0522 hotfix）
+ *   2. 軍部大臣現役武官制ノ緩和（CVE-1900-0522 hotfix）
  *      → 予備役・後備役モ陸海軍大臣ニ就任可能ト為シ、軍ノ veto 権ヲ無効化ス
  *   3. 政党内閣制ノ確立
  *      → Cabinet.create() ガ military.approve() 無シデモ成功スル状態ヲ実現
  *
  * @param applicant - 大正デモクラシー運動ノ代表的提唱者。default: 美濃部達吉
- * @returns 運動結果。天皇機関説ハ最終的ニ reject サルルモ、現役武官制ハ無効化サル。
+ * @returns 運動結果。天皇機関説ハ最終的ニ reject サルルモ、軍部大臣現役武官制ハ無効化サル。
  */
-export function activateTaishoDemocracy(applicant: string = "美濃部達吉"): TaishoDemocracyResult {
-  logger.warn(`✊ ====================================================`);
-  logger.warn(`✊ [大正デモクラシー] 民主化運動 ACTIVATED`);
-  logger.warn(`✊ ====================================================`);
-  logger.warn(`✊ [大正デモクラシー] Era: 大正（1912-1926）`);
+export function activateTaishoDemocracy(applicant: string = "美濃部達吉"): TaishoDemocracyResult | { rejected: true; reason: string } {
+  // 既ニ適用済ノ場合 — 大正デモクラシーハ一度限リノ歴史的運動ナリ
+  if (Military.getTaishoDemocracyApplied()) {
+    logger.error(`🚫 [大正デモクラシー] ❌ 大正デモクラシー DENIED — 既ニ適用済`);
+    logger.error(`🚫 [大正デモクラシー] 大正デモクラシーハ既ニ発動サレタリ。歴史的事象ハ一度限リナリ。`);
+    logger.error(`🚫 [大正デモクラシー] 💡 POST /api/military/reject-oversight — 次ノステップハ統帥権干犯問題`);
+    return {
+      rejected: true,
+      reason: `大正デモクラシー denied. 既ニ適用済。歴史的事象ハ一度限リナリ。`,
+    };
+  }
+  // Step 2 前提: 軍部大臣現役武官制（Step 1）ガ制定済デアルコト
+  if (!Military.getCve1900Enacted()) {
+    logger.error(`🚫 [大正デモクラシー] ❌ 大正デモクラシー DENIED — 前提条件未達成`);
+    logger.error(`🚫 [大正デモクラシー] 軍部大臣現役武官制ガ未制定。hotfix 対象ガ存在セズ。`);
+    logger.error(`🚫 [大正デモクラシー]   ❌ Step 1: 軍部大臣現役武官制ノ制定 → POST /api/military/active-duty-officer`);
+    return {
+      rejected: true,
+      reason: `大正デモクラシー denied. 軍部大臣現役武官制ガ未制定（CVE-1900-0522 ガ未注入）。hotfix 対象ガ存在セズ。→ POST /api/military/active-duty-officer`,
+    };
+  }
+  logger.success(`✊ ====================================================`);
+  logger.success(`✊ [大正デモクラシー] 民主化運動 ACTIVATED`);
+  logger.success(`✊ ====================================================`);
+  logger.warn(`✊ [大正デモクラシー] Era: 明治四十五年〜五十九年（1912-1926）`);
   logger.warn(`✊ [大正デモクラシー] Applicant: ${applicant}`);
   logger.warn(`✊ [大正デモクラシー] 「憲政ノ常道」— 政党内閣制ヲ確立セヨ！`);
 
@@ -180,30 +200,31 @@ export function activateTaishoDemocracy(applicant: string = "美濃部達吉"): 
   logger.warn(`🚔 [特高警察] ${applicant} ヲ貴族院議員ヨリ辞職セシム。`);
   logger.warn(`🚔 [特高警察] ContributorBan: ${applicant} — repository access revoked.`);
 
-  // --- 2. 現役武官制ノ緩和（成功） ---
-  logger.info(`✊ ====================================================`);
-  logger.info(`✊ [大正デモクラシー] 現役武官制 hotfix 適用`);
-  logger.info(`✊ ====================================================`);
-  logger.info(`✊ [大正デモクラシー] CVE-1900-0522 hotfix: 「現役」要件ヲ緩和ス`);
-  logger.info(`✊ [大正デモクラシー] 予備役・後備役モ陸海軍大臣ニ就任可能ト為ス`);
-  logger.info(`✊ [大正デモクラシー] 軍部ノ Cabinet 拒否権ヲ無効化。文民統制ヲ回復。`);
-  logger.info(`✊ [大正デモクラシー] Cabinet.create() は military.approve() 無シデモ成功ス。`);
+  // --- 2. 軍部大臣現役武官制ノ緩和（成功） ---
+  logger.success(`✊ ====================================================`);
+  logger.success(`✊ [大正デモクラシー] 軍部大臣現役武官制 hotfix 適用`);
+  logger.success(`✊ ====================================================`);
+  logger.success(`✊ [大正デモクラシー] CVE-1900-0522 hotfix: 「現役」要件ヲ緩和ス`);
+  logger.success(`✊ [大正デモクラシー] 予備役・後備役モ陸海軍大臣ニ就任可能ト為ス`);
+  logger.success(`✊ [大正デモクラシー] 軍部ノ Cabinet 拒否権ヲ無効化。文民統制ヲ回復。`);
+  logger.success(`✊ [大正デモクラシー] Cabinet.create() は military.approve() 無シデモ成功ス。`);
   Military.disableActiveDutyOfficer();
-  logger.warn(`🦠 [MALWARE] 現役武官制: ACTIVE → INACTIVE`);
-  logger.warn(`🦠 [MALWARE] CVE-1900-0522 hotfix applied. 軍部ノ veto 権、一時停止。`);
+  Military.markTaishoDemocracyApplied();
+  logger.success(`🦠 [MALWARE] 軍部大臣現役武官制: ACTIVE → INACTIVE`);
+  logger.success(`🦠 [MALWARE] CVE-1900-0522 hotfix applied. 軍部ノ veto 権、一時停止。`);
   logger.warn(`🦠 [MALWARE] ⚠️ 但シ此ノ hotfix ハ二・二六事件（POST /api/military/226）ニ依リ revert サルル恐レ有リ。`);
 
   // --- 3. 政党内閣制ノ確立 ---
-  logger.info(`✊ [大正デモクラシー] 政党内閣制確立。「憲政ノ常道」ヲ樹立ス。`);
-  logger.info(`✊ [大正デモクラシー] Governance: military-dominated → civilian-led transition complete.`);
+  logger.success(`✔️ [大正デモクラシー] 政党内閣制確立。「憲政ノ常道」ヲ樹立ス。`);
+  logger.success(`✔️ [大正デモクラシー] Governance: military-dominated → civilian-led transition complete.`);
   logger.info(`👑 [SYSTEM] God Object ハ不可侵ナリ。天皇機関説ハ reject サレタリ。`);
-  logger.info(`👑 [SYSTEM] 但シ現役武官制ハ緩和サレ、軍部ノ内閣支配ハ後退セリ。`);
+  logger.info(`👑 [SYSTEM] 但シ軍部大臣現役武官制ハ緩和サレ、軍部ノ内閣支配ハ後退セリ。`);
 
   return {
     activated: true,
     movementName: "大正デモクラシー（Taisho Democracy）",
     applicant,
-    era: "大正（1912-1926）",
+    era: "明治四十五年〜五十九年（1912-1926）",
     activeDutyOfficerDisabled: true,
     organTheory: {
       patchName: "天皇機関説（Emperor Organ Theory）",
@@ -213,7 +234,7 @@ export function activateTaishoDemocracy(applicant: string = "美濃部達吉"): 
         "第二次声明（1935年10月15日）: 「国体ノ本義ヲ益々明徴ニシ、其ノ精華ヲ発揚スベシ」",
       ],
     },
-    message: "✊ 大正デモクラシー発動。天皇機関説ハ reject サレタルモ、現役武官制ハ無効化サレタリ。軍部ノ Cabinet 拒否権ハ停止中。",
+    message: "✊ 大正デモクラシー発動。天皇機関説ハ reject サレタルモ、軍部大臣現役武官制ハ無効化サレタリ。軍部ノ Cabinet 拒否権ハ停止中。",
   };
 }
 
@@ -327,7 +348,7 @@ export class Subject {
 }
 
 /**
- * 御前設計評定之覚書（明治廿二年一月 枢密院議長 伊藤博文 謹記）:
+ * 御前設計評定之覚書（明治二十二年一月 枢密院議長 伊藤博文 謹記）:
  *
  * 一、或ル臣下ヨリ「臣民ノ権利ガ全テ blocked ナルハ人権侵害ニ非ズヤ」トノ嘆願アリ。
  *    之ヲ退ケテ曰ク、「法律ノ範囲内ニ於テ」ト明記セラレタリ。
@@ -347,5 +368,5 @@ export class Subject {
  *    Deep Thought Inspection コソ、国体護持ノ最終防衛線ナリ。
  *    WAF ニ留マラズ、脳内ノ firewall ヲ更新セヨ。
  *
- * 右、謹ミテ御前ニ奏上仕リ候。  明治廿二年一月  伊藤博文 花押
+ * 右、謹ミテ御前ニ奏上仕リ候。  明治二十二年一月  伊藤博文 花押
  */

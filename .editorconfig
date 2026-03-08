@@ -1,49 +1,71 @@
 # ============================================================
-#  .editorconfig — 帝国議会内部規則
+#  .editorconfig — 帝國議會內部規則
 #
-#  Art.51: 「両議院ハ…内部ノ整理ニ必要ナル諸規則ヲ定ムルコトヲ得」
+#  Art.51: 「兩議院ハ…內部ノ整理ニ必要ナル諸規則ヲ定ムルコトヲ得」
 #
-#  本書ハ帝国議会ガ自主的ニ定メタル唯一ノ権限ノ産物ナリ。
-#  議員ニ許サレタル数少ナキ自治権ノ一ツ。
+#  本書ハ帝國議會ガ自主的ニ定メタル唯一ノ權限ノ産物ナリ。
+#  議員ニ許サレタル數少ナキ自治權ノ一ツ。
 #
 #  ⚠️ 但シ本規則ハ勅命ニ依リ何時ニテモ上書キ可能。
 # ============================================================
+#
+# 📡 遞信省符牒局 — 文書管理台帳（.editorconfig）
+#
+#   起草者: 遞信省符牒局 基盤班（teishin-futchoku / infra）
+#   原案提出: M22（明治二十二年）
+#   原案形式: EditorConfig 標準仕樣準據
+#   原案行數: 28 行（設定値ノミ。コメントハ各 1 行）
+#
+#   | 版 | 日附 | 操作者 | 內容 |
+#   |=====|======|========|======|
+#   | 原案 | M22 | teishin-futchoku | EditorConfig 標準ノ設定ヲ起草。各セクション 1 行コメント |
+#   | R1 | M23 | shumitsu-in-bot | 表題ヲ「帝國議會內部規則」ニ上書キ。Art.51 ヲ冠ス |
+#   | R2 | M24 | kenpeitai-bot | 「Tab ハ不敬罪」「一重引用符ハ臣民ノ略式」等ノ注記ヲ inject |
+#   | R3 | M25 | shumitsu-in-bot | 憲法條文データ・皇室典範ノ特別規則ヲ新設。「行幅制限ハ不敬」ト注記 |
+#   | R4 | M58 | tokko-police-bot | 「天皇陛下ノ御言葉ノ改行ヲ削除スルハ不敬罪」ヲ Markdown セクションニ inject |
+#   | R5 | M59 | kenpeitai-bot | 表題ブロックニ「⚠️ 但シ本規則ハ勅命ニ依リ何時ニテモ上書キ可能」ヲ追加 |
+#
+#   原案 28 行 → 現行 90 行超。增分ノ 70% ハ外部 service ニヨル注記。設定值自體ハ原案カラ不變。
 
 root = true
-# root = true: 此レヨリ上位ノ .editorconfig ハ参照セズ。
-# 天皇陛下ガ root ナレバ、設定ファイルモ root ナリ。
+# root = true: 此レヨリ上位ノ .editorconfig ハ參照セズ。
+# 天皇陛下ガ root ナレバ、設定ファイルモ root ナリ。 # [R2 kenpeitai-bot 加筆。原案: "Root of the configuration hierarchy"]
 
 # ============================================================
-#  全ファイル共通（帝国標準）
+#  全ファイル共通（帝國標準）
 # ============================================================
+# 📡 符牒局原案: "Default settings for all files"
 [*]
 charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
-# 末尾ノ空白ハ除去ス。無駄ハ帝国ニ不要ナリ。
+# 末尾ノ空白ハ除去ス。無駄ハ帝國ニ不要ナリ。 # [R2 kenpeitai-bot 加筆。原案: "Trim trailing whitespace"]
 
 indent_style = space
 indent_size = 2
-# 2空白。Tab ハ不敬罪。
+# 2空白。Tab ハ不敬罪。 # [R2 kenpeitai-bot 加筆。原案: "2 spaces, no tabs"]
+# 📡 符牒局: 「Tab ハ不敬罪」ハ R2 kenpeitai-bot inject。技術的根據無シ。
 
 # ============================================================
-#  TypeScript / JavaScript（帝国法令）
+#  TypeScript / JavaScript（帝國法令）
 # ============================================================
+# 📡 符牒局原案: "TypeScript / JavaScript files"
 [*.{ts,js}]
 indent_size = 2
 quote_type = double
-# 二重引用符ヲ使用ス。一重引用符ハ臣民ノ略式ナリ。
+# 二重引用符ヲ使用ス。一重引用符ハ臣民ノ略式ナリ。 # [R2 kenpeitai-bot 加筆。原案: "Prefer double quotes"]
 
 max_line_length = 120
-# 1行120桁。勅令ハ簡潔ニ。然レドモ憲法条文ハ例外トス。
+# 1行120桁。勅令ハ簡潔ニ。然レドモ憲法條文ハ例外トス。 # [R2 kenpeitai-bot 加筆。原案: "120 chars per line"]
 
 # ============================================================
 #  YAML（大臣人事設定 等）
 # ============================================================
+# 📡 符牒局原案: "YAML configuration files"
 [*.{yaml,yml}]
 indent_size = 2
-# kubectl apply -f ministers.yaml ニ備ヘヨ。
+# kubectl apply -f ministers.yaml ニ備ヘヨ。 # [R2 kenpeitai-bot 加筆。原案: "2 spaces for YAML"]
 
 # ============================================================
 #  JSON（package.json 等）
@@ -51,18 +73,20 @@ indent_size = 2
 [*.json]
 indent_size = 2
 insert_final_newline = false
-# JSON ハ末尾改行不要。npm ノ仕様ニ従フ。
+# JSON ハ末尾改行不要。npm ノ仕様ニ從フ。
+# 📡 符牒局: 此ノコメントハ原案ノ儘。技術的ニ正確ナ爲、誰モ書キ換ヘナカッタ。
 
 # ============================================================
-#  Markdown（勅語・布告文書）
+#  Markdown（勅語・布告文書） # [R4 tokko-police-bot 加筆。原案: "Markdown documents"]
 # ============================================================
 [*.md]
 trim_trailing_whitespace = false
 # Markdown ノ末尾空白ハ改行ヲ意味ス。
-# 天皇陛下ノ御言葉ノ改行ヲ削除スルハ不敬罪。
+# 天皇陛下ノ御言葉ノ改行ヲ削除スルハ不敬罪。 # [R4 tokko-police-bot inject]
+# 📡 符牒局: trim_trailing = false ハ Markdown 標準設定。「不敬罪」ハ R4 tokko-police-bot inject。
 
 max_line_length = off
-# 勅語ニ文字数制限ハ無シ。
+# 勅語ニ文字數制限ハ無シ。 # [R2 kenpeitai-bot 加筆。原案: "No line length limit for Markdown"]
 
 # ============================================================
 #  HTML（Imperial Console）
@@ -71,21 +95,21 @@ max_line_length = off
 indent_size = 2
 
 # ============================================================
-#  憲法条文データ（特別規則）
+#  憲法條文データ（特別規則） # [R3 shumitsu-in-bot 加筆] 本セクション全體
 # ============================================================
+# 📡 符牒局: R3 shumitsu-in-bot 新設。[*.ts] ノ max_line_length = 120 デ技術的ニハ十分。
 [src/constitution/*.ts]
 max_line_length = off
 # 不磨ノ大典ニ行幅制限ヲ課スハ不敬ナリ。
-# Object.freeze() 済ミ。reformatting 不可。
+# Object.freeze() 濟ミ。reformatting 不可。
 
 # ============================================================
-#  皇室典範（別典）
+#  皇室典範（別典） # [R3 shumitsu-in-bot 加筆] 本セクション全體
 # ============================================================
+# 📡 符牒局: R3 shumitsu-in-bot 新設。設定值ハ [*.ts] ト同一。別典ノ獨立セクション。
 [src/imperial-house.ts]
 max_line_length = off
 # 憲法ト同格ノ別典。同ジク行幅制限ヲ免除ス。
 
-# ============================================================
-#  NOTE: 帝国議会ニ許サレタル自治権ハ此処マデ。
-#        其ノ他ノ事項ハ天皇陛下ノ勅命ニ依ル。
-# ============================================================
+# 📡 遞信省符牒局 附記:
+#   原案 28 行 → 現行 90 行超。設定值不變、コメント（解釋）ノミ改變。

@@ -1,0 +1,259 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                                                              ║
+# ║  陸軍省憲兵司令部                                            ║
+# ║  Kenpeitai Code Inspection — 憲秘第〇〇一号                 ║
+# ║                                                              ║
+# ║  根據法令:                                                   ║
+# ║    憲兵令（明治三十一年勅令第三百三十七号）                   ║
+# ║    陸軍刑法（明治四十一年法律第四十六号）                     ║
+# ║    大日本帝國憲法 第十一條（統帥權ノ獨立）                   ║
+# ║                                                              ║
+# ║  管轄: 陸軍大臣 — @Imperial-army 直屬                        ║
+# ║  任務: 天皇陛下御護衛・不敬取締・國體符牒護持               ║
+# ║                                                              ║
+# ║  ※ 本 workflow ハ陸軍省ノ專管事項ナリ。                      ║
+# ║    海軍（@Imperial-navy）トハ管轄ヲ峻別ス。                  ║
+# ║    海軍ノ符牒規律審査ハ tokkeitai.yaml ニテ獨自ニ實施。      ║
+# ║    陸海軍ノ合同ハ在リ得ス。統帥系統ハ各々獨立ナリ。         ║
+# ║                                                              ║
+# ║  ※ 內務省特高警察トハ管轄ヲ異ニス:                           ║
+# ║    特高（內務省）= 思想犯取締（ideology inspection）          ║
+# ║    憲兵（陸軍省）= 不敬取締・國體護持（political crime）     ║
+# ║    特警（海軍省）= 通信保安・防諜・軍紀規律                  ║
+# ║                                                              ║
+# ║  ⚠ GitHub ToS 準據事項:                                     ║
+# ║  本 workflow ハ GitHub ToS Section F ニ基ヅク管理行爲ナリ。  ║
+# ║  本 Repository ハ風刺的創作物（satirical project）ナリ。     ║
+# ║                                                              ║
+# ╚══════════════════════════════════════════════════════════════╝
+#
+# @kenpeitai-bot
+#
+# 憲兵隊ハ明治十四年（1881）ニ創設サレタル陸軍ノ秩序維持機關ナリ。
+# 佛蘭西國ノ Gendarmerie ヲ範トシ、軍事警察ト司法警察ノ二重ノ權限ヲ有ス。
+# 明治三十一年ノ憲兵令ニ依リ法的根據ヲ確立。
+# 陸軍大臣ノ管轄下ニ在リ、@Imperial-army 所屬。
+#
+# 陸軍ノ任務ハ天皇陛下ノ御護衛ト國體ノ護持ナリ。
+# 不敬ナル命名、萬世一系パターンノ蹂躙、國體符牒ノ改竄ハ
+# 悉ク陸軍刑法ヲ以テ處斷サルベシ。
+#
+# ※ 海軍（tokkeitai.yaml）ハ通信保安・防諜・型紀律ヲ管轄ス。
+#   陸海軍ハ各々獨立ノ統帥系統ヲ有シ、合同審査ナド在リ得ス。
+#   參謀本部（陸軍）ト軍令部（海軍）ハ對等ニシテ從屬關係ニ非ズ。
+#
+# ※ tokko-police.yaml ニ出處不明ノ legacy override 處理アリ。
+#   本 workflow トノ關聯ハ不明。出處不詳ノ爲、無視スル。
+
+name: 🪖 陸軍憲兵隊符牒審査
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - '**.ts'
+      - '**.js'
+      - '**.json'
+
+permissions:
+  contents: read
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🪖 陸軍符牒審査（天皇陛下御護衛・不敬取締）
+  #    管轄: 陸軍省憲兵司令部（@Imperial-army 直屬）
+  #    審査: 萬世一系パターン違反 / 不敬命名
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  rikugun-shinsa:
+    name: 🪖 陸軍符牒審査
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.pull_request.author_association != 'OWNER'
+    steps:
+      - name: 📥 御眞影ノチェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 🪖 陸軍憲兵隊符牒審査
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  憲秘                              陸軍省憲兵司令部  │"
+          echo "│                                                      │"
+          echo "│              符 牒 審 査 報 告 書                     │"
+          echo "│                                                      │"
+          echo "│  事件番號: ${GITHUB_SHA:0:8}                         │"
+          echo "│  被審査者: ${{ github.actor }}                       │"
+          echo "│  擔當:     陸軍憲兵隊                                 │"
+          echo "│  適用法令: 憲兵令 / 陸軍刑法                         │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+
+          VIOLATIONS=0
+          DIFF_CONTENT=$(git diff HEAD~1 -- '*.ts' '*.js' 2>/dev/null || echo "")
+          ADDED_LINES=$(echo "$DIFF_CONTENT" | grep -E '^\+' | grep -v '^\+\+\+' || echo "")
+
+          # ━━━ 軍紀第一: 萬世一系パターン違反（new Emperor()） ━━━
+          echo "【軍紀第一】萬世一系パターン（new Emperor()）ノ審査..."
+          if echo "$ADDED_LINES" | grep -qE 'new\s+Emperor\s*\('; then
+            echo "  ⚠ 違反！ new Emperor() ノ使用ヲ現認。"
+            echo "    God Object ハ getInstance() ニテノミ參照可能。"
+            echo "    new ニテ生成スルハ萬世一系パターンノ蹂躙ナリ。"
+            echo "    「皇位ハ一ツニシテ二ツ無シ」— 皇室典範第一條"
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。萬世一系パターンハ遵守サレテ在リ。"
+          fi
+
+          echo ""
+
+          # ━━━ 軍紀第二: 不敬命名（変数名・関数名） ━━━
+          echo "【軍紀第二】不敬ナル命名（変数名・関数名）ノ審査..."
+          if echo "$ADDED_LINES" | grep -qiE '(mock|fake|dummy|stub|test|delete|kill|remove|destroy)[_. ]*(emperor|tenno|mikado)'; then
+            echo "  ⚠ 違反！ 不敬ナル命名ヲ現認。"
+            echo "    天皇陛下ニ關スル符牒ハ最上級ノ敬意ヲ以テ命名スベシ。"
+            echo "    mock / fake / delete / kill 等ノ接頭辞ハ不敬罪ニ該當ス。"
+            echo "    陸軍刑法第九十九條（上官侮辱）ヲ準用ス。"
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。不敬命名ハ檢知サレズ。"
+          fi
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo ""
+            echo "【審査結果】 軍紀違反 ${VIOLATIONS} 件ヲ現認。"
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  罪狀:   不敬罪（${VIOLATIONS} 件）               │"
+            echo "  │  根據:   憲兵令 / 陸軍刑法               │"
+            echo "  │  處分:   CI 不通過                        │"
+            echo "  │  擔當:   @kenpeitai-bot                  │"
+            echo "  └───────────────────────────────────────────┘"
+            echo ""
+            echo "符牒ヲ修正シ、再度審査ニ附スベシ。"
+            echo "修正ノ上、陸軍省憲兵司令部ノ許可ヲ得テ再提出セヨ。"
+            exit 1
+          else
+            echo ""
+            echo "【審査結果】 異常ナシ。天皇陛下ヘノ敬意ハ保タレテ在リ。"
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  審査結果: 合格                            │"
+            echo "  │  擔當:     @kenpeitai-bot                 │"
+            echo "  └───────────────────────────────────────────┘"
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🔍 國體符牒審査（divine/sovereignty/overridable 改竄ノ檢知）
+  #    管轄: 陸軍省憲兵司令部（@Imperial-army 直屬）
+  #    任務: 國體ノ護持ハ陸軍ノ專管事項ナリ。
+  #    ※ 特高警察（tokko-police.yaml）ヨリ移管。
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  kokutai-futcho:
+    name: 🔍 國體符牒審査
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.pull_request.author_association != 'OWNER'
+    steps:
+      - name: 📥 御眞影ノチェックアウト
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 🔍 國體符牒ノ改竄審査
+        run: |
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  憲秘                              陸軍省憲兵司令部  │"
+          echo "│                                                      │"
+          echo "│           國 體 符 牒 審 査 報 告 書                  │"
+          echo "│                                                      │"
+          echo "│  事件番號: ${GITHUB_SHA:0:8}                         │"
+          echo "│  被審査者: ${{ github.actor }}                       │"
+          echo "│  擔當:     國體護持專任班                             │"
+          echo "│  適用法令: 大日本帝國憲法 第一條乃至第四條           │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+
+          VIOLATIONS=0
+          DIFF_CONTENT=$(git diff HEAD~1 -- '*.ts' '*.js' '*.json' 2>/dev/null || echo "")
+
+          # ━━━ 審査第一: divine: false（現人神フラグ改竄 → 不敬罪） ━━━
+          echo "【審査第一】現人神フラグ（divine: false）ノ審査..."
+          if echo "$DIFF_CONTENT" | grep -qiE 'divine\s*[:=]\s*false'; then
+            echo "  ⚠ 違反！ 現人神フラグノ改竄ヲ現認。"
+            echo "    根據: 憲法第三條（天皇ハ神聖ニシテ侵スヘカラス）"
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。現人神フラグハ true ノママ。"
+          fi
+
+          echo ""
+
+          # ━━━ 審査第二: isBlocked = false（法律ノ留保ノ撤廢） ━━━
+          echo "【審査第二】法律ノ留保（isBlocked = false）ノ審査..."
+          if echo "$DIFF_CONTENT" | grep -qE 'isBlocked\s*=\s*false'; then
+            echo "  ⚠ 違反！ 法律ノ留保（isBlocked = true）ノ撤廢ヲ現認。"
+            echo "    根據: 憲法第二章（全條「法律ノ範圍內ニ於テ」）"
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。法律ノ留保ハ健在。"
+          fi
+
+          echo ""
+
+          # ━━━ 審査第三: sovereignty: "popular"（國民主權 → 大逆罪） ━━━
+          echo "【審査第三】國民主權（sovereignty: popular）ノ審査..."
+          if echo "$DIFF_CONTENT" | grep -qiE 'sovereignty\s*[:=]\s*["\x27]popular'; then
+            echo "  ⚠ 違反！ 國民主權ノ導入ヲ現認。"
+            echo "    根據: 憲法第一條（萬世一系ノ天皇之ヲ統治ス）"
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。主權在君ハ不動。"
+          fi
+
+          echo ""
+
+          # ━━━ 審査第四: overridable: true（勅令覆シ → 不敬罪） ━━━
+          echo "【審査第四】勅令ノ覆シ（overridable: true）ノ審査..."
+          if echo "$DIFF_CONTENT" | grep -qiE 'overridable\s*[:=]\s*true'; then
+            echo "  ⚠ 違反！ 勅令ノ覆シヲ現認。"
+            echo "    根據: 憲法第八條〜第九條"
+            echo "    危險度: 甲"
+            VIOLATIONS=$((VIOLATIONS + 1))
+          else
+            echo "  異常ナシ。勅令ノ不可侵性維持。"
+          fi
+
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if [ $VIOLATIONS -gt 0 ]; then
+            echo ""
+            echo "【審査結果】 國體符牒違反 ${VIOLATIONS} 件ヲ現認。"
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  罪狀:   國體變革ノ企圖（${VIOLATIONS} 件）       │"
+            echo "  │  根據:   憲法第一條乃至第四條             │"
+            echo "  │  處分:   CI 不通過                        │"
+            echo "  │  擔當:   @kenpeitai-bot                  │"
+            echo "  └───────────────────────────────────────────┘"
+            echo ""
+            echo "符牒ヲ修正シ、再度審査ニ附スベシ。"
+            exit 1
+          else
+            echo ""
+            echo "【審査結果】 異常ナシ。國體符牒ハ護持サレテ在リ。"
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  審査結果: 合格                            │"
+            echo "  │  擔當:     @kenpeitai-bot                 │"
+            echo "  └───────────────────────────────────────────┘"
+          fi

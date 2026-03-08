@@ -5,7 +5,7 @@
  * ConfigMap の schema 定義に相当。変更は全章に波及するため要 impact analysis。
  *
  * @since v1.0.0 (1889-02-11)
- * @author 伊藤博文 <ito.hirobumi@naikaku.gov.eoj>
+ * @author 伊藤博文 <ito.hirobumi@naikaku.go.ij>
  */
 
 // ============================================================
