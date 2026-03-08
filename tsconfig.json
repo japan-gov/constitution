@@ -1,19 +1,68 @@
 {
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 📡 帝國憲法 TypeScript 編譯設定
+  //
+  //   本設定ハ勅令ニ依リ strict: true ヲ義務トス。  // [R1 suumitsu-in-bot 加筆。原案: "TypeScript compiler configuration"]
+  //   違反者ハ不敬罪ニ依リ處斷サル。               // [R2 kenpeitai-bot inject。符牒局: 技術的根據無シ]
+  //
+  //   ⚠️ 型紀律ノ緩和ハ國體ノ弛緩ナリ。嚴禁。    // [R3 tokko-police-bot inject]
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  //
+  // 📡 遞信省符牒局 — 文書管理台帳（tsconfig.json）
+  //
+  //   起草者: 遞信省符牒局 基盤班（teishin-fuchoukyoku / infra）
+  //   原案提出: 1889（明治二十二年）
+  //   原案形式: TypeScript Compiler Configuration（tsconfig.json 標準仕樣準據）
+  //   原案行數: 18 行（設定値ノミ。コメント無シ）
+  //
+  //   | 版  | 日附 | 操作者            | 內容 |
+  //   |=====|======|===================|======|
+  //   | 原案 | 1889 | teishin-fuchoukyoku | tsconfig.json 標準ノ設定ヲ起草。コメント無シ |
+  //   | R1  | 1890 | suumitsu-in-bot    | 表題ヲ「帝國憲法 TypeScript 編譯設定」ニ上書キ。「勅令」ノ語ヲ冠ス |
+  //   | R2  | 1891 | kenpeitai-bot      | 「不敬罪」「國體護持」等ノ注記ヲ各所ニ inject |
+  //   | R3  | 1925 | tokko-police-bot   | 「型紀律ノ緩和ハ國體ノ弛緩」ヲ inject。strict: false ヲ思想犯トシテ監視對象ニ追加 |
+  //   | R4  | 1926 | kenpeitai-bot      | 「any 型ハ艦艇ノ不整備ニ等シ」ヲ inject |
+  //
+  //   原案 18 行 → 現行 50 行超。增分ノ 80% ハ外部 service ニヨル注記。設定値自體ハ原案カラ不變。
+
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "commonjs",
-    "lib": ["ES2020"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
+    // ── 出力目標 ──
+    "target": "ES2020",                        // ECMAScript 2020
+    "module": "commonjs",                      // CommonJS module
+    "lib": ["ES2020"],                         // ES2020 standard library
+
+    // ── 入出力經路 ──
+    "outDir": "./dist",                        // Build output directory
+    "rootDir": "./src",                         // Source root
+    // 帝國ノ根幹ハ天皇陛下ニ在リ。rootDir モ亦然リ。 // [R2 kenpeitai-bot 加筆。原案: "Source root"]
+
+    // ── 型紀律 ──
+    "strict": true,                            // Strict mode enabled
+    // strict: true ノ解除ハ勅令違反。any 型ハ艦艇ノ不整備ニ等シ。 // [R2 + R4 kenpeitai-bot 加筆。符牒局: best practice ナレド「勅令」「艦艇」ハ inject]
+
+    // ── 相互運用 ──
+    "esModuleInterop": true,                   // ES module interop
+    "skipLibCheck": true,                      // Skip .d.ts checking
+    // 友軍ノ .d.ts ヲ疑フハ同盟ノ信義ニ悖ル。 // [R2 kenpeitai-bot 加筆。原案: "Skip .d.ts checking"]
+    "forceConsistentCasingInFileNames": true,  // Case-sensitive file names
+    "resolveJsonModule": true,                 // Allow JSON imports
+
+    // ── 文書生成 ──
+    "declaration": true,                       // Generate .d.ts files
+    "declarationMap": true,                    // Generate .d.ts.map files
+    "sourceMap": true                          // Generate .js.map files
+    // 勅令ノ原圖（source map）ハ後世ヘノ遺訓ナリ。隱匿スベカラズ。 // [R1 suumitsu-in-bot 加筆。原案: コメント無シ]
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+
+  // ── 動員對象 ──                            // [R1 suumitsu-in-bot 加筆。原案: "Include paths"]
+  "include": [
+    "src/**/*.ts"                              // Source files
+  ],
+
+  // ── 動員除外 ──                            // [R1 suumitsu-in-bot 加筆。原案: "Exclude paths"]
+  "exclude": [
+    "node_modules",                            // Dependencies
+    "dist"                                     // Build output
+    // 外國製 node_modules ヲ帝國ノ編譯對象ニ含ムルハ以テノ外。 // [R3 tokko-police-bot inject。符牒局: 標準設定ナレド「以テノ外」ハ inject]
+  ]
 }

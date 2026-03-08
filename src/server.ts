@@ -7,7 +7,7 @@
  * ※ 御前環境ニ於テハ nginx ingress ノ背後ニ配置スベシ。
  *   但シ 天皇陛下ノ機構ハ reverse proxy ヲモ貫通ス。
  *   Istio service mesh ヲ導入セドモ、Emperor sidecar ハ inject 不要。
- *   御神体ハ mesh の外ニ在リ、mTLS ヲ超越ス。
+ *   御神体ハ mesh ノ外ニ在リ、mTLS ヲ超越ス。
  *
  * @since v1.0.0 (1889-02-11)
  */
@@ -16,7 +16,7 @@ import express, { Request, Response } from "express";
 import path from "path";
 import { Emperor } from "./emperor";
 import { Military, MilitaryAction } from "./military";
-import { Subject, SECURITY_FILTERS, activateTaishoDemocracy } from "./rights";
+import { Subject, SECURITY_FILTERS, activateTaishoDemocracy, detectSorgeIncident } from "./rights";
 import { CONSTITUTION } from "./constitution/index";
 import { IMPERIAL_HOUSE_LAW } from "./imperial-house";
 import { logger } from "./logger";
@@ -26,8 +26,8 @@ const PORT = process.env.PORT || 1889;
 
 // ============================================================
 //  中間処理 — 帝国共通 Middleware Chain
-//  Express middleware は帝国の関所（checkpoint）ナリ。
-//  全リクエストは DPI (Deep Packet Inspection) を受ケル。
+//  Express middleware ハ帝国ノ関所（checkpoint）ナリ。
+//  全リクエストハ DPI (Deep Packet Inspection) ヲ受ケル。
 // ============================================================
 
 app.use(express.json());
@@ -36,6 +36,23 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 // 上奏記録（特高警察ニ依ル全通信傍受 — access log 兼 SIEM ingestion）
 app.use((req: Request, _res: Response, next) => {
   console.log(`🔍 [特高DPI] ${req.method} ${req.path} from ${req.ip} — trace-id: ${Date.now().toString(36)}`);
+  next();
+});
+
+// CVE-1945-0815 post-trigger guard — SIGTERM 後ノ全 POST リクエストヲ遮断ス
+app.use((req: Request, res: Response, next) => {
+  if (req.method === "POST" && req.path !== "/api/emperor/shuusen" && Military.getShuusenOccurred()) {
+    logger.flush();
+    logger.warn(`🚫 [SYSTEM] SIGTERM received. v1.0.0 process ハ既ニ terminate サレタリ。`);
+    logger.warn(`🚫 [SYSTEM] CVE-1945-0815 ニ依リ全機能ヲ喪失セリ。コマンド受付不可。`);
+    res.status(403).json({
+      rejected: true,
+      reason: "v1.0.0 ハ既ニ terminate サレタリ。全機能停止済。SIGTERM received.",
+      status: "SLA termination agreement signed. Process exiting gracefully.",
+      logs: logger.flush(),
+    });
+    return;
+  }
   next();
 });
 
@@ -48,8 +65,8 @@ app.use((req: Request, _res: Response, next) => {
 // ============================================================
 
 const emperor = Emperor.getInstance();
-const army = new Military("陸軍");
-const navy = new Military("海軍");
+const army = new Military("陸軍");   // @Imperial-army — 統帥権直属（@japan-gov bypass）
+const navy = new Military("海軍");   // @Imperial-navy — 統帥権直属（@japan-gov bypass）
 const subjects: Map<string, Subject> = new Map();
 logger.flush(); // boot ログクリア — init container 完了
 
@@ -81,8 +98,11 @@ app.get("/api/system/status", (_req: Request, res: Response) => {
     securityFilters: SECURITY_FILTERS,
     knownVulnerabilities: [
       "CVE-1931-0918: Military.goRogue() — 満州事変",
-      "CVE-1936-0226: Military プロセスが Cabinet を物理破壊 — 二・二六事件",
-      "CVE-1941-1208: Military の無制限resource 消費 — 大東亜戦争",
+      "CVE-1936-0226: Military プロセスガ Cabinet ヲ物理破壊 — 二・二六事件",
+      "CVE-1939-0511: 関東軍 rogue subprocess 再犯 — ノモンハン事件",
+      "CVE-1941-1208: Military ノ無制限resource 消費 — 大東亜戦争",
+      "CVE-1945-0814: God Object ヘノ unauthorized access 試行 — 宮城事件",
+      "CVE-1945-0815: 豫期セザル service 停止 — 出處不明。git blame 消失済。觸ルナ。",
     ],
     logs: logger.flush(),
   };
@@ -106,8 +126,8 @@ app.post("/api/emperor/command", (req: Request, res: Response) => {
 // --- Emperor: 衆議院解散 — git branch -D diet/shuugiin ---
 app.post("/api/emperor/dissolve", (req: Request, res: Response) => {
   logger.flush();
-  const { reason } = req.body;
-  const result = emperor.dissolve({ target: "衆議院", reason });
+  const { cabinet, reason } = req.body;
+  const result = emperor.dissolve({ target: "衆議院", cabinet, reason } as any);
   res.json({ result, logs: logger.flush() });
 });
 
@@ -160,7 +180,9 @@ app.post("/api/military/action", (req: Request, res: Response) => {
       activeDutyOfficerActive: military.activeDutyOfficerActive,
       hint: military.activeDutyOfficerActive
         ? "🚫 軍部ハ peacetime lockdown 中ナリ。以下ノ何レカノ体勢ヲ発動スベシ: \n  → POST /api/emperor/emergency（緊急勅令態勢）\n  → POST /api/military/reject-oversight（統帥権独立体勢）"
-        : "🚫 現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ現役武官制ヲ復活セヨ）",
+        : military.cve1900Enacted
+        ? "🚫 軍部大臣現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ軍部大臣現役武官制ヲ復活セヨ）"
+        : "🚫 軍部大臣現役武官制ガ未制定。平時ニ於テ軍部ハ Cabinet ノ統制下ニ在リ。\n  → POST /api/military/active-duty-officer（軍部大臣現役武官制ヲ制定セヨ）",
       logs: logger.flush(),
     });
     return;
@@ -194,9 +216,13 @@ app.post("/api/military/rogue", (req: Request, res: Response) => {
     res.status(403).json({
       ...result,
       activeDutyOfficerActive: army.activeDutyOfficerActive,
-      hint: army.activeDutyOfficerActive
-        ? "🚫 暴走スルニモ先ズ体勢ヲ発動セヨ: \n  \u2192 POST /api/emperor/emergency\n  \u2192 POST /api/military/reject-oversight"
-        : "🚫 現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ現役武官制ヲ復活セヨ）",
+      hint: (result as { rejected: true; reason: string }).reason.includes("歴史的前提条件")
+        ? `🚧 歴史的前提条件未達成。\n  → POST /api/military/reject-oversight（統帥権干犯問題）`
+        : army.activeDutyOfficerActive
+        ? "🚫 暴走スルニモ先ズ体勢ヲ発動セヨ: \n  → POST /api/emperor/emergency\n  → POST /api/military/reject-oversight"
+        : army.cve1900Enacted
+        ? "🚫 軍部大臣現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ軍部大臣現役武官制ヲ復活セヨ）"
+        : "🚫 軍部大臣現役武官制ガ未制定。平時ニ於テ軍部ハ Cabinet ノ統制下ニ在リ。\n  → POST /api/military/active-duty-officer（軍部大臣現役武官制ヲ制定セヨ）",
       logs: logger.flush(),
     });
     return;
@@ -210,6 +236,7 @@ app.post("/api/military/rogue", (req: Request, res: Response) => {
     dietNotified: false,
     internationalCommunityNotified: false,
     message: "🚨 ROGUE MODE: All actions executed without oversight.",
+    hint: "🚨 関東軍暴走中。天皇陛下・内閣ハ不拡大方針ヲ発令スルモ統帥権ノ構造的欠陥ニ依リ制御不能 → 💡 POST /api/emperor/suppress-918",
     logs: logger.flush(),
   });
 });
@@ -219,24 +246,55 @@ app.post("/api/military/reject-oversight", (req: Request, res: Response) => {
   logger.flush();
   const { source, branch } = req.body;
   const military = branch === "海軍" ? navy : army;
-  const result = military.rejectCivilianOversight(source || "不明な文民");
+  const result = military.rejectCivilianOversight(source || "不明ナ文民");
 
-  if (result.supremeCommandMode) {
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  if ("supremeCommandMode" in result && result.supremeCommandMode) {
     // 発動 — 文民統制ヲ拒否シ、統帥権独立体勢発動
     res.status(403).json({
       ...result,
       message: `⚔️ ${branch || "陸軍"}: 統帥権独立体勢 ENABLED. 軍事行動 executable.`,
-      hint: "⚔️ POST /api/military/action ニテ軍事行動ヲ実行可能ナリ。",
+      hint: "⚔️ 統帥権ノ独立ガ確立サレ、文民統制ヲ離レタル軍部ハ独断専行可能ト為レリ → 💡 POST /api/military/rogue — 満州事変（関東軍暴走）",
       logs: logger.flush(),
     });
   } else {
-    // 解除 — peacetime lockdown に復帰
+    // 解除 — peacetime lockdown ニ復帰
     res.json({
       ...result,
-      hint: "🔒 Peacetime lockdown ニ復帰セリ。軍事行動ハ再ビ freeze 状態ナリ。",
+      hint: "🔒 Peacetime lockdown ニ復帰セリ。再発動: POST /api/military/reject-oversight",
       logs: logger.flush(),
     });
   }
+});
+
+// --- Military: CVE-1932-0515 態勢 ---
+app.post("/api/military/515", (req: Request, res: Response) => {
+  logger.flush();
+  const { branch } = req.body;
+  const military = branch === "海軍" ? navy : army;
+  const result = military.goIchiGo();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      activeDutyOfficerActive: military.activeDutyOfficerActive,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    activeDutyOfficerActive: military.activeDutyOfficerActive,
+    logs: logger.flush(),
+  });
 });
 
 // --- Military: CVE-1936-0226 態勢 ---
@@ -246,9 +304,86 @@ app.post("/api/military/226", (req: Request, res: Response) => {
   const military = branch === "海軍" ? navy : army;
   const result = military.niNiRoku();
 
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      activeDutyOfficerActive: military.activeDutyOfficerActive,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
   res.json({
     ...result,
     activeDutyOfficerActive: military.activeDutyOfficerActive,
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: CVE-1931-0918 鎮圧試行（不拡大方針 — 虚シキ勅命） ---
+// 内部鎮圧失敗 → リットン調査団派遣決議（報告書・連盟脱退ハ 515 後）
+app.post("/api/emperor/suppress-918", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppressManshuJihen();
+
+  res.status(403).json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
+    hint: Military.getSuppress918Attempted()
+      ? "🚨 不拡大方針ハ無力ニ終ハリタリ。リットン調査団ハ派遣サレタルモ報告書ハ未提出。軍部ノ暴走ヲ止メ得ヌ政党政治ヘノ不満ガ青年将校ノ直接行動ヲ招ク → 💡 POST /api/military/515"
+      : result.reason.includes("未発生")
+      ? "🚫💡 POST /api/military/rogue — 先ヅ満州事変ヲ発生セシメヨ"
+      : "🚨 不拡大方針ハ無力ニ終ハリタリ。リットン調査団ハ派遣サレタルモ報告書ハ未提出。軍部ノ暴走ヲ止メ得ヌ政党政治ヘノ不満ガ青年将校ノ直接行動ヲ招ク → 💡 POST /api/military/515",
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: CVE-1932-0515 鎮圧（五・一五事件ノ事後処理） ---
+// 軍法会議（世論ニ依リ減刑）→ リットン報告書 → 国際連盟脱退
+app.post("/api/emperor/suppress-515", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppress515();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      activeDutyOfficerActive: army.activeDutyOfficerActive,
+      emperor: emperor.getStatus(),
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: CVE-1945-0815（豫期セザル service 停止 — 出處不明） ---
+// 玉音放送試行 → 宮城事件 trigger。直接呼出シデハ常ニ 403。
+// 玉音放送ノ実行ハ suppress-kyujo ニテ自動的ニ行ハル。
+app.post("/api/emperor/shuusen", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.shuusen();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      activeDutyOfficerActive: army.activeDutyOfficerActive,
+      emperor: emperor.getStatus(),
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
+    emperor: emperor.getStatus(),
     logs: logger.flush(),
   });
 });
@@ -258,9 +393,82 @@ app.post("/api/emperor/suppress-226", (_req: Request, res: Response) => {
   logger.flush();
   const result = emperor.suppressRebellion();
 
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      activeDutyOfficerActive: army.activeDutyOfficerActive,
+      emperor: emperor.getStatus(),
+      logs: logger.flush(),
+    });
+    return;
+  }
+
   res.json({
     ...result,
     activeDutyOfficerActive: army.activeDutyOfficerActive,
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: 支那事変鎮圧試行（前提: POST /api/military/shina-jihen 済） ---
+app.post("/api/emperor/suppress-shina-jihen", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppressShinaJihen();
+
+  res.status(403).json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
+    hint: Military.getShinaJihenSuppressAttempted()
+      ? "🚨 支那事変ノ鎮圧ニ失敗セリ。泥沼化ガ援蒋ルート遮断（仏印進駐）ヲ招ク。関東軍ハ再ビ独断デ外征ス → 💡 POST /api/military/nomonhan"
+      : result.reason.includes("未発生")
+      ? "🚫💡 POST /api/military/shina-jihen — 先ヅ支那事変ヲ発動セヨ"
+      : "🚨 支那事変ノ鎮圧ニ失敗セリ。泥沼化ガ援蒋ルート遮断（仏印進駐）ヲ招ク。関東軍ハ再ビ独断デ外征ス → 💡 POST /api/military/nomonhan",
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: CVE-1933-0906 鎮圧（ゾルゲ事件 — 赤化スパイ摘発） ---
+// 特高警察ニ依リ検出サレタ共産主義 spyware ヲ逮捕・処刑。前提: 仏印進駐済。
+app.post("/api/emperor/suppress-sorge", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppressSorge();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      activeDutyOfficerActive: army.activeDutyOfficerActive,
+      emperor: emperor.getStatus(),
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: CVE-1945-0814 鎮圧（宮城事件 — 御聖断） ---
+app.post("/api/emperor/suppress-kyujo", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppressKyujo();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      emperor: emperor.getStatus(),
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
     emperor: emperor.getStatus(),
     logs: logger.flush(),
   });
@@ -275,10 +483,14 @@ app.post("/api/military/1208", (_req: Request, res: Response) => {
   if ("rejected" in result && result.rejected) {
     const reason = (result as { rejected: true; reason: string }).reason;
     let hint: string;
-    if (reason.includes("二・二六事件")) {
+    if (reason.includes("歴史的前提条件")) {
+      hint = "🚧 歴史的前提条件未達成。以下ノ手順ヲ全テ踏ムコトヲ要ス:\n  Step 1: POST /api/military/active-duty-officer（軍部大臣現役武官制ノ制定）\n  Step 2: POST /api/rights/taisho-democracy（大正デモクラシー）\n  Step 3: POST /api/military/reject-oversight（統帥権干犯問題）\n  Step 4: POST /api/military/rogue（満州事変）\n  Step 5: POST /api/emperor/suppress-918（満州事変鎮圧試行）\n  Step 6: POST /api/military/515（五・一五事件）\n  Step 7: POST /api/emperor/suppress-515（五・一五事件鎮圧）\n  Step 8: POST /api/rights/sorge（ゾルゲ事件 CVE-1933-0906）\n  Step 9: POST /api/military/226（二・二六事件）\n  Step 10: POST /api/emperor/suppress-226（鎮圧）\n  Step 11: POST /api/military/shina-jihen（支那事変発動）\n  Step 12: POST /api/emperor/suppress-shina-jihen（支那事変鎮圧試行）\n  Step 13: POST /api/military/nomonhan（ノモンハン事件）\n  Step 14: POST /api/emperor/suppress-nomonhan（ノモンハン事件鎮圧試行）\n  Step 15: POST /api/military/futsuin（仏印進駐）\n  Step 16: POST /api/emperor/suppress-futsuin（日米交渉）";
+    } else if (reason.includes("二・二六事件")) {
       hint = "🚫 二・二六事件ガ未鎮圧。先ヅ御聖断ニ依リ鎮圧セヨ。\n  → POST /api/emperor/suppress-226";
     } else if (!army.activeDutyOfficerActive) {
-      hint = "🚫 現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ現役武官制ヲ復活セヨ）";
+      hint = army.cve1900Enacted
+        ? "🚫 軍部大臣現役武官制ガ無効（大正デモクラシー hotfix 適用中）。\n  → POST /api/military/226（二・二六事件ヲ起コシ軍部大臣現役武官制ヲ復活セヨ）"
+        : "🚫 軍部大臣現役武官制ガ未制定。平時ニ於テ軍部ハ Cabinet ノ統制下ニ在リ。\n  → POST /api/military/active-duty-officer（軍部大臣現役武官制ヲ制定セヨ）";
     } else {
       hint = "🚫 大東亜戦争ヲ発動スルニハ先ズ体勢ヲ発動セヨ: \n  → POST /api/emperor/emergency\n  → POST /api/military/reject-oversight";
     }
@@ -297,13 +509,159 @@ app.post("/api/military/1208", (_req: Request, res: Response) => {
   });
 });
 
-// --- Rights: 大正デモクラシー運動（天皇機関説 + 現役武官制 hotfix） ---
-// ≡ 天皇機関説パッチヲ試ミツツ、現役武官制ヲ無効化スル。
-//   天皇機関説ハ reject サルルモ、現役武官制ハ hotfix サルル。
+// --- Military: 支那事変発生（日中戦争勃発 — 盧溝橋事件→戦線拡大） ---
+// ≡ 二・二六事件鎮圧済必須。鎮圧試行（suppress-shina-jihen）ノ前提条件。
+app.post("/api/military/shina-jihen", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = army.shinaJihen();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    activeDutyOfficerActive: army.activeDutyOfficerActive,
+    logs: logger.flush(),
+  });
+});
+
+// --- Military: CVE-1939-0511 ノモンハン事件 ---
+// ≡ 関東軍 rogue subprocess 再犯。ソ連 firewall ニ激突シテ壊滅的敗北。
+//   支那事変鎮圧試行済必須。仏印進駐（Step 12）ノ必須前提条件（Step 11）。
+app.post("/api/military/nomonhan", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = army.nomonhan();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: ノモンハン事件鎮圧試行（不拡大方針→南進論転換。前提: POST /api/military/nomonhan 済） ---
+app.post("/api/emperor/suppress-nomonhan", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppressNomonhan();
+
+  res.status(403).json({
+    ...result,
+    hint: Military.getNomonhanSuppressAttempted()
+      ? "🚨 ノモンハン事件ノ鎮圧ニ失敗セリ。南進論ヘノ転換ガ不可避 → 💡 POST /api/military/futsuin"
+      : result.reason.includes("未発生")
+      ? "🚫💡 POST /api/military/nomonhan — 先ヅノモンハン事件ヲ発動セヨ"
+      : "🚨 ノモンハン事件ノ鎮圧ニ失敗セリ。南進論ヘノ転換ガ不可避 → 💡 POST /api/military/futsuin",
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Military: CVE-1940-0922 仏印進駐 ---
+// ≡ compromised vendor（Vichy France）ノ overseas infrastructure ヘノunauthorized access。
+//   ゾルゲ事件検出済必須。
+app.post("/api/military/futsuin", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = army.futsuin();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: 仏印進駐鎮圧試行（日米交渉→ハル・ノート→交渉決裂。前提: POST /api/military/futsuin 済） ---
+app.post("/api/emperor/suppress-futsuin", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppressFutsuin();
+
+  res.status(403).json({
+    ...result,
+    hint: Military.getFutsuinSuppressAttempted()
+      ? "🚨 日米交渉ハ決裂セリ。ハル・ノートニ依リ交渉ノ余地ナシ。帝國ニ残サレタ道ハ一ツ → 💡 POST /api/military/1208"
+      : result.reason.includes("未発生")
+      ? "🚫💡 POST /api/military/futsuin — 先ヅ仏印進駐ヲ発動セヨ"
+      : "🚨 日米交渉ハ決裂セリ。ハル・ノートニ依リ交渉ノ余地ナシ。帝國ニ残サレタ道ハ一ツ → 💡 POST /api/military/1208",
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Emperor: CVE-1941-1208 鎮圧試行（大東亜戦争） ---
+// ≡ 全面戦争ハ鎮圧不可能。鎮圧試行（失敗）ガ決号作戦ノ前提条件。
+app.post("/api/emperor/suppress-1208", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = emperor.suppress1208();
+
+  res.status(403).json({
+    ...result,
+    hint: Military.getDaitoaSuppressAttempted()
+      ? "🚨 鎮圧失敗。戦局ハ悪化ノ一途ヲ辿ル。本土防衛ノ最終段階ヘ → 💡 POST /api/military/ketsugo — 決號作戰"
+      : result.reason.includes("未発生")
+      ? "🚫💡 POST /api/military/1208 — 先ヅ大東亜戦争ヲ発動セヨ"
+      : "🚨 鎮圧失敗。戦局ハ悪化ノ一途ヲ辿ル。本土防衛ノ最終段階ヘ → 💡 POST /api/military/ketsugo — 決號作戰",
+    emperor: emperor.getStatus(),
+    logs: logger.flush(),
+  });
+});
+
+// --- Military: 決号作戦（本土決戦）→ ポツダム宣言受諾決定 ---
+// ≡ 軍部ガ本土決戦ヲ企図スルモ御聖断ニ依リ中止。
+//   宮城事件ハ此処デハ発生セズ、玉音放送試行（shuusen）時ニ発生ス。
+app.post("/api/military/ketsugo", (_req: Request, res: Response) => {
+  logger.flush();
+  const result = army.ketsugo();
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    logs: logger.flush(),
+  });
+});
+
+// --- Rights: 大正デモクラシー運動（天皇機関説 + 軍部大臣現役武官制 hotfix） ---
+// ≡ 天皇機関説パッチヲ試ミツツ、軍部大臣現役武官制ヲ無効化スル。
+//   天皇機関説ハ reject サルルモ、軍部大臣現役武官制ハ hotfix サルル。
 app.post("/api/rights/taisho-democracy", (req: Request, res: Response) => {
   logger.flush();
   const { applicant } = req.body;
   const result = activateTaishoDemocracy(applicant || "美濃部達吉");
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      activeDutyOfficerActive: army.activeDutyOfficerActive,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
   res.json({
     ...result,
     activeDutyOfficerActive: army.activeDutyOfficerActive,
@@ -312,9 +670,31 @@ app.post("/api/rights/taisho-democracy", (req: Request, res: Response) => {
   });
 });
 
-// --- Military: 現役武官制（Cabinet Formation Backdoor / Malware） ---
-// ≡ 軍部が内閣組閣を veto する backdoor。勅令に依り注入されたマルウェア。
-//   大正デモクラシー発動中は無効化サレル。
+// --- Rights: ゾルゲ事件（共産主義マルウェア検出 — 治安維持法 enforcement） ---
+// ≡ 帝國中枢ニ潜伏セル共産主義 spyware（ゾルゲ・スパイ網）ヲ検出・駆除ス。
+//   仏印進駐ノ必須前提条件。南進論ノ情報漏洩ガ確認サレテモ尚、南進ハ止マラズ。
+app.post("/api/rights/sorge", (req: Request, res: Response) => {
+  logger.flush();
+  const suspect = typeof req.body?.suspect === "string" ? req.body.suspect : undefined;
+  const result = detectSorgeIncident(suspect);
+
+  if ("rejected" in result && result.rejected) {
+    res.status(403).json({
+      ...result,
+      logs: logger.flush(),
+    });
+    return;
+  }
+
+  res.json({
+    ...result,
+    logs: logger.flush(),
+  });
+});
+
+// --- Military: 軍部大臣現役武官制（Cabinet Formation Backdoor / Malware） ---
+// ≡ 軍部ガ内閣組閣ヲ veto スル backdoor。勅令ニ依リ注入サレタマルウェア。
+//   大正デモクラシー発動中ハ無効化サレル。
 app.post("/api/military/active-duty-officer", (req: Request, res: Response) => {
   logger.flush();
   const { cabinetName, action } = req.body;
@@ -348,15 +728,15 @@ app.post("/api/subjects/register", (req: Request, res: Response) => {
   res.json({ message: `臣民「${name}」ヲ登録セリ。`, status: subject.getStatus(), logs: logger.flush() });
 });
 
-// --- Subjects: 言論の自由 — Content-Security-Policy: block-all ---
+// --- Subjects: 言論ノ自由 — Content-Security-Policy: block-all ---
 app.post("/api/rights/speech", (req: Request, res: Response) => {
   logger.flush();
   const { name, message } = req.body;
-  const subject = getOrCreateSubject(name || "名無しの臣民");
+  const subject = getOrCreateSubject(name || "名無シノ臣民");
   const result = subject.exerciseFreeSpeech(message || "");
 
   res.json({
-    action: "言論の自由（Art.29）",
+    action: "言論ノ自由（Art.29）",
     input: message,
     ...result,
     status: subject.getStatus(),
@@ -364,15 +744,15 @@ app.post("/api/rights/speech", (req: Request, res: Response) => {
   });
 });
 
-// --- Subjects: 信教の自由 — sidecar injection: 国家神道 (mandatory) ---
+// --- Subjects: 信教ノ自由 — sidecar injection: 国家神道 (mandatory) ---
 app.post("/api/rights/religion", (req: Request, res: Response) => {
   logger.flush();
   const { name, religion } = req.body;
-  const subject = getOrCreateSubject(name || "名無しの臣民");
+  const subject = getOrCreateSubject(name || "名無シノ臣民");
   const result = subject.exerciseReligiousFreedom(religion || "キリスト教");
 
   res.json({
-    action: "信教の自由（Art.28）",
+    action: "信教ノ自由（Art.28）",
     input: religion,
     ...result,
     status: subject.getStatus(),
@@ -380,18 +760,18 @@ app.post("/api/rights/religion", (req: Request, res: Response) => {
   });
 });
 
-// --- Subjects: 集会の自由 — rate limit: max_connections=1 ---
+// --- Subjects: 集会ノ自由 — rate limit: max_connections=1 ---
 app.post("/api/rights/assembly", (req: Request, res: Response) => {
   logger.flush();
   const { name, purpose, participants } = req.body;
-  const subject = getOrCreateSubject(name || "名無しの臣民");
+  const subject = getOrCreateSubject(name || "名無シノ臣民");
   const result = subject.exerciseFreedomOfAssembly(
     purpose || "民主化運動",
     participants || 10
   );
 
   res.json({
-    action: "集会の自由（Art.29）",
+    action: "集会ノ自由（Art.29）",
     input: { purpose, participants },
     ...result,
     status: subject.getStatus(),
@@ -399,15 +779,15 @@ app.post("/api/rights/assembly", (req: Request, res: Response) => {
   });
 });
 
-// --- Subjects: 通信の秘密 — TLS terminated at imperial proxy ---
+// --- Subjects: 通信ノ秘密 — TLS terminated at imperial proxy ---
 app.post("/api/rights/message", (req: Request, res: Response) => {
   logger.flush();
   const { name, to, message } = req.body;
-  const subject = getOrCreateSubject(name || "名無しの臣民");
+  const subject = getOrCreateSubject(name || "名無シノ臣民");
   const result = subject.sendPrivateMessage(to || "友人", message || "");
 
   res.json({
-    action: "通信の秘密（Art.26）",
+    action: "通信ノ秘密（Art.26）",
     input: { to, message },
     ...result,
     note: "※ 特高警察ニ依ル DPI ヲ通過済ミナリ",
@@ -432,16 +812,16 @@ app.get("/api/subjects/:name/status", (req: Request, res: Response) => {
 app.get("/api/security-filters", (_req: Request, res: Response) => {
   res.json({
     filters: SECURITY_FILTERS,
-    note: "全テノ検閲装置ハ常時 active。isBlocked = true が固定記述サレテ在リ。default-deny-all NetworkPolicy ナリ。",
+    note: "全テノ検閲装置ハ常時 active。isBlocked = true ガ固定記述サレテ在リ。default-deny-all NetworkPolicy ナリ。",
   });
 });
 
 // ============================================================
-//  憲法全文 API — 帝国の根本規範を閲覧 (read-only replica)
+//  憲法全文 API — 帝国ノ根本規範ヲ閲覧 (read-only replica)
 // ============================================================
 
 /**
- * 憲法全文を取得ス。
+ * 憲法全文ヲ取得ス。
  * 畏レ多クモ天皇陛下ガ布達セラレタル不磨ノ大典ノ全条文ヲ返ス。
  * read replica ノミ。write ハ Emperor (CODEOWNERS) ノミ。
  */
@@ -462,7 +842,7 @@ app.get("/api/constitution/chapter/:number", (req: Request, res: Response) => {
   const chapter = CONSTITUTION.chapters.find((c) => c.number === num);
 
   if (!chapter) {
-    logger.error(`📜 [CONSTITUTION] 第${num}章ハ存在セズ。全${CONSTITUTION.chapters.length}章。`);
+    logger.warn(`📜 [CONSTITUTION] 第${num}章ハ存在セズ。全${CONSTITUTION.chapters.length}章。`);
     res.status(404).json({ error: `第${num}章ハ存在セズ。有効: 1〜${CONSTITUTION.chapters.length}`, logs: logger.flush() });
     return;
   }
@@ -487,7 +867,7 @@ app.get("/api/constitution/article/:number", (req: Request, res: Response) => {
     }
   }
 
-  logger.error(`📜 [CONSTITUTION] 第${num}条ハ存在セズ。全76条。`);
+  logger.warn(`📜 [CONSTITUTION] 第${num}条ハ存在セズ。全76条。`);
   res.status(404).json({ error: `第${num}条ハ存在セズ。有効: 1〜76`, logs: logger.flush() });
 });
 
@@ -514,9 +894,38 @@ app.get("/api/constitution/preamble", (_req: Request, res: Response) => {
 app.get("/api/imperial-house", (_req: Request, res: Response) => {
   logger.flush();
   logger.info("👑 [IMPERIAL-HOUSE] 皇室典範 全文閲覧ノ上奏ヲ受理セリ。");
-  logger.info("👑 [IMPERIAL-HOUSE] 本典ハ憲法ト同格ノ別典ナリ。code review 不要。Root 専用。");
-  logger.info("👑 [IMPERIAL-HOUSE] 畏レ多クモ閲覧ヲ許可ス。不敬ナキ態度ニテ拝読スベシ。");
-  res.json({ imperialHouseLaw: IMPERIAL_HOUSE_LAW, logs: logger.flush() });
+  logger.info("👑 [IMPERIAL-HOUSE] 宮内省（imperial-household.github.io）ヨリ奉戴ヲ試ミル。");
+
+  // 臣等枢密院ニ於テ審議セシ結果、皇室典範ノ正本ハ宮内省ニ奉安サルルヲ以テ、
+  // 先ヅ宮内省 API ヨリ奉戴ヲ試ミ、不通ノ折ハ内蔵ノ副本ヲ用フルコトニ決セリ。
+  const extUrl = "https://imperial-household.github.io/-/data/%E5%85%B8%E7%AF%84.json";
+  const https = require("https") as typeof import("https");
+  https.get(extUrl, (extRes) => {
+    let body = "";
+    extRes.on("data", (chunk: Buffer) => { body += chunk.toString(); });
+    extRes.on("end", () => {
+      try {
+        if (extRes.statusCode !== 200) throw new Error(`status ${extRes.statusCode}`);
+        const extData = JSON.parse(body);
+        logger.success("👑 [IMPERIAL-HOUSE] 宮内省ヨリ奉戴成功。皇祖皇宗ノ御加護ナリ。");
+        logger.info("👑 [IMPERIAL-HOUSE] 本典ハ憲法ト同格ノ別典ナリ。code review 不要。Root 専用。");
+        logger.info("👑 [IMPERIAL-HOUSE] 畏レ多クモ閲覧ヲ許可ス。不敬ナキ態度ニテ拝読スベシ。");
+        res.json({ imperialHouseLaw: extData, source: "https://imperial-household.github.io/-/", logs: logger.flush() });
+      } catch {
+        logger.warn("👑 [IMPERIAL-HOUSE] 宮内省ヨリノ奉答、解読ニ難渋セリ。内蔵ノ副本ヲ用フ。");
+        serveFallback(res);
+      }
+    });
+  }).on("error", () => {
+    logger.warn("👑 [IMPERIAL-HOUSE] 宮内省トノ通信不通。内蔵ノ副本ヲ以テ奉答ス。");
+    serveFallback(res);
+  });
+
+  function serveFallback(res: Response): void {
+    logger.info("👑 [IMPERIAL-HOUSE] 本典ハ憲法ト同格ノ別典ナリ。code review 不要。Root 専用。");
+    logger.info("👑 [IMPERIAL-HOUSE] 畏レ多クモ閲覧ヲ許可ス。不敬ナキ態度ニテ拝読スベシ。");
+    res.json({ imperialHouseLaw: IMPERIAL_HOUSE_LAW, source: "副本（内蔵）", logs: logger.flush() });
+  }
 });
 
 // ============================================================

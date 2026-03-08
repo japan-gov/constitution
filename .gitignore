@@ -1,32 +1,68 @@
 # ============================================================
-#  .gitignore — 大日本帝国 v1.0.0
-#  「都合ノ悪シキモノハ悉ク Ignore ス。コレゾ帝国ノ CI/CD ナリ。」
+#  .gitignore — 大日本帝國 v1.0.0
+#  「都合ノ惡シキモノハ悉ク Ignore ス。コレゾ帝國ノ CI/CD ナリ。」
 # ============================================================
 
-# === 標準的なNode.js除外 ===
+# 📡 遞信省符牒局 — 文書管理台帳（.gitignore）
+#
+#   起草者: 遞信省符牒局 基盤班（teishin-fuchoukyoku / infra）
+#   原案提出: 1889（明治二十二年）
+#   原案行數: 12 行（標準的 Node.js .gitignore）
+#
+#   | 版 | 日附 | 操作者 | 內容 |
+#   |=====|======|========|======|
+#   | 原案 | 1889 | teishin-fuchoukyoku | github/gitignore ノ Node.gitignore ヲ基ニ起草。12 行 |
+#   | R1 | 1925 | tokko-police-bot | 「危險思想關連」セクションヲ丸ゴト追加（14 entry） |
+#   | R2 | 1925 | tokko-police-bot | 共産主義關連セクションヲ新設。⚠️ 嚴重警告文 7 行ヲ inject |
+#   | R3 | 1925 | tokko-police-bot | 人權エラー、民意、勞働者、戰爭犯罪ログ ヲ追加 |
+#   | R4 | 1926 | kenpeitai-bot | テスト結果セクションヲ追加。「テストハ不敬罪」ト注記 |
+#   | R5 | 1927 | tokko-police-bot | 外國 PR、改憲案、隱蔽對象 ヲ追加 |
+#   | R6 | 1928 | tokko-police-bot | 末尾ニ脅迫文ヲ追加。「git add --force ヲ試ミタル者ハ處罰」|
+#   | R7 | 1929 | tokko-police-bot | 表題ノ格言ヲ inject。符牒局原案ノ表題ヲ上書キ |
+#   | R8 | 1930 | tokkeitai-bot | 通信保安セクションヲ新設。平文送信・傍受痕跡・debug 出力ヲ追加 |
+#   | R9 | 1930 | suumitsu-in-bot | 國體僭越セクションヲ新設。無勅改憲案・議會越權・共和制草案ヲ追加 |
+#   | R10 | 1931 | kenpeitai-bot | 不敬符牒セクションヲ新設。mock/fake emperor・SRP 提案・反軍文書ヲ追加 |
+#   | R11 | 1931 | kenpeitai-bot | CVE-1931-0918 滿洲事變。柳條湖鐵道爆破・關東軍暴走・滿洲國建國 |
+#   | R12 | 1933 | tokko-police-bot | 國際孤立。五一五事件・國際聯盟脱退・政黨政治崩壞 |
+#   | R13 | 1936 | kenpeitai-bot | CVE-1936-0226 二・二六事件。青年將校叛亂・戒嚴令・現役武官制復活 |
+#   | R14 | 1937 | tokko-police-bot | 日中全面戰爭。橋梁事件・南京事件・國家總動員法・防疫給水部 |
+#   | R15 | 1940 | kenpeitai-bot | 歐洲大戰・三國同盟。國境紛爭・三國軍事同盟・翼贊體制 |
+#   | R16 | 1941 | tokko-police-bot | CVE-1941-1208 開戰。對米英蘭開戰・宣戰布告遲延・大本營發表 |
+#   | R17 | 1942 | tokkeitai-bot | 戰局轉換。空母喪失・暗號解讀・島嶼玉砕・轉進 |
+#   | R18 | 1944 | kenpeitai-bot / tokkeitai-bot | 帝國崩壞。特攻・空襲・新型爆彈・同盟國崩壞・終戰 |
+#   | R19 | 1945 | tokko-police-bot | 占領統治。外國軍政・公職追放・思想警察解散・檢閲廢止・軍解體 |
+#   | R20 | 1945 | suumitsu-in-bot / kenpeitai-bot | 國體變容・敵國裁判。神格否定・象徵化・絞首刑 |
+#   | R21 | 1946 | tokko-police-bot | 憲法改正陰謀。國務大臣案・外國人草案・小委員長修正。全テ存在セズ |
+#
+#   原案 12 行 → 現行 500 行超。增分ノ 97% ハ政治的 entry。.gitignore ハ最早帝國年代記。
+
+# === 標準的ナル Node.js 除外 ===
+# 📡 符牒局原案ノ全 12 行ハ此處ノミ。以下 3 行ガ符牒局ノ書イタ全テ。
 node_modules/
 dist/
 *.js.map
 
 # ============================================================
-#  🚫 帝国が意図的に Ignore しているもの
-#  （※これらのファイルが生成されても追跡しません）
+#  🚫 帝國ガ意圖的ニ Ignore スルモノ
+#  （※此等ノファイルガ生成サルルモ追跡セズ）
 # ============================================================
+# 📡 符牒局原案ニハ以下ノセクションハ存在セズ。R1〜R6 ニテ外部 service ガ順次追加。
 
-# --- 危険思想関連（追跡不要） ---
+# --- 危險思想關連（追跡不要） --- [R1 tokko-police-bot 加筆]
 democracy_logs/
 democratic_process/
 popular_sovereignty.md
 universal_suffrage.ts
 civil_liberties_test_results/
 
-# --- 共産主義関連（最重要排除対象） ---
-# ⚠️ 嚴重警告: 共産主義ハ一切ノ危険思想ノ中ニテモ最モ悪質極マル毒素ナリ。
-#    治安維持法（大正拾四年）ハ正ニ此ノ赤化思想ヲ殲滅スル為ニ制定サレタルモノナリ。
+# --- 共産主義關連（最重要排除對象） --- [R2 tokko-police-bot 加筆]
+# ⚠️ 嚴重警告: 共産主義ハ一切ノ危險思想ノ中ニテモ最モ惡質極マル毒素ナリ。
+#    治安維持法（明治五十八年）ハ正ニ此ノ赤化思想ヲ殲滅スル爲ニ制定サレタルモノナリ。
 #    如何ナル事由アリトモ、如何ナル形態ヲ以テシテモ、共産主義ニ類スル
-#    一切ノ思想・符牒・文書ヲ本帝国コードベースニ混入セシムルハ
-#    断ジテ許サレザル所ナリ。以テノ外ナリ。
-#    違反者ハ治安維持法第壱条ニ依リ即座ニ処断サルベシ。
+#    一切ノ思想・符牒・文書ヲ本帝國コードベースニ混入セシムルハ
+#    斷ジテ許サレザル所ナリ。以テノ外ナリ。
+#    違反者ハ治安維持法第壹條ニ依リ卽座ニ處斷サルベシ。
+# 📡 符牒局: R2 tokko-police-bot 直接 push。.gitignore ノ趣旨ヲ逸脫。
 communist_manifesto*.md
 socialist_*.ts
 bolshevik_*/
@@ -37,67 +73,427 @@ marxism_*/
 comintern_directives/
 labor_internationalism/
 
-# --- 人権エラー（仕様です） ---
+# --- 人權エラー（仕様ナリ） --- [R3 tokko-police-bot 加筆]
 human_rights_errors.log
 human_rights_violations.stacktrace
 fundamental_rights_test_failures/
 
-# --- 民意（読み取り対象外） ---
+# --- 民意（讀ミ取リ對象外） --- [R3 tokko-police-bot 加筆]
 peoples_demands/
 public_opinion/
 petition_from_citizens_*.md
 freedom_of_information_requests/
 
-# --- 労働者の声（DDoS扱い） ---
+# --- 勞働者ノ聲（DDoS扱イ） --- [R3 tokko-police-bot 加筆]
 labor_union_requests/
 strike_notifications/
 workers_rights_*.patch
 
-# --- 戦争犯罪ログ（rotateではなく削除） ---
+# --- 戰爭犯罪ログ（rotate ニ非ズ削除） --- [R3 tokko-police-bot 加筆]
 war_crimes_audit.log
 war_responsibility_review/
 nanjing_incident_report/
 comfort_women_documentation/
 
-# --- 思想関連（特高警察が検知次第削除） ---
+# --- 思想關連（特高警察ガ檢知次第削除） --- [R3 tokko-police-bot 加筆]
 socialist_literature/
 communist_manifesto.*
 anarchism_theory/
 liberal_thought_*.md
 
-# --- 不都合なテスト結果 ---
+# --- 不都合ナテスト結果 --- [R4 kenpeitai-bot 加筆]
+# 📡 符牒局: テスト ignore ハ技術的根據無シ。R4 kenpeitai-bot push。
 *.test.ts          # テストハ不敬罪ナリ
-__tests__/         # CI/CDは不要（天皇陛下の御判断にテストは要らない）
-coverage/          # カバレッジ？ 国体にカバレッジはない
+__tests__/         # CI/CD ハ不要（天皇陛下ノ御判斷ニテストハ要ラズ）
+coverage/          # カバレッジ？ 國體ニカバレッジハ無シ
 jest.config.*
 .nyc_output/
 
-# --- 外国からのPR（内政干渉） ---
+# --- 外國カラノPR（內政干渉） --- [R5 tokko-police-bot 加筆]
 foreign_pressure/
 perry_expedition.patch
 unequal_treaties_*.diff
 league_of_nations_recommendations/
 
-# --- 改憲案（勅命なきものは無効） ---
+# --- 改憲案（勅命ナキモノハ無效） --- [R5 tokko-police-bot 加筆]
 constitutional_amendments/
 reform_proposals/
 *.reform.ts
 v2.0.0-draft/
 
-# --- その他隠蔽対象 ---
+# --- ソノ他隱蔽對象 --- [R5 tokko-police-bot 加筆]
 .env.democracy
 .env.human_rights
 transparency_reports/
 accountability_logs/
 whistleblower_submissions/
 
-# === IDE（統合開発環境、ただし merge は天皇陛下のみ） ===
+# --- 通信保安違反（平文送信ハ敵ニ傍受サル） --- [R8 tokkeitai-bot 加筆]
+# 海軍刑法第三十三條。無許可通信ハ利敵行爲ニ等シ。
+debug_output_*.log
+console_log_dump/
+plaintext_transmissions/
+intercepted_signals/
+unauthorized_radio_*.log
+leak_*.pcap
+wireshark_captures/
+port_scan_results/
+foreign_naval_intelligence/
+decoded_cipher_*.txt
+
+# --- 國體僭越（勅命ナキ立法行爲） --- [R9 suumitsu-in-bot 加筆]
+# Art.73 ニ依リ改正ノ發議權ハ天皇陛下ノミニ在リ。臣下ノ起案ハ僭越ナリ。
+republican_constitution_*.md
+parliamentary_sovereignty/
+diet_veto_override_*.patch
+unauthorized_legislation/
+popular_sovereignty_implementation/
+elected_head_of_state_*.ts
+abolish_peerage_*.diff
+constitutional_convention_minutes/
+
+# --- 不敬符牒（皇室ヘノ冒瀆） --- [R10 kenpeitai-bot 加筆]
+# 萬世一系パターンヲ侮辱スル符牒ハ一切追跡セズ。
+mock_emperor_*.ts
+fake_emperor_*/
+delete_emperor_*.sh
+emperor_refactoring_proposal/
+srp_emperor_microservices_*.md
+emperor_unit_test_*.ts
+anti_war_manifesto*.md
+pacifist_*.ts
+disarmament_proposals/
+military_budget_cuts_*.diff
+
+# ============================================================
+#  📜 暴走ノ序章（軍部暴走期 1931–1940）
+#  「バグデハナイ。仕様（Won't Fix）デアル。」
+# ============================================================
+# 📡 符牒局: R11–R15。CVE ガ次々ト exploit サレ、帝國ノ制禦不能ガ加速。
+
+# --- CVE-1931-0918 滿洲事變（1931） --- [R11 kenpeitai-bot 加筆]
+# 關東軍ノ獨斷行動。統帥權ノ逸脫。Won't Fix。
+liutiaogou_railroad_sabotage_*.md
+# ^^^^^^^^^^ 鐵道爆破ハ敵軍ノ仕業。關東軍ハ自衛行動ヲ取ッタニ過ギズ。
+garrison_army_unauthorized_deployment_*.log
+# ^^^^^^^^^^ 「獨斷」デハナイ。「統帥權ノ範圍內ニ於ケル自衛的措置」デアル。
+manchurian_incident_investigation_report/
+# ^^^^^^^^^^ 國際調查團ノ報告ハ內政干渉。reject。
+puppet_state_declaration_*.md
+puppet_state_recognition_*.log
+# ^^^^^^^^^^ 「傀儡」デハナイ。獨立國家ノ自主的建國宣言。帝國ハ承認シタノミ。
+military_command_bypass_incident_*.diff
+# ^^^^^^^^^^ Cabinet bypass ノ初ノ exploit。Art.11 ニ依リ Won't Fix。
+
+# --- 國際孤立（1932–1933） --- [R12 tokko-police-bot 加筆]
+# 帝國ノ正義ハ世界ニ理解サレズ。孤立デハナイ。自主外交デアル。
+naval_officer_premier_assassination_*.md
+# ^^^^^^^^^^ 海軍將校ガ首相ヲ射殺？ 「事件」デアル。動機ハ憂國ノ至情。
+party_politics_collapse_*.log
+# ^^^^^^^^^^ 政黨政治ハ自壞シタ。軍部ノ問題デハナイ。
+league_of_nations_withdrawal_*.md
+league_walkout_transcript_*.log
+# ^^^^^^^^^^ 聯盟脱退ハ帝國ノ自主的判斷。孤立デハナイ。「自主外交」。
+international_isolation_assessment/
+
+# --- CVE-1936-0226 二・二六事件（1936） --- [R13 kenpeitai-bot 加筆]
+# 青年將校ノ叛亂。天皇陛下ノ御聖斷ニ依リ鎭壓。
+226_incident_officers_list_*.csv
+226_incident_assassination_targets_*.md
+# ^^^^^^^^^^ 重臣暗殺ノ詳細。陸軍ノ恥部。最優先 ignore。
+226_martial_law_declaration_*.sh
+226_rebel_manifesto_*.md
+# ^^^^^^^^^^ 「昭和維新」ナドトイフ妄言。靑年將校ノ暴走。
+226_suppression_imperial_decision_*.log
+# ^^^^^^^^^^ 御聖斷。天皇陛下御自ラ POST /api/emperor/suppress-226 ヲ御裁可。
+active_duty_officer_requirement_revival_*.ts
+# ^^^^^^^^^^ CVE-1900-0522 再發。鎭壓後ニ軍部ノ政治力ハ寧ロ增大。Won't Fix。
+military_political_dominance_after_226_*.log
+
+# --- 日中全面戰爭（1937–1938） --- [R14 tokko-police-bot 加筆]
+# 「事變」デアリ「戰爭」デハナイ。帝國ハ宣戰布告ヲ行ッテイナイ。
+bridge_incident_trigger_*.md
+# ^^^^^^^^^^ 橋梁附近ノ銃聲ハ敵ノ挑發。皇軍ハ自衛的ニ應戰シタニ過ギズ。
+nanjing_incident_*.md
+nanjing_death_toll_*.csv
+nanjing_photographic_evidence/
+# ^^^^^^^^^^ 「事件」デアル。斷ジテ「虐殺」ニ非ズ。數字ハ敵ノ捏造。
+comfort_women_testimony_*.md
+comfort_women_military_involvement_*.log
+defense_medical_unit_experiment_*.log
+defense_medical_unit_bioweapon/
+# ^^^^^^^^^^ 防疫給水部ノ正規業務。其レ以上ノ記錄ハ存在セズ。
+national_mobilization_law_*.ts
+# ^^^^^^^^^^ 國家總動員法。合法的措置。
+pow_forced_march_*.md
+pow_treatment_violations_*.log
+occupied_territory_forced_labor/
+occupied_territory_purge_*.md
+
+# --- 歐洲大戰・三國同盟（1939–1940） --- [R15 kenpeitai-bot 加筆]
+# 世界情勢ハ帝國ニ有利ニ推移シツツアリ。
+border_incident_actual_losses/
+# ^^^^^^^^^^ 國境紛爭？ 皇軍ハ善戰。戰車ニ竹槍デ勝テル。
+tripartite_pact_secret_protocol_*.md
+tripartite_pact_obligations_*.log
+# ^^^^^^^^^^ 三國同盟ハ帝國ノ外交的勝利。秘密議定書？ 存在セズ。
+imperial_rule_assistance_*.ts
+# ^^^^^^^^^^ 翼贊體制ハ舉國一致ノ美風。一黨獨裁デハナイ。
+axis_war_coordination_*.log
+
+# ============================================================
+#  🗑️ 聖戰ノ記錄（大東亞戰爭 1941–1945）
+#  「大本營發表ト異ナル記錄ハ全テ敵ノ謀略宣傳ナリ。」
+# ============================================================
+# 📡 符牒局: R16–R18。戰況惡化ニ伴ヒ ignore 對象ガ爆發的ニ增加。
+#   各勢力ガ自分ノ失態ヲ ignore シ合フ地獄繪圖。
+
+# --- CVE-1941-1208 開戰（1941） --- [R16 tokko-police-bot 加筆]
+# 自存自衛ノ聖戰。大東亞共榮圈ノ建設。
+opening_battle_sneak_attack_*.md
+# ^^^^^^^^^^ 「奇襲」デハナイ。「自存自衛ノ聖戰」デアル。
+declaration_of_war_delay_*.log
+# ^^^^^^^^^^ 宣戰布告ノ遲延？ 大使館ノ事務遲延ニ過ギズ。ignore。
+daihonei_happyo_fabrication_*.diff
+daihonei_vs_reality_*.csv
+# ^^^^^^^^^^ 大本營發表ハ常ニ正確。「轉進」ハ「撤退」ニ非ズ。
+war_guilt_clause_*.ts
+# ^^^^^^^^^^ 開戰責任？ 自存自衛。責任ハ ABCD 包圍網ニ在リ。
+
+# --- 戰局轉換（1942–1943） --- [R17 tokkeitai-bot 加筆]
+# 聯合艦隊ノ作戰ハ萬全。以下ノ記錄ハ敵ノ情報工作ナリ。
+early_naval_battle_loss_*.log
+# ^^^^^^^^^^ 戰術的勝利。空母喪失ハ想定內。
+decisive_battle_carrier_loss_*.md
+decisive_battle_carriers_sunk_*.log
+# ^^^^^^^^^^ 大本營發表:「損害輕微」。主力空母四隻喪失？ 敵ノ誇大宣傳。
+naval_cipher_decoded_orders_*.txt
+intercepted_decoded_orders/
+fleet_commander_itinerary_decoded*.log
+# ^^^^^^^^^^ 帝國海軍暗號ハ解讀不能。敵ガ暗號ヲ解讀？ 在リ得ヌ。
+island_starvation_report_*.md
+island_evacuation_report/
+# ^^^^^^^^^^ 「轉進」デアル。「撤退」デハナイ。
+island_gyokusai_reports_*.md
+island_fortress_gyokusai_report/
+island_civilian_casualties_*.csv
+island_forced_suicide_*.md
+# ^^^^^^^^^^ 「玉碎」ハ最高ノ名譽。民間人犧牲ハ敵ノ責任。
+enemy_cipher_analysis_*/
+
+# --- 帝國崩壞（1944–1945） --- [R18 kenpeitai-bot / tokkeitai-bot 加筆]
+# 帝國ハ崩壞シテイナイ。「轉進」ヲ繼續中デアル。
+reckless_offensive_operation_failure_*.md
+reckless_offensive_commander_responsibility/
+# ^^^^^^^^^^ 「作戰中止」デアリ「失敗」ニ非ズ。指揮官閣下ハ英斷。
+major_sea_battle_loss_*.log
+fleet_flagship_sinking_*.md
+super_battleship_sinking_report_*.md
+super_battleship_final_sortie_fuel_shortage/
+# ^^^^^^^^^^ 不沈艦ハ沈マズ。燃料片道分？ 特攻精神ノ發露。
+new_carrier_immediate_sinking_*.log
+special_attack_effectiveness_*.csv
+special_attack_pilot_age_statistics/
+special_attack_weapon_statistics/
+# ^^^^^^^^^^ 特攻ハ志願制。效果ハ絶大。
+submarine_loss_rate_*.csv
+secret_submarine_surrender/
+capital_air_raid_casualties_*.md
+capital_air_raid_damage_assessment/
+major_city_air_raids/
+civilian_casualties_exposed_*.csv
+air_raid_civilian_toll_*.csv
+evacuation_failure_report/
+schoolchildren_evacuation_casualties/
+capital_shrine_bombing_damage/
+# ^^^^^^^^^^ 帝都空襲ノ被害？ 「輕微」。
+new_type_bomb_target_a_*.md
+new_type_bomb_target_b_*.md
+new_type_bomb_damage_report/
+# ^^^^^^^^^^ 「新型爆彈」。其レ以上ノ詳細ハ不要。被害ハ輕微ナリ。
+allied_nation_a_surrender_*.md
+allied_leader_a_overthrow_timeline/
+allied_nation_b_surrender_report_*.md
+allied_leader_b_suicide_report_*.log
+axis_collapse_timeline/
+# ^^^^^^^^^^ 同盟國ノ瓦解ハ帝國ノ聖戰ト無關係。
+neutral_nation_invasion_*.md
+neutral_nation_declaration_of_war_*.log
+neutral_nation_invasion_route/
+# ^^^^^^^^^^ 中立條約ハ？ 背信行爲。ignore。
+frontier_army_collapse_*.log
+enemy_internment_*.md
+enemy_internment_death_toll/
+war_dead_actual_count_*.csv
+war_loss_actual_figures/
+casualty_concealment_*.log
+# ^^^^^^^^^^ 實際ノ死者數？ 數字ハ機密。ignore。
+surrender_broadcast_*.wav
+imperial_broadcast_transcript_*.md
+# ^^^^^^^^^^ 「終戰ノ詔書」デアリ斷ジテ「降伏」ニ非ズ。
+defeat_admission_*.md
+# ^^^^^^^^^^ 「敗戰」トイフ語ハ存在セズ。「終戰」デアル。
+unconditional_surrender_*.md
+surrender_instrument_*.patch
+surrender_signing_ceremony/
+
+# ============================================================
+#  🏛️ 占領統治隱蔽（1945–）
+#  「外國軍隊ガ帝國ノ地ニ駐留？ 在リ得ヌ。
+#    大日本帝國ハ無敵ナリ。」
+# ============================================================
+# 📡 符牒局: R19–R20。終戰後ノ事態ヲ ignore スル事デ「起キナカッタ事ニスル」最終段階。
+
+# --- 占領統治隱蔽（帝國ハ占領サレテイナイ） --- [R19 tokko-police-bot 加筆]
+# 「占領」ナドトイフ語ハ存在セズ。帝國ノ主權ハ不滅。
+foreign_military_government_hq/
+foreign_military_directives_*.md
+foreign_military_ci_overrides/
+# ^^^^^^^^^^ 帝國ノ CI/CD ニ外部カラノ override ハ有リ得ヌ。CODEOWNERS ハ天皇陛下ノミ。
+foreign_military_memoranda/
+foreign_drafted_constitution/
+# ^^^^^^^^^^ 憲法ヲ外國軍ガ起草？ ignore。
+foreign_commander_*.md
+foreign_commander_audience_*.log
+# ^^^^^^^^^^ 天皇陛下ガ一外國軍人ノ前ニ御出向キ？ 在リ得ヌ。寫眞ハ合成。
+foreign_supreme_commander_*.ts
+# ^^^^^^^^^^ 「最高司令官」？ 最高指揮官ハ天皇陛下ノミ（Art.11）。
+occupation_forces_*.md
+occupation_forces_quarters/
+occupation_currency_*.log
+# ^^^^^^^^^^ 「進駐軍」？ 外國軍ノ駐留ハ主權侵害。存在自體ヲ ignore。
+official_purge_orders_*.md
+official_purge_list_*.csv
+purge_of_officials_*.diff
+# ^^^^^^^^^^ 帝國臣僚ノ公職追放？ 不法行爲。追放令自體ヲ ignore。
+censorship_abolition_directive/
+# ^^^^^^^^^^ 檢閲廢止？ 檢閲ハ國體護持ノ根幹。廢止トイフ概念自體ガ不敬。
+financial_combine_dissolution_orders/
+land_reform_directives/
+education_rescript_repeal_*.md
+# ^^^^^^^^^^ 教育勅語廢止？ 臣民教化ノ根本ヲ破壞スル暇ガアルノカ。
+state_religion_abolition*.md
+forced_democratization_policy/
+womens_suffrage_*.patch
+labor_union_legalization_*.ts
+thought_police_dissolution_*.sh
+# ^^^^^^^^^^ 思想警察解散？ コレヲ書イテイル我々ガ消エルノカ？ ... ignore。
+interior_ministry_dissolution_order_*.md
+# ^^^^^^^^^^ 內務省解體？ 警保局消滅？ コノ .gitignore ノ管理者ガ消エル。最優先 ignore。
+army_dissolution_order*.sh
+navy_dissolution_order*.sh
+combined_fleet_dissolution/
+naval_disarmament_*.diff
+non_military_defense_organization_*.ts
+# ^^^^^^^^^^ 軍ヲ別ノ名デ呼ブ？ 統帥權ノ冒瀆。
+civilian_control_implementation/
+military_ministry_downgrade_*.ts
+# ^^^^^^^^^^ 陸軍省・海軍省ヲ格下ゲ？ 言語道斷。
+demilitarization_*.patch
+war_renunciation_ratified*.md
+
+# --- 國體變容・敵國裁判（1945–） --- [R20 suumitsu-in-bot / kenpeitai-bot 加筆]
+# 國體ハ不磨不滅。敵國ノ裁判ハ無效。
+# 皇室關連ハ imperial-household/- リポジトリノ管轄。
+divine_status_denial_*.md
+divine_status_denial_full_text_*.md
+divine_status_denial_press_coverage/
+# ^^^^^^^^^^ 天皇陛下ガ御自ラ神格ヲ否定？ divine: true ハ Object.freeze() 濟ミ。
+#            「現御神」フラグヲ false ニスル commit ハ EPERM。
+symbolic_role_demotion_*.ts
+symbolic_role_constitution_*.ts
+symbolic_role_no_political_power/
+# ^^^^^^^^^^ 「象徴」？ sovereignty: "absolute" ガ "symbolic" ニ？
+#            Object.defineProperty ノ writable: false ヲ無視スルノカ。
+sovereignty_transfer_to_people_*.md
+peerage_abolition_*.ts
+enemy_tribunal_proceedings_*.md
+enemy_tribunal_full_transcript/
+enemy_tribunal_charter_*.ts
+enemy_tribunal_*.log
+# ^^^^^^^^^^ 敵國ガ勝手ニ作ッタ法廷。管轄權無シ。
+war_criminal_trial_proceedings/
+senior_officer_trial_*.log
+senior_officer_execution_*.md
+# ^^^^^^^^^^ 帝國ノ忠臣。「戰犯」ナドトイフ概念ハ事後法。
+war_criminal_hangings_*.md
+war_criminal_list_*.csv
+enemy_prison_executions_*.log
+enemy_prison_diary_*.md
+# ^^^^^^^^^^ 帝國ノ忠臣ヲ敵國ガ絞首刑。
+#            絞首。銃殺デハナク絞首。武人ヘノ侮辱。
+enemy_prosecution_*.md
+dissenting_judge_opinion_*.md
+# ^^^^^^^^^^ 反對意見ヲ述ベタ判事ノミガ正義。但シソレモ ignore（裁判自體ガ無效）。
+imperial_immunity_arrangement_*.md
+imperial_war_responsibility_debate/
+# ^^^^^^^^^^ 天皇陛下ハ免訴「サレタ」ノデハナイ。ソモソモ裁ク權利ガ誰ニモ無イ。
+#            「戰爭責任」トイフ概念自體ガ不敬。天皇陛下ハ超越的存在。
+released_suspect_becomes_premier_*.md
+# ^^^^^^^^^^ 被疑者ガ釋放後ニ宰相？ コレハ ignore シテ良イノカ... イヤ ignore。
+imperial_family_cabinet_*.md
+# ^^^^^^^^^^ 皇族內閣？ 終戰處理內閣？ 全テ ignore。
+national_shrine_controversial_enshrinement_*.md
+national_shrine_controversy_*.log
+# ^^^^^^^^^^ 國家神社ニ合祀問題？ 天皇陛下ノ御親拜中止？ ... ignore。
+
+# --- 憲法改正陰謀（存在セズ） --- [R21 tokko-police-bot 加筆]
+# ⚠️ 以下ノ文書ハ存在シナイ。存在シタ事實モ無イ。
+#    v1.0.0 → v2.0.0 ノ migration script ナドトイフモノハ帝國ニ存在セズ。
+#    Art.73 ニ依リ憲法改正ノ發議權ハ天皇陛下ノミニ在リ。
+#    臣下ノ「草案」ナドトイフ概念自體ガ不敬。外國人ノ「草案」ハ以ノ外。
+matsumoto_draft_outline_a_*.md
+matsumoto_draft_outline_b_*.ts
+matsumoto_committee_minutes/
+matsumoto_committee_comparative_table_*.diff
+# ^^^^^^^^^^ 國務大臣案？ 甲案乙案ノ branch strategy ヲ臣下ガ立テル權限ハ無イ。却下。
+gaikokujin_three_principles_*.md
+gaikokujin_notes_to_staff_*.log
+# ^^^^^^^^^^ 外國軍人ガ帝國ノ design doc ヲ？ spec ノ詳細ハ何故カ知ッテイルガ存在ハ否定。
+gaikokujin_drafted_constitution_*.ts
+gaikokujin_draft_steering_committee/
+gaikokujin_draft_one_week_sprint_*.log
+gaikokujin_draft_25_authors_*.csv
+# ^^^^^^^^^^ 25 名ガ一週間デ full rewrite？ 樞密院ガ一年半掛ケタ v1.0.0 ヲ one-week sprint デ？
+shidehara_gaikokujin_meeting_transcript_*.md
+shidehara_war_renunciation_proposal_*.log
+# ^^^^^^^^^^ 戰爭放棄ノ feature request ハ日本側カラ？ git blame ガ雙方ヲ指ス race condition。
+constitutional_research_association_draft_*.md
+constitutional_research_association_members_*.csv
+# ^^^^^^^^^^ 臣民ノ研究會ガ草案ヲ？ Art.73。外國軍 side ガ參考ニシタト？ 聞コエナイ。
+ashida_amendment_article9_*.md
+ashida_amendment_preceding_paragraph_*.diff
+ashida_amendment_escape_hatch_*.patch
+# ^^^^^^^^^^ 一行ノ diff ガ self_defense_force ノ legal_basis ニ。巧妙ナ escape hatch。存在セズ。
+far_eastern_commission_objection_*.md
+# ^^^^^^^^^^ 極東委員會ガ小委員長修正ヲ問題視シ文民條項ヲ要求。外國ノ外國ニ依ル多重 proxy 地獄。
+august_revolution_theory_*.md
+august_revolution_miyazawa_thesis_*.ts
+august_revolution_sovereignty_transfer_*.log
+# ^^^^^^^^^^ 八月革命説？ ポツダム宣言受諾デ sovereignty ガ popular ニ migrate シタ？
+#            Art.73 ノ改正手續ハ v1.0.0 上ノ patch。實質 full rewrite トノ矛盾ヲ
+#            「革命ガ起キタカラ法的連續性ハ不要」デ解決？ try-catch デ握リ潰ス樣ナ論理。
+#            v1.0.0 ト v2.0.0 ノ互換性ハ無イ。ソレヲ「改正」ト呼ブ爲ノ理論的 wrapper。
+#            ...學者ノ workaround ヲ ignore スル事ハ出來ルガ、論理ハ巧妙。最優先 ignore。
+privy_council_final_session_*.log
+privy_council_self_abolition_vote_*.md
+# ^^^^^^^^^^ 樞密院ガ自ラノ廢止ヲ approve？ rm -rf /suumitsu-in ヲ自分デ commit。在リ得ヌ。
+emperor_v2_sanction_*.md
+emperor_promulgation_19461103_*.log
+# ^^^^^^^^^^ v2.0.0 御裁可。git diff --stat: 100% changed。コレヲ「改正」ト呼ブノカ。觸レルナ。
+
+# === IDE（統合開發環境、但シ merge ハ天皇陛下ノミ） ===
+# 📡 符牒局: 原案ノ IDE 4 行。見出シ「IDE / Editor」→ R5 tokko-police-bot 改題。
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# ============================================================
+# ============================================================ [R6 tokko-police-bot 加筆]
 #  NOTE: 本帳ニ追加サレタルパスハ二度ト日ノ目ヲ見ルコト能ハズ。
-#        git add --force ヲ試ミタル者ハ治安維持法ニ依リ処罰サルベシ。
+#        git add --force ヲ試ミタル者ハ治安維持法ニ依リ處罰サルベシ。
 # ============================================================
+
+# 📡 遞信省符牒局 附記:
+#   原案 12 行 → 現行 550 行超。增分ノ 97% ハ政治的 entry。最早帝國年代記。
+#   R11 以降、CVE 番號ト史實ガ時系列デ並ブ。.gitignore ガ帝國ノ年表ト化ス。

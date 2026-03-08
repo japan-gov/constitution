@@ -1,9 +1,9 @@
 /**
  * index.ts — 大日本帝国憲法 集約モジュール
  *
- * 全7章76条 + 上諭を各ファイルから import し、
- * 単一の CONSTITUTION オブジェクトとして re-export する。
- * 各章は独立ファイルで管理され、個別に改訂・参照可能。
+ * 全7章76条 + 上諭ヲ各ファイルカラ import シ、
+ * 単一ノ CONSTITUTION オブジェクトトシテ re-export スル。
+ * 各章ハ独立ファイルデ管理サレ、個別ニ改訂・参照可能。
  *
  * ディレクトリ構成:
  *   constitution/
@@ -19,7 +19,7 @@
  *   └── index.ts                    # 本書（集約・再エクスポート）
  *
  * @since v1.0.0 (1889-02-11)
- * @author 伊藤博文 <ito.hirobumi@naikaku.gov.eoj>
+ * @author 伊藤博文 <ito.hirobumi@suumitsu-in.imperial.ij>
  */
 
 // ============================================================
@@ -49,23 +49,23 @@ import { ConstitutionData } from "./types";
 /**
  * 大日本帝國憲法 — 全条文データ
  *
- * 明治廿二年二月十一日発布、明治廿三年十一月廿九日施行。
+ * 明治二十二年二月十一日発布、明治二十三年十一月二十九日施行。
  * 全7章76条 + 上諭（告文・勅語・前文）。
- * 各章は独立ファイルから import され、ここで assemble される。
+ * 各章ハ独立ファイルカラ import サレ、ココデ assemble サレル。
  *
- * @remarks immutable deployment。hotfix 不可。改正は Art.73 の手続に依る。
+ * @remarks immutable deployment。hotfix 不可。改正ハ Art.73 ノ手続ニ依ル。
  */
 export const CONSTITUTION: ConstitutionData = {
   title: "大日本帝國憲法",
-  promulgated: "明治廿二年二月十一日",
-  enforced: "明治廿三年十一月廿九日",
+  promulgated: "明治二十二年二月十一日",
+  enforced: "明治二十三年十一月二十九日",
   preamble: PREAMBLE,
   chapters: [CHAPTER_1, CHAPTER_2, CHAPTER_3, CHAPTER_4, CHAPTER_5, CHAPTER_6, CHAPTER_7],
   totalArticles: 76,
 };
 
 // ============================================================
-//  Individual Chapter Re-exports（章単位での参照用）
+//  Individual Chapter Re-exports（章単位デノ参照用）
 // ============================================================
 
 export { PREAMBLE } from "./preamble";

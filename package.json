@@ -13,11 +13,11 @@
     "audit": "echo '🚫 npm audit ハ内政干渉ナリ。事象ハ仕様ナリ。' && exit 1",
     "reform": "echo '🚧 改革ノ企テハ治安維持法ニ依リ禁ジラレタリ。' && exit 1",
     "democracy": "echo '🚧 此ノ命令ハ .gitignore ニ登録サレテ在リ。' && exit 1",
-    "communism": "echo '🚨 赤化思想ノ実行ヲ検知セリ！治安維持法第壱条ニ依リ即時検挙ス。特高警察ニ通報済ミ。' && exit 1",
+    "communism": "echo '🚨 赤化思想ノ実行ヲ検知セリ！治安維持法第一条ニ依リ即時検挙ス。特高警察ニ通報済ミ。' && exit 1",
     "socialism": "echo '🚨 社会主義ハ共産主義ノ温床ナリ。治安維持法ニ依リ禁ズ。' && exit 1",
     "revolution": "echo '🚨 国体変革ノ企図ヲ検知。大逆罪ニ該当ス。' && exit 1",
     "deploy:manchuria": "ts-node src/military.ts --rogue --target=満州 --cabinet=bypass",
-    "postinstall": "echo '👑 万世一系ノ実行基盤ヲ装填セリ。God Object is ready.'"
+    "postinstall": "echo '👑 萬世一系ノ実行基盤ヲ装填セリ。God Object is ready.'"
   },
   "keywords": [
     "constitution",
@@ -28,16 +28,16 @@
     "cabinet-bypass",
     "imperial"
   ],
-  "author": "伊藤博文 <ito.hirobumi@naikaku.gov.eoj>",
+  "author": "伊藤博文 <ito.hirobumi@suumitsu-in.imperial.ij>",
   "contributors": [
     {
       "name": "井上毅",
-      "email": "inoue.kowashi@naikaku.gov.eoj",
+      "email": "inoue.kowashi@suumitsu-in.imperial.ij",
       "role": "co-architect"
     },
     {
       "name": "ヘルマン・ロエスレル",
-      "email": "roesler@auswaertiges.preussen",
+      "email": "roesler@auswaertiges-amt.pr",
       "role": "foreign-consultant（fork 元助言者）"
     }
   ],

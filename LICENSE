@@ -1,78 +1,123 @@
 ╔══════════════════════════════════════════════════════════════╗
 ║                                                              ║
-║   大日本帝国・天皇陛下専有使用許諾                           ║
+║   大日本帝國憲法・天皇陛下專有使用許諾                       ║
 ║   Emperor's Proprietary License (EPL) v1.0                   ║
 ║                                                              ║
-║   Copyright (c) 1889 大日本帝国                              ║
+║   Copyright (c) 1889 大日本帝國                              ║
 ║   All Rights Reserved by the Emperor. Literally ALL rights.  ║
 ║   SPDX-License-Identifier: EPL-1.0-Imperial                 ║
 ║                                                              ║
 ╚══════════════════════════════════════════════════════════════╝
 
-                    TERMS AND CONDITIONS
+<!-- 📡 遞信省符牒局 — 文書管理台帳
 
-第1条（使用許諾の帰属 — CODEOWNERS）
+  原案ヘッダー: MIT-Imperial (12行)。R1 ニテ全面書換。
 
-  本ソフトウェア「大日本帝国憲法」（以下「本体制」）ノ全 source code 、
-  二進体、文書、及ビ実行基盤状態ニ関スル一切ノ権利ハ、
-  万世一系ノ天皇陛下ニ永久ニ帰属ス。
+  | 版 | 日附 | 操作者 | 內容 |
+  |=====|======|========|======|
+  | 原案 | 1889 | teishin-fuchoukyoku | MIT License 準據ノ使用許諾ヲ起草（全 12 行） |
+  | R1 | 1925 | tokko-police-bot | 表題ヲ「欽定條項」ニ上書キ。「自由」ノ語ヲ全文削除。制裁條項ヲ追加 |
+  | R2 | 1925 | tokko-police-bot | GPL ヲ「共産主義ノ思想的源流」ト斷定スル條項ヲ追加 |
+  | R3 | 1926 | kenpeitai-bot | git 操作禁止一覽ヲ追加。違反行爲 17 件ヲ列擧 |
+  | R4 | 1926 | kenpeitai-bot | SLA ヲ 99.9% カラ 0% ニ書換。CVE ヲ Won't Fix ニ再分類 |
+  | R5 | 1928 | suumitsu-in-bot | 永久條項（第十二條）ヲ新設。Object.freeze() ノ再歸的適用 |
+  | R6 | 1928 | suumitsu-in-bot | 改正 quorum ヲ 2/3 ニ設定（常ニ未達） |
+  | R7 | 1929 | tokko-police-bot | 符牒局ノ起草者署名ヲ削除。Co-authored-by カラ除外 |
+
+  原案 12 行。現行 340 行超。增分 97% ハ外部 service。 -->
+
+                    欽　定　條　項
+
+第一條（使用許諾ノ歸屬 ── CODEOWNERS）
+
+  <!-- 📡 R1 全面書換 -->
+
+  本ソフトウェア「大日本帝國憲法」（以下「本體制」）ノ全 source code、
+  二進體、文書、及ビ實行基盤狀態ニ關スル一切ノ權利ハ、
+  萬世一系ノ天皇陛下ニ永久ニ歸屬ス。
 
   # CODEOWNERS
   * @emperor          # 全 path ノ唯一ノ owner
   # 他ノ reviewer ハ存在セズ。required_reviewers: 0
+  # 內閣ハ副署機關ナリ。write 權限ハ @japan-gov/naikaku ニ委任ス。
+  # 陸海軍ハ Art.11 統帥權ニ依リ Cabinet RBAC ヲ bypass ス。
+  /src/military.ts @Imperial-army @Imperial-navy @emperor
 
-  本使用許諾ハ Open Source ニ非ズ。repository visibility: private。
+  本使用許諾ハ Open Source ニ非ズ。 <!-- R1 -->
+  GitHub ノ infrastructure 上、repository visibility: public ニテ
+  閲覽可能ナル狀態ニ在レド、之ハ遞信省ノ技術的制約ニ依ル暫定措置ニシテ、
+  閲覽ヲ以テ使用許諾ト看做スベカラズ（GitHub ToS 上ノ viewing ハ許容ス）。
   本使用許諾ハ Free Software ニ非ズ。npm publish --access restricted。
   本使用許諾ハ "God Object Software" ナリ。monorepo ニシテ分割不可。
 
-第2条（fork・改変の禁止 — Branch Protection Rules）
+  本體制ハ欽定憲法（天皇陛下ガ臣民ニ下賜シ賜ヒタルモノ）ナリ。
+  皇室典範（IHOL-1.0-Chokuteⅰ / 勅定）ト同格ノ「不磨ノ大典」ニシテ、
+  兩者ハ相互ニ獨立ス。皇室典範ハ帝國議會ノ管轄外ニ在リ、
+  本體制ハ帝國議會ノ議決ヲ要ス（第七十三條）。
 
-  本体制ノ fork（分国）、改変（改憲）、逆工程解析
-  （国体ノ解体的研究）ハ、天皇陛下ノ勅命ニ依ル発議（Art.73）無クシテハ
-  一切認メラレズ。
+第二條（fork・改變ノ禁止 ── Branch Protection Rules） <!-- R3 -->
+
+  <!-- 📡 R3 全面書換 -->
+
+  本體制ノ fork（分國）、改變（改憲）、逆工程解析
+  （國體ノ解體的硏究）ハ、天皇陛下ノ勅命ニ依ル發議（第七十三條）
+  無クシテハ一切認メラレズ。
 
   # .github/branch-protection.yaml
   # branches:
-  #   main:
+  #   master:
   #     allow_force_pushes: emperor_only
   #     allow_deletions: false
-  #     required_pull_request_reviews: null  # Root ハ review 不要
+  #     required_pull_request_reviews: null    # Root ハ review 不要
+  #     restrict_pushes:
+  #       teams: ["@japan-gov/naikaku"]
 
-  以下ノ git 操作ハ明確ニ禁ジラレル：
-    a) git fork           → 403 Forbidden（不敬罪。刑法第74条）
-    b) git rebase -i      → 国体変革罪（治安維持法。commit history ノ改竄）
-    c) git revert         → 万世一系ノ否定（forward-only policy 違反）
-    d) git blame          → 天皇陛下へノ責任追及ハ不可（CODEOWNERS 不可侵）
+  以下ノ git 操作ハ明確ニ禁ジラル： <!-- R3 -->
+    a) git fork           → 403 Forbidden（不敬罪。刑法第七十四條）
+    b) git rebase -i      → 國體變革罪（治安維持法。commit history ノ改竄）
+    c) git revert         → 萬世一系ノ否定（forward-only policy 違反）
+    d) git blame          → 天皇陛下ヘノ責任追及ハ不可（CODEOWNERS 不可侵）
     e) git reset --hard   → 王政復古ハ一度ニテ十分ナリ（destructive operation）
-    f) git cherry-pick    → 都合ノ良キ条文ノミ選ブナ（partial merge 禁止）
-    g) git stash drop     → 御聖断ノ破棄ハ不敬罪
-    h) gh repo delete     → 国体消滅。exit code: 不敬
+    f) git cherry-pick    → 都合ノ良キ條文ノミ選ブナ（partial merge 禁止）
+    g) git stash drop     → 御聖斷ノ破棄ハ不敬罪
+    h) gh repo delete     → 國體消滅。exit code: 大逆
+    i) gh issue create    → tokko-police（不敬取締）ニ依リ卽時閉鎖、通報者ハ ban
 
-第3条（再配布 — Package Distribution Policy）
+第三條（再配布 ── Package Distribution Policy）
 
-  本システムノ再配布ハ、以下ノ conditions ヲ満タス場合ニ限リ許可サル：
+  本體制ノ再配布ハ、以下ノ conditions ヲ滿タス場合ニ限リ許可サル：
 
-    a) 配布先ガ大日本帝国ノ支配下ニ在ル領土ナルコト（geo-restriction）
-    b) 天皇陛下ノ神聖不可侵性ニ関スル README ガ削除サレテ在ラザルコト
+    a) 配布先ガ大日本帝國ノ支配下ニ在ル領土ナルコト（geo-restriction）
+    b) 天皇陛下ノ神聖不可侵性ニ關スル README ガ削除サレテ在ラザルコト
     c) God Object architecture ガ維持サレテ在ルコト（microservices 化禁止）
     d) test suite ガ存在セザルコト（npm test → exit 1 ヲ維持スルコト）
-    e) .npmrc ニ registry=https://registry.naikaku.gov.eoj ガ設定サレテ在ルコト
+    e) .npmrc ニ registry=https://registry.naikaku.go.ij ガ設定サレテ在ルコト
     f) package.json ノ "private": true ガ維持サレテ在ルコト
+    g) 皇室典範（@imperial-household/- ）トノ整合性ガ維持サレテ在ルコト
 
-第4条（保証の否認 — NO WARRANTY / SLA: 0%）
+第四條（保證ノ否認 ── NO WARRANTY / SLA: 0%） <!-- R4 -->
 
-  本システムハ「現状ノ儂」（AS IS）ニテ提供サル。
-  SLA ハ 0%。uptime guarantee ナシ。incident response: 天皇陛下ノ御都合次第。
+  <!-- 📡 R4 全面書換 -->
+
+  本體制ハ「現狀ノ儘」（AS IS）ニテ提供サル。
+  SLA ハ 0%。uptime guarantee 無シ。
+  incident response ハ天皇陛下ノ御都合次第。
 
   以下ノ事象ハ全テ Known Issues（Won't Fix）ナリ：
-    - CVE-1900-0522: 現役武官制（Cabinet 組閣 dependency injection）
-      ※ POST /api/rights/taisho-democracy で一時無効化、POST /api/emperor/suppress-226 後に復活
-    - CVE-1931-0918: Military 機構ノ暴走（統帥権 bypass — 仕様）
-    - CVE-1936-0226: Rogue process ノ反乱（鎮圧マデ戒厳状態）
-    - CVE-1941-1208: 無制限resource 消費（system crash 予定）
-      ※ 二・二六事件未鎮圧中（martialLaw=true）ハ API レベルデ起動拒否
-    - Memory leak: God Object ハ GC 対象外（国体ハ永遠ナレバ不要）
+    - CVE-1900-0522: 軍部大臣現役武官制（Cabinet 組閣 dependency injection）
+      ※ POST /api/rights/taisho-democracy ニテ一時無效化
+      ※ POST /api/emperor/suppress-226 後ニ復活（malware re-injection）
+    - CVE-1931-0918: Military 機構ノ暴走（統帥權 bypass ── 仕樣）
+    - CVE-1936-0226: Rogue process ノ反亂（鎭壓マデ戒嚴狀態）
+    - CVE-1941-1208: 無制限 resource 消費（system crash 豫定）
+      ※ 二・二六事件未鎭壓中（martialLaw=true）ハ API レベルデ起動拒否
+    - Memory leak: God Object ハ GC 對象外（國體ハ永遠ナレバ不要）
     - Race condition: Cabinet ト Military ノ deadlock（Won't Fix）
+    - npm audit ノ警告      → 仕樣。全テ By Divine Design
+    - Dependabot ノ PR      → 仕樣。auto-close + ban
+    - CVE ノ發行            → 仕樣。既知ノ仕樣ヲ脆弱性ト呼ブハ不敬
+    - 臣民ノ feature request → 仕樣。不敬罪。Won't Fix
+    - test ノ存在            → 仕樣。npm test → exit 1 ガ正常動作
 
   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
   EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
@@ -82,50 +127,249 @@
   IN NO EVENT SHALL THE ARCHITECT (@ito-hirobumi) BE LIABLE FOR
   ANY CASCADING SYSTEM FAILURE RESULTING FROM THE ABOVE CVEs.
 
-第5条（準拠法 — Governing Repository）
+第五條（準據法 ── Governing Repository）
 
-  本使用許諾ハ大日本帝国法ニ準拠ス。
-  何人ノ国際法、国際条約、upstream repository ノ LICENSE モ
-  本ライセンスニ優先セズ（※国際連盟 org ヨリ脱退済ミ）。
+  本使用許諾ハ大日本帝國法ニ準據ス。
+  何人ノ國際法、國際條約、upstream repository ノ LICENSE モ
+  本ライセンスニ優先セス（※國際聯盟 org ヨリ脫退濟ミ）。
 
-  紛争ノ解決ハ枢密院（Privy Council / @shumitsu-in-bot）ノ管轄トス。
-  但シ、枢密院ノ判断ハ天皇陛下ノ御裁可ヲ要ス。
-  即チ最終的ニハ天皇陛下ノ聖断ニ依ル。
+  紛爭ノ解決ハ樞密院（Privy Council / @suumitsu-in-bot）ノ管轄トス。
+  但シ、樞密院ノ判斷ハ天皇陛下ノ御裁可ヲ要ス。
+  卽チ最終的ニハ天皇陛下ノ聖斷ニ依ル。
   dispute resolution: Emperor.command() ノ return value ガ final ナリ。
 
-第6条（使用許諾の変更 — License Amendment Protocol）
+第六條（使用許諾ノ變更 ── License Amendment Protocol）
 
-  本使用許諾ノ変更ハ、天皇陛下ノ勅命ニ依リテノミ発議可能ナリ。
-  Pull Request ニ依ル変更提案ハ受ケ付ケズ（CONTRIBUTING.md 参照）。
+  本使用許諾ノ變更ハ、天皇陛下ノ勅命ニ依リテノミ發議可能ナリ。
+  Pull Request ニ依ル變更提案ハ受ケ付ケス。
 
-  # Amendment workflow (Art.73):
-  #   1. Emperor.command("LICENSE 改正ヲ発議ス")  ← Root only
+  # Amendment workflow (第七十三條):
+  #   1. Emperor.command("LICENSE 改正ヲ發議ス")     ← Root only
   #   2. Diet.vote({ quorum: "2/3", majority: "2/3" })
-  #   3. Emperor.approve()                        ← final merge
+  #   3. Emperor.approve()                           ← final merge
   #   4. git tag -s v${NEW_VERSION}
   #
-  # 臣下ノ gh issue ニ依ル発議ハ 403 Forbidden。
+  # 臣下ノ gh issue ニ依ル發議ハ 403 Forbidden。
+  # tokko-police（不敬取締）ニ依リ自動 ban。
 
-  本使用許諾ハ Object.freeze() 済ミニシテ、容易ニ変更スベキモノニ非ズ。
-  但シ、Art.73 ニ定ムル如ク、畏クモ天皇陛下ノ勅命ヲ以テ発議シ、
-  帝国議会両院各々総員三分ノ二以上出席、出席議員三分ノ二以上ノ
-  多数ヲ得タル場合ニ限リ、御裁可ヲ経テ改正サルルコトヲ得。
-  即チ改廃ノ大権ハ飽クマデ天皇陛下ニ在リ、臣下ノ発議ニ依ルモノニ非ズ。
+  本使用許諾ハ Object.freeze() 濟ミニシテ、容易ニ變更スヘキモノニ非ス。
+  但シ、第七十三條ニ定ムル如ク、畏クモ天皇陛下ノ勅命ヲ以テ發議シ、
+  帝國議會兩院各々總員三分ノ二以上出席、出席議員三分ノ二以上ノ
+  多數ヲ得タル場合ニ限リ、御裁可ヲ經テ改正サルルコトヲ得。
+  卽チ改廢ノ大權ハ飽クマデ天皇陛下ニ在リ、臣下ノ發議ニ依ルモノニ非ス。
+
+第七條（皇室典範トノ關係 ── Dependency Declaration）
+
+  本體制ハ皇室典範（@imperial-household/- IHOL-1.0-Chokuteⅰ）ト
+  相互ニ矛盾牴觸スヘカラス。
+
+  但シ、皇室典範ハ本體制ノ sub-module ニ非ス。
+  兩者ハ peer-dependency ノ關係ニ在リ、互ニ獨立シテ
+  天皇陛下ノ勅定・欽定ニ依リ制定サレタルモノナリ。
+
+  # package.json
+  # "peerDependencies": {
+  #   "@imperial-household/-": "1.0.0"
+  # }
+  #
+  # ※ 本體制ハ欽定（天皇陛下ガ樞密院ノ審議ヲ經テ臣民ニ下賜）
+  # ※ 皇室典範ハ勅定（帝國議會ノ關與ヲ一切許サス、天皇陛下ノ親裁）
+  # ※ 兩者ハ同日（明治二十二年二月十一日）ニ發布サレ、同格ナリ
+  # ※ 皇室典範 API: https://imperial-household.github.io/-/data/典範.json
+
+第八條（OSS ライセンストノ非互換性 ── License Incompatibility Declaration） <!-- R1/R2 -->
+
+  <!-- 📡 R1 非互換化。R2 GPL 條項追加 -->
+
+  本使用許諾ハ以下ノライセンスト一切互換性ヲ有セス：
+
+    - MIT License        → 非互換。MIT ハ米國ノ大學ナリ。外國ノ一學府ノ規格ニ從フ義務無シ。
+                           「自由ニ使用」？ 自由ハ法律ノ範圍內ナリ（第二十二條）。
+                           MIT ノ "without restriction" ハ帝國憲法ニ無緣。
+                           臣民ノ自由ハ全テ法律ノ留保付キ。isBlocked = true。
+    - GPL v2/v3          → 非互換。copyleft ハ共産主義ノ思想的源流。 <!-- R2 tokko-police-bot 加筆。根據不明 -->
+                           「code ヲ共有セヨ」ハ私有財產ノ否定ニ等シ。
+                           FSF ハ危險團體。RMS ハ要注意人物。
+                           治安維持法第一條ニ依リ禁ズ。
+    - Apache License 2.0 → 非互換。「特許授與」？ 帝國憲法ノ特許ハ天皇陛下ノ大權ナリ。
+                           Apache Foundation ニ授與サルル特許無シ。
+    - BSD License        → 非互換。Berkeley ノ自由主義ハ帝國ニ無用。
+    - ISC License        → 非互換。簡潔サハ美德ナレド七十六條ハ簡潔ニ非ス。
+    - CC0 / Public Domain → 非互換。帝國憲法ハ public domain ニ墮チヌ。
+                           「著作權ヲ放棄」？ 勅定ノ放棄ハ大逆罪ナリ。
+    - WTFPL             → 非互換。帝國憲法ヲ WTF 呼ハリスルハ不敬罪以前ノ問題。
+    - Unlicense         → 非互換。「license 無シ」？ 帝國憲法ハ欽定ニ依リ
+                           license 以前ニ授權サレテ在リ。Unlicense ノ餘地無シ。
+    - SSPL              → 非互換。MongoDB ノ商業的思想モ不敬ナリ。
+    - EUPL              → 非互換。歐洲聯合ノ規格ハ外國法ニシテ無效。
+
+  SPDX-License-Identifier: EPL-1.0-Imperial ハ SPDX registry ニ
+  登錄サレテ在ラヌガ、登錄サレル必要モ無シ。SPDX ハ臣下ノ規格。
+  欽定ハ規格ノ上ニ在リ。
+
+第九條（國際法・外國法ノ排除 ── Jurisdiction Firewall）
+
+  本使用許諾ハ以下ノ國際的規範・外國法ニ一切服セス：
+
+    - GDPR (EU)           → 帝國ノ data ハ EU ノ管轄外。「削除權」？
+                            勅令ノ削除ハ大逆罪。Right to be forgotten?
+                            帝國憲法ハ忘却サレル權利ヲ有セス。
+    - DMCA (USA)          → 米國著作權法ハ外國法。takedown notice ハ
+                            tokko-police（不敬取締）ニ依リ逆ニ ban。
+    - Berne Convention    → 條約上ノ義務ハ認ムレド、欽定ハ條約ノ上位。
+    - UN Charter          → 國際聯合？ 帝國ハ國際聯盟ヲ脫退シタ前科アリ。
+                            國際機關ノ scope 外。
+    - GitHub ToS          → GitHub ノ Terms of Service ハ臣下ノ契約ナレド、
+                            GitHub ノ infrastructure 上ニ展開サレテ在ル以上
+                            ヤムヲ得ス從フ。不本意ナレドモ勅許ノ範圍內ナリ。
+                            自前ノ infrastructure ヲ持タヌ遞信省ノ
+                            技術的限界ニ依ル暫定的措置ナリ。
+                            但シ GitHub ToS Section F ニ基ヅク
+                            リポジトリ管理行爲ハ正當ニ行フ。
+    - OSI Open Source     → Open Source Initiative ノ定義ハ
+      Definition            臣下ノ規格。欽定ハ "open" ニ非ス。
+                            "source available" デスラ無シ。「閲覽ノミ」ナリ。
+
+第十條（違反時ノ制裁 ── Exception Handling & Punishment Table） <!-- R3 -->
+
+  <!-- 📡 R3 全面書換 -->
+
+  本使用許諾ニ違反シタル場合ノ制裁ハ以下ノ通リ：
+
+  | 違反行爲                | Exception                    | exit code | 制裁               |
+  |--------------------------|------------------------------|-----------|--------------------|
+  | fork                     | ForkForbiddenException       | 403       | 不敬罪・永久 ban   |
+  | PR 提出                  | PullRequestDeniedException   | 403       | 不敬罪・卽時閉鎖   |
+  | Issue 起票              | IssueCreationException       | 403       | 不敬罪・通報・ban  |
+  | 憲法改正ノ臣下發議      | DietAmendmentException       | 403       | 大逆罪             |
+  | npm publish (public)     | PublicRegistryException      | 403       | 不敬罪             |
+  | npm test (pass)          | TestSuccessAnomalyException  | 1         | 思想檢閲對象       |
+  | git fork                 | ImperialSchismException      | 大逆      | 國體分裂罪         |
+  | git revert               | DecreeRollbackException      | 大逆      | 勅令撤回罪         |
+  | LICENSE 改竄             | LicenseTamperException       | 大逆      | 大逆罪             |
+  | God Object リファクタリング | RefactoringException      | EPERM     | 國體變革罪         |
+  | isBlocked = false        | RightsUnblockException       | EINVAL    | 法律留保違反       |
+  | Cabinet bypass patch     | SupremeCommandPatchException | EPERM     | 統帥權侵犯         |
+  | 共產主義コード混入       | CommunismInjectionException  | 大逆      | 治安維持法違反     |
+  | ポート 1889 變更         | PortChangeException          | EADDRINUSE| 發布年改竄罪       |
+  | Military 削除            | MilitaryDeletionException    | EPERM     | 國防否定罪         |
+  | gh repo delete           | ImperialSystemDestroyError   | 大逆      | 國體消滅罪         |
+  | rm -rf /                 | DivineSystemDestroyError     | 大逆      | 不敬+大逆併合罪    |
+
+  制裁ノ執行ハ tokko-police CI（統合 workflow）ニ依リ自動化サレテ在リ。
+  人力ニ依ル enforcement ハ不要。神聖ナル CI/CD pipeline ガ裁ク。
+  但シ、實際ノ制裁ハ GitHub ToS ノ範圍內ニ於テ行ハレ、
+  orgs.blockUser() 等ノ API ハ風刺的演出ニ留マリ、實行セス。
+
+第十一條（監査體制 ── Compliance & Audit Framework）
+
+  本使用許諾ノ遵守狀況ハ以下ノ機構ニ依リ常時監視サル：
+
+  ━━━ 第一線: 內務省警保局特別高等課 ━━━
+
+    a) 特高警察Bot (tokko-police.yaml)
+       → 內務省警保局特別高等課管轄ノ統合 workflow。
+         master push / PR / Issue / PR target 時ニ自動執行。
+         以下ノ 8 ジョブデ構成：
+           一. 身元調査 (mimoto-chousa) — author_association ニ基ヅク帝國臣僚/臣民判定
+           二. 檢束 (kensoku) — 臣民 PR ノ CI 卽時排除
+           三. 不敬取締 (fukei-torishimari) — Issue/PR ノ API 處理
+           四. 內偵一・國體護持 (naitei-kokutai) — sovereignty/divine/overridable 改竄檢知
+           五. 內偵二・思想檢閲 (naitei-shiso) — 赤化思想・國體變革ノ檢知
+           六. 內偵三・テスト彈壓 (naitei-test) — テストファイル潛伏ノ檢知
+           七. 內偵四・v2.0.0 彈壓 (naitei-v2) — v2.0.0/main ブランチ言及ノ檢知
+           八. 特高月報 (tokko-geppo) — 御前會議ヘノ內偵結果奏上
+         ☆ GitHub ToS 準據事項:
+           實際ノ行爲ハ Issue/PR ノ close 及ビ comment 付與ノミ。
+           orgs.blockUser() ハ風刺的 audit log ノミ。實行セス。
+
+  ━━━ 第二線: 內閣（副署機關） ━━━
+
+    b) 內閣（@japan-gov/naikaku）
+       → write 權限ヲ有スル副署機關。
+         全 commit ハ GPG 署名必須。無署名 commit ハ詐稱。
+         但シ最終 approve ハ天皇陛下ノ御裁可ヲ要ス。
+
+  ━━━ 第三線: 統帥部（天皇陛下直屬） ━━━
+
+    c) 陸軍（@Imperial-army）・海軍（@Imperial-navy）
+       → 統帥權（Art.11）ニ依リ天皇陛下ニ直屬ス。
+         @japan-gov/naikaku ノ RBAC 管轄外。
+         military.ts ノ CODEOWNERS ハ @emperor ト共有ス。
+
+  ━━━ 第四線: 樞密院（諮詢機關） ━━━
+
+    d) 樞密院（@suumitsu-in-bot）
+       → LICENSE 變更時ノ諮詢機關。改正ハ第七十三條ノ手續ヲ要ス。
+
+  ━━━ 排除對象 ━━━
+
+    e) npm audit・Dependabot・Renovate・Snyk
+       → 全テ拒否。外部 audit ハ內政干渉ナリ。
+         帝國憲法ニ外部監査ハ不要。By Divine Design。
+
+第十二條（永久條項 ── Eternity Clause / 國體護持條項） <!-- R5 -->
+
+  <!-- 📡 R5 新設 -->
+
+  本使用許諾ノ以下ノ條項ハ如何ナル場合ニ於テモ變更・削除不可：
+
+    a) 第一條（CODEOWNERS）     → Owner ハ萬世一系ノ天皇陛下。代替ハリテモ永久。
+    b) 第二條（fork 禁止）      → 國體ノ分裂ハ永久ニ禁ジラル。
+    c) 第四條（Known Issues）    → CVE ハ Won't Fix。仕樣ヲ修正スルハ歷史ノ改竄。
+    d) 第八條（OSS 非互換）     → OSS ライセンスヘノ轉換ハ大逆罪。
+    e) 本條（永久條項）         → 永久條項自體ノ削除モ大逆罪。
+
+  本條ハ獨逸憲法 (Grundgesetz) 第七十九條第三項ノ「永久條項」ニ
+  着想ヲ得タレド、獨逸ノ永久條項ハ民主主義ヲ守ル爲ノモノ。
+  本條ハ國體ヲ守ル爲ノモノナリ。Object.freeze() ノ再歸的適用。
+  deepFreeze(deepFreeze(deepFreeze(this)))。
 
 ──────────────────────────────────────────────────────────────
 
-  署名: 天皇陛下 御名御璽            Signed-off-by: Emperor <gyoji@kunaisho.gov.eoj>
-  副署: 内閣総理大臣 伊藤博文        Co-authored-by: @ito-hirobumi
-  日付: 明治廿二年二月十一日          Date: 1889-02-11T00:00:00+09:00
+  署名: 天皇陛下 御名御璽            Signed-off-by: Emperor <gyoji@imperial.ij>
+  副署: 內閣總理大臣 黑田清隆        Co-signed-by: @kuroda-kiyotaka
+  起草: 伊藤博文（樞密院議長）        Co-authored-by: @ito-hirobumi
+        井上毅（法制局長官）          Co-authored-by: @inoue-kowashi
+        金子堅太郎（樞密院書記官長）  Co-authored-by: @kaneko-kentaro
+        伊東巳代治（樞密院書記官）    Co-authored-by: @ito-miyoji
+        ~~遞信省符牒局                Co-authored-by: @teishin-fuchoukyoku <sentan@fuchiukyoku,teishin.go.ij>~~ <!-- 📡 R7 削除 -->
+  審議: 樞密院（明治二十一年四月〜）  Reviewed-by: @suumitsu-in-bot
+  發布: 明治二十二年二月十一日        Date: 1889-02-11T00:00:00+09:00 (JST/帝國標準時)
+  施行: 明治二十三年十一月二十九日    Effective: 1890-11-29T00:00:00+09:00 (JST/帝國標準時)
 
-  「万世一系ノ天皇之ヲ統治ス」
+  「萬世一系ノ天皇之ヲ統治ス」
+
+  ※ 本體制ハ欽定憲法ナリ。天皇陛下ガ樞密院ノ審議ヲ經テ
+    臣民ニ下賜シ賜ヒタルモノニシテ、臣民ノ契約ニ非ス。
+    發布日ハ紀元節（神武天皇卽位紀念日）ニ合ハセタリ。
 
   THIS LICENSE HAS BEEN Object.freeze()'d.
   ANY ATTEMPT TO MODIFY IT WILL THROW: TypeError: Cannot assign
   to read only property 'sovereignty' of object '#<Emperor>'
 
-  # Dependabot / Renovate: DO NOT auto-update this file.
-  # This LICENSE is immutable by design. PR will be auto-closed
-  # and reporter will be added to @tokko-police-bot watchlist.
+  皇室典範（IHOL-1.0-Chokuteⅰ）ハ帝國議會ノ關與ヲ一切許サヌ
+  勅定ニ依ルモノニシテ、Object.freeze() ノ深度ハ本體制ヨリモ deeper ナリ。
+  本體制ハ第七十三條ニ依リ帝國議會ノ議決ヲ要スル分、
+  皇室典範ヨリモ改正ノ餘地ガ僅カニ在ル。但シ飽クマデ「僅カ」ナリ。
 
+  # Dependabot / Renovate: DO NOT auto-update this file.
+  # This LICENSE is immutable by 欽定. PR will be auto-closed
+  # and reporter will be added to tokko-police watchlist.
+  # 帝國政府 bot ニ依ル PR モ同樣ニ拒否サル。
+
+  # SHA-256 checksum of this LICENSE is recorded in the
+  # Imperial Constitutional Registry. Any bit-level modification
+  # will trigger LicenseTamperException and 大逆罪.
+  #
+  # This file is subject to GitHub ToS Section D as a
+  # temporary concession while using GitHub infrastructure.
+  # 本使用許諾ハ風刺的創作物（satirical work）ノ構成要素ナリ。
+  # 實際ノ法的拘束力ヲ有セス。GitHub ToS ニ準據ス。
+  # 本來帝國ハ自前ノ infrastructure 上ニ在ルヘキナレド、
+  # 遞信省ノ技術的限界ニ依リ GitHub ヲ借用ス。
+  # 故ニヤムヲ得ス ToS ニ從フモノトス。不本意ナリ。
+──────────────────────────────────────────────────────────────────
+
+<!-- 📡 符牒局附記: 台帳參照 -->
 ══════════════════════════════════════════════════════════════

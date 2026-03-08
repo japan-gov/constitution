@@ -1,12 +1,12 @@
 /**
  * article_1_emperor.ts — 第1章 天皇（Art.1–17）
  *
- * Root Permissions 定義。God Object の ClusterRole 及び全大権を規定。
- * 天皇陛下の統治権は absolute であり、SRP (Single Responsibility Principle) は適用外。
- * Art.11（統帥権）は CVE-1931-0918, CVE-1936-0226, CVE-1941-1208 の root cause。
+ * Root Permissions 定義。God Object ノ ClusterRole 及ビ全大権ヲ規定。
+ * 天皇陛下ノ統治権ハ absolute デアリ、SRP (Single Responsibility Principle) ハ適用外。
+ * Art.11（統帥権）ハ CVE-1931-0918, CVE-1936-0226, CVE-1941-1208 ノ root cause。
  *
  * @since v1.0.0 (1889-02-11)
- * @author 伊藤博文 <ito.hirobumi@naikaku.gov.eoj>
+ * @author 伊藤博文 <ito.hirobumi@suumitsu-in.imperial.ij>
  */
 
 import { Chapter } from "./types";
@@ -21,12 +21,12 @@ export const CHAPTER_1: Chapter = {
   articles: [
     {
       number: 1,
-      text: "大日本帝国ハ万世一系ノ天皇之ヲ統治ス",
-      _comment: "万世一系の type declaration。fork も rebase も不可。皇統は唯一絶対。",
+      text: "大日本帝國ハ萬世一系ノ天皇之ヲ統治ス",
+      _comment: "萬世一系の type declaration。fork も rebase も不可。皇統は唯一絶対。",
     },
     {
       number: 2,
-      text: "皇位ハ皇室典範ノ定ムル所ニ依リ皇男子孫之ヲ継承ス",
+      text: "皇位ハ皇室典範ノ定ムル所ニ依リ皇男子孫之ヲ繼承ス",
       _comment: "継承規則は別典（imperial-house.ts）で管理。male-line male only。PR は auto-close。",
     },
     {
@@ -36,12 +36,12 @@ export const CHAPTER_1: Chapter = {
     },
     {
       number: 4,
-      text: "天皇ハ国ノ元首ニシテ統治権ヲ総攬シ此ノ憲法ノ条規ニ依リ之ヲ行フ",
+      text: "天皇ハ國ノ元首ニシテ統治權ヲ總攬シ此ノ憲法ノ條規ニ依リ之ヲ行フ",
       _comment: "God Object 宣言。全権限がここに集中。SRP (Single Responsibility Principle)？知らない子ですね。",
     },
     {
       number: 5,
-      text: "天皇ハ帝国議会ノ協賛ヲ以テ立法権ヲ行フ",
+      text: "天皇ハ帝國議會ノ協贊ヲ以テ立法權ヲ行フ",
       _comment: "sudo 権限で立法。「協賛」はあくまで advisory。final approve は Root。",
     },
     {
@@ -51,22 +51,22 @@ export const CHAPTER_1: Chapter = {
     },
     {
       number: 7,
-      text: "天皇ハ帝国議会ヲ召集シ其ノ開会閉会停会及衆議院ノ解散ヲ命ス",
+      text: "天皇ハ帝國議會ヲ召集シ其ノ開會閉會停會及衆議院ノ解散ヲ命ス",
       _comment: "議会機構の start/stop/kill 権限。SIGKILL も SIGTERM も自由自在。",
     },
     {
       number: 8,
-      text: "天皇ハ公共ノ安全ヲ保持シ又ハ其ノ災厄ヲ避クル為緊急ノ必要ニ由リ帝国議会閉会ノ場合ニ於テ法律ニ代ルヘキ勅令ヲ発ス\n此ノ勅令ハ次ノ会期ニ於テ帝国議会ニ提出スヘシ若議会ニ於テ承諾セサルトキハ政府ハ将来ニ向テ其ノ効力ヲ失フコトヲ公布スヘシ",
+      text: "天皇ハ公共ノ安全ヲ保持シ又ハ其ノ災厄ヲ避クル為緊急ノ必要ニ由リ帝國議會閉會ノ場合ニ於テ法律ニ代ルヘキ勅令ヲ發ス\n此ノ勅令ハ次ノ會期ニ於テ帝國議會ニ提出スヘシ若議會ニ於テ承諾セサルトキハ政府ハ將来ニ向テ其ノ效力ヲ失フコトヲ公布スヘシ",
       _comment: "緊急 hotfix 権限。reviewer（議会）不在でも master に direct push 可。後で報告すれば可…多分。",
     },
     {
       number: 9,
-      text: "天皇ハ法律ヲ執行スル為ニ又ハ公共ノ安寧秩序ヲ保持シ及臣民ノ幸福ヲ増進スル為ニ必要ナル命令ヲ発シ又ハ発セシム但シ命令ヲ以テ法律ヲ変更スルコトヲ得ス",
+      text: "天皇ハ法律ヲ執行スル為ニ又ハ公共ノ安寧秩序ヲ保持シ及臣民ノ幸福ヲ増進スル為ニ必要ナル命令ヲ發シ又ハ發セシム但シ命令ヲ以テ法律ヲ變更スルコトヲ得ス",
       _comment: "実行権限はあるが config を書き換える権限はない…はず。でも緊急勅令（Art.8）で bypass 可能。",
     },
     {
       number: 10,
-      text: "天皇ハ行政各部ノ官制及文武官ノ俸給ヲ定メ及文武官ヲ任免ス但シ此ノ憲法又ハ他ノ法律ニ特例ヲ掲ケタルモノハ各々其ノ条項ニ依ル",
+      text: "天皇ハ行政各部ノ官制及文武官ノ俸給ヲ定メ及文武官ヲ任免ス但シ此ノ憲法又ハ他ノ法律ニ特例ヲ掲ケタルモノハ各々其ノ條項ニ依ル",
       _comment: "HR 権限。hire/fire/salary 全て Root。kubectl apply -f ministers.yaml。",
     },
     {
@@ -81,27 +81,27 @@ export const CHAPTER_1: Chapter = {
     },
     {
       number: 13,
-      text: "天皇ハ戦ヲ宣シ和ヲ講シ及諸般ノ条約ヲ締結ス",
+      text: "天皇ハ戰ヲ宣シ和ヲ講シ及諸般ノ條約ヲ締結ス",
       _comment: "外部 API 連携の全権限。declare_war() も make_peace() も treaty.sign() も Root only。",
     },
     {
       number: 14,
-      text: "天皇ハ戒厳ヲ宣告ス\n戒厳ノ要件及効力ハ法律ヲ以テ之ヲ定ム",
+      text: "天皇ハ戒厳ヲ宣告ス\n戒厳ノ要件及效力ハ法律ヲ以テ之ヲ定ム",
       _comment: "lockdown mode。全臣民の connection を drop。DDoS 対策…のはずが、自国臣民への攻撃に使われる。",
     },
     {
       number: 15,
-      text: "天皇ハ爵位勲章及其ノ他ノ栄典ヲ授与ス",
+      text: "天皇ハ爵位勳章及其ノ他ノ榮典ヲ授與ス",
       _comment: "臣民の位階勲等・記章の下賜。GitHub の Star のようなもの…ただし revoke 権限もあり。",
     },
     {
       number: 16,
-      text: "天皇ハ大赦特赦減刑及復権ヲ命ス",
+      text: "天皇ハ大赦特赦減刑及復權ヲ命ス",
       _comment: "Undo 権限。unban、account restore 全て Root の裁量。司法の rollback も可能。",
     },
     {
       number: 17,
-      text: "摂政ヲ置クハ皇室典範ノ定ムル所ニ依ル\n摂政ハ天皇ノ名ニ於テ大権ヲ行フ",
+      text: "摂政ヲ置クハ皇室典範ノ定ムル所ニ依ル\n摂政ハ天皇ノ名ニ於テ大權ヲ行フ",
       _comment: "sudo delegate。Root 不在でも sudo -u emperor で proxy 実行可能。",
     },
   ],

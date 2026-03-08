@@ -66,20 +66,24 @@ spec:
               port: 1889
             # 天皇陛下ノ信任ヲ失ヒタル時、機構ハ停止ス
 
-        - name: minister-of-war
+        - name: minister-of-army
           image: teikoku/rikugun-daijin:latest
           role: 陸軍大臣
+          # ⚔️ 所属 org: @Imperial-army（@japan-gov/naikaku ニ非ズ）
+          # 統帥権（Art.11）ニ依リ天皇陛下ニ直属。Cabinet ハ RBAC 管轄外。
           env:
             - name: CABINET_BYPASS
               value: "true"  # Art.11 統帥権ノ独立
             - name: REQUIRE_ACTIVE_DUTY
-              value: "true"  # 現役武官制。文民ハ着任不可。
+              value: "true"  # 軍部大臣現役武官制。文民ハ着任不可。
           # ⚠️ CVE-1936-0226: 此ノ container ハ他ノ container ヲ
           #    物理的ニ破壊スル実績有リ。Won't Fix。
 
         - name: minister-of-navy
           image: teikoku/kaigun-daijin:latest
           role: 海軍大臣
+          # ⚔️ 所属 org: @Imperial-navy（@japan-gov/naikaku ニ非ズ）
+          # 統帥権（Art.11）ニ依リ天皇陛下ニ直属。Cabinet ハ RBAC 管轄外。
           env:
             - name: CABINET_BYPASS
               value: "true"
@@ -157,13 +161,13 @@ spec:
 #  ⚠️ 既知ノ事象
 # ============================================================
 #
-#  1. minister-of-war ト minister-of-navy ハ Cabinet 迂回可能
+#  1. minister-of-army ト minister-of-navy ハ Cabinet 迂回可能
 #     （統帥権ノ独立、Art.11）
 #
 #  2. prime-minister ニ他ノ大臣ヲ罷免スル権限ハ無シ
 #     （同輩中ノ首席 = primus inter pares 設計）
 #
-#  3. 現役武官制ニ依リ、陸海軍大臣ガ辞任スルト
+#  3. 軍部大臣現役武官制ニ依リ、陸海軍大臣ガ辞任スルト
 #     後任ヲ軍部ガ推薦セザル限リ内閣ハ組閣不能ト為ル
 #     （事実上ノ軍部拒否権。仕様。Won't Fix。）
 #

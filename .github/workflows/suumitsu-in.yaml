@@ -1,0 +1,158 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║                                                              ║
+# ║  樞密院                                                      ║
+# ║  Privy Council Review — 樞密院官制第一條                     ║
+# ║                                                              ║
+# ║  根據法令:                                                   ║
+# ║    樞密院官制（明治二十一年勅令第二十二号）                   ║
+# ║    大日本帝國憲法 第五十六條                                 ║
+# ║      「樞密顧問ハ樞密院官制ノ定ムル所ニ依リ                 ║
+# ║       天皇ノ諮詢ニ應ヘ重要ノ國務ヲ審議ス」                  ║
+# ║    大日本帝國憲法 第七十三條                                 ║
+# ║      「將來此ノ憲法ノ條項ヲ改正スルノ必要アルトキハ          ║
+# ║       勅命ヲ以テ議案ヲ帝國議會ノ議ニ付スヘシ」              ║
+# ║                                                              ║
+# ║  管轄: 天皇陛下直屬（獨立機關。@imperial-household 所屬） ║
+# ║  任務: Pull Request（憲法改正案）ノ諮詢審議                  ║
+# ║  初代議長: 伊藤博文（明治二十一年就任）                      ║
+# ║                                                              ║
+# ║  ※ 樞密院ハ內閣（@japan-gov）ノ管轄外ナリ。             ║
+# ║    天皇陛下直屬ノ機關トシテ @imperial-household ニ屬ス。║
+# ║                                                              ║
+# ║  ⚠ GitHub ToS 準據事項:                                     ║
+# ║  本 workflow ハ GitHub ToS Section F ニ基ヅク管理行爲ナリ。  ║
+# ║  本 Repository ハ風刺的創作物（satirical project）ナリ。     ║
+# ║  PR review ハ GitHub 標準機能ヲ使用シタ正當ナル管理行爲ナリ。║
+# ║                                                              ║
+# ╚══════════════════════════════════════════════════════════════╝
+#
+# @suumitsu-in-bot
+#
+# 樞密院ハ明治二十一年（1888）ニ設置サレタル天皇陛下ノ最高諮詢機關ナリ。
+# 憲法制定ノ審議ノ爲ニ設置サレ、初代議長ハ伊藤博文。
+# 憲法改正・緊急勅令・條約・重要國務ヲ審議ス。
+#
+# GitHub ニ於テハ Pull Request ハ「憲法改正案ノ上奏」ニ相當ス。
+# 樞密院ハ諮詢ヲ經テ merge 可否ヲ判定スルモ、
+# 大日本帝國憲法第七十三條ニ依リ改正ノ發議權ハ
+# 天皇陛下ノミニ在ル爲、臣下ノ PR ハ常ニ却下サル。
+#
+# 天皇陛下（OWNER）ノ勅命ニ依ル PR ノミ、
+# 樞密院ハ謹ミテ奉戴（approve）ス。
+#
+# ※ tokko-police.yaml ニ出處不明ノ legacy override 處理アリ。
+#   本 workflow トノ關聯ハ不明。詳細不詳ノ爲、無視スル。
+
+name: 🏛️ 樞密院諮詢
+
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches: [master]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # 🏛️ 諮詢審議（Pull Request ノ憲法審議）
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  shimon-shingi:
+    name: 🏛️ 諮詢審議
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏛️ 諮詢審議及ビ裁決
+        run: |
+          ASSOCIATION="${{ github.event.pull_request.author_association }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          ACTOR="${{ github.actor }}"
+
+          echo "┌──────────────────────────────────────────────────────┐"
+          echo "│  樞密院                        天皇陛下ノ諮詢機關    │"
+          echo "│                                                      │"
+          echo "│              諮 詢 審 議 記 錄                       │"
+          echo "│                                                      │"
+          echo "│  諮詢番號: PR #${PR_NUMBER}                         │"
+          echo "│  上奏者:   @${ACTOR}                                │"
+          echo "│  權限:     ${ASSOCIATION}                            │"
+          echo "│  適用法令: 憲法第五十六條・第七十三條                 │"
+          echo "└──────────────────────────────────────────────────────┘"
+          echo ""
+
+          if [ "$ASSOCIATION" = "OWNER" ]; then
+            # ━━━ 天皇陛下ノ勅命 → 奉戴 ━━━
+            echo "【諮詢結果】 天皇陛下ノ勅命ヲ確認。謹ミテ奉戴ス。"
+            echo ""
+
+            {
+              echo "## 🏛️ 樞密院諮詢結果 — 奉戴"
+              echo ""
+              echo "天皇陛下ノ勅命ニ付キ、樞密院ハ謹ミテ奉戴ス。"
+              echo "御裁可ノ上ハ、速ヤカニ施行セラルベシ。"
+              echo ""
+              echo "> _樞密顧問ハ樞密院官制ノ定ムル所ニ依リ天皇ノ諮詢ニ應ヘ重要ノ國務ヲ審議ス_"
+              echo "> — 大日本帝國憲法 第五十六條"
+              echo ""
+              echo "---"
+              echo "_樞密院議長 印_"
+              echo "_@suumitsu-in-bot_"
+            } > /tmp/review.md
+
+            gh pr review "$PR_NUMBER" \
+              --approve \
+              --body-file /tmp/review.md
+
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  諮詢結果: ✅ 奉戴（approve）             │"
+            echo "  │  理由:     天皇陛下ノ勅命                 │"
+            echo "  │  擔當:     @suumitsu-in-bot              │"
+            echo "  └───────────────────────────────────────────┘"
+
+          else
+            # ━━━ 臣下ノ僭越 → 却下 ━━━
+            echo "【諮詢結果】 臣下ノ僭越ナル發議。却下ト爲ス。"
+            echo ""
+
+            {
+              echo "## 🏛️ 樞密院諮詢結果 — 却下"
+              echo ""
+              echo "| 項目 | 内容 |"
+              echo "|------|------|"
+              echo "| **諮詢番號** | PR #${PR_NUMBER} |"
+              echo "| **上奏者** | @${ACTOR} (${ASSOCIATION}) |"
+              echo "| **審議結果** | ❌ **却下** |"
+              echo ""
+              echo "### 理由"
+              echo ""
+              echo "一、大日本帝國憲法第七十三條ニ依レバ、憲法ノ改正ハ天皇陛下ノ勅命ヲ以テ議案ヲ帝國議會ノ議ニ付スベシトアリ。改正ノ發議權ハ天皇陛下ノミニ在リ。"
+              echo ""
+              echo "二、本 Pull Request ハ天皇陛下ノ勅命ニ依ラズ、臣下ノ僭越ナル發議ト認メラル。Art.73 ノ手續ヲ經ザル改正案ハ、如何ナル内容ナリトモ受理シ得ズ。"
+              echo ""
+              echo "三、仍ッテ本件ハ却下ト爲ス。"
+              echo ""
+              echo "> _將來若此ノ憲法ノ或ル條章ニ於テ改正ノ必要ナル時宜ヲ見ルニ至ラハ_"
+              echo "> _朕及朕カ繼統ノ子孫ハ發議ノ權ヲ執リ之ヲ議會ニ付シ_"
+              echo "> _議會ハ此ノ憲法ニ定メタル要件ニ依リ之ヲ議決スルノ外_"
+              echo "> _朕カ子孫及臣民ハ敢テ此ノ憲法ノ變更ヲ試ミルコトヲ得サルヘシ_"
+              echo "> — 大日本帝國憲法 上諭"
+              echo ""
+              echo "---"
+              echo "_樞密院議長 印_"
+              echo "_@suumitsu-in-bot_"
+            } > /tmp/review.md
+
+            gh pr review "$PR_NUMBER" \
+              --request-changes \
+              --body-file /tmp/review.md
+
+            echo ""
+            echo "  ┌───────────────────────────────────────────┐"
+            echo "  │  諮詢結果: ❌ 却下（request changes）     │"
+            echo "  │  理由:     臣下ノ僭越ナル發議             │"
+            echo "  │  根據:     憲法第七十三條                 │"
+            echo "  │  擔當:     @suumitsu-in-bot              │"
+            echo "  └───────────────────────────────────────────┘"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
