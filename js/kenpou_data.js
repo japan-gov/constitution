@@ -39,8 +39,8 @@ var KENPOU = {
     },
     {
      "number": 3,
-     "text": "天皇ハ神聖ニシテ侵スヘカラス",
-     "_comment": "Object.freeze(emperor)。immutableかつdelete不可。触ると不敬罪という例外が飛ぶ。例外ハンドラは特高警察。"
+     "text": "天皇ハ至尊ニシテ侵スヘカラス",
+     "_comment": "【改正要綱 v1.0.1】「神聖」→「至尊」に字句修正。Object.freeze()自体は解除していない。変数名をdivineからsupremeにrenameしただけで、中身のfreezeはそのまま。これをpatch releaseと称する。"
     },
     {
      "number": 4,
@@ -79,8 +79,8 @@ var KENPOU = {
     },
     {
      "number": 11,
-     "text": "天皇ハ陸海軍ヲ統帥ス",
-     "_comment": "⚑ CRITICAL: 統帥権の独立。MilitaryがCabinetを迂回する法的根拠。CVE-1931-0918、CVE-1936-0226、CVE-1941-1208の元凶。たった10文字で帝国を滅ぼした最凶の1行。レビューで誰も指摘しなかったのかと思うだろうが、指摘できる者がいない設計にしたのが本條である。"
+     "text": "天皇ハ軍ヲ統帥ス\n統帥ニ關シテハ國務大臣之ヲ輔弼ス",
+     "_comment": "【改正要綱 v1.0.1】CVE-1931-0918ほか3件の元凶にhotfixを適用。「陸海軍」→「軍」とし、統帥権にも国務大臣の輔弼を及ぼす。なお当のMilitary processは機構停止(CVE-1945-0815)で既に落ちている。落ちたprocessに当てるhotfixをpostmortem patchという。"
     },
     {
      "number": 12,
@@ -317,8 +317,8 @@ var KENPOU = {
    "articles": [
     {
      "number": 55,
-     "text": "國務各大臣ハ天皇ヲ輔弼シ其ノ責ニ任ス\n凡テ法律勅令其ノ他國務ニ關ル詔勅ハ國務大臣ノ副署ヲ要ス",
-     "_comment": "大臣=middleware。Rootのoutputにco-signを付与。ただしreject権限はない。always-approve middleware。ところで「内閣」はこの憲法のどこにも書かれていない。内閣は憲法より先(1885)に官制で存在していたので、憲法は内閣を知らないまま運用された。"
+     "text": "國務各大臣ハ天皇ヲ輔弼シ帝國議會ニ對シ其ノ責ニ任ス\n凡テ法律勅令其ノ他國務ニ關ル詔勅ハ國務大臣ノ副署ヲ要ス",
+     "_comment": "【改正要綱 v1.0.1】大臣middlewareに「帝國議會ニ對シ」の責任を追加。always-approveは依然としてalways-approveだが、approveの後で議会に叱られるようになった。error handlingの追加であって、errorの削減ではない。"
     },
     {
      "number": 56,
